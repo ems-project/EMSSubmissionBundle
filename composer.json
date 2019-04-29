@@ -15,7 +15,7 @@
 	"require" : {
 		"php" : ">=7.1",
 		"elasticms/client-helper-bundle" : "^3.0",
-		"symfony/framework-bundle": "~4.1.0",
+		"symfony/swiftmailer-bundle": "^3.2",
 		"twig/twig" : "^2.4"
 	},
 	"require-dev" : {
