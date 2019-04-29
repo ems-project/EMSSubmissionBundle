@@ -48,7 +48,6 @@ class SubmissionClient
                 ->setFrom($this->templating->render($configuration->getOriginTemplate(), $data))
                 ->setTo($this->templating->render($configuration->getTargetTemplate(), $data))
                 ->setBody($this->templating->render($configuration->getDataTemplate(), $data));
-
         } catch (\Exception $exception) {
             return sprintf('Submission failed, contact your admin. %s', $exception->getMessage());
         }
@@ -63,5 +62,4 @@ class SubmissionClient
         //TODO is this enough? or can we get more info from the mail deamon?
         return 'Submission send by mail.';
     }
-
 }
