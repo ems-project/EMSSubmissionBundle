@@ -15,10 +15,10 @@ class SubmissionController extends AbstractController
         $this->submissionClient = $submissionClient;
     }
 
-    public function submit(string $submissionId, $data = [])
+    public function submit(string $submissionId, string $locale, array $data = [])
     {
         return $this->render('@EMSForm/form-api/submitted.html.twig', [
-            'data' => join(' | ', $data),
+            'data' => $this->submissionClient->submit($submissionId, $locale, $data),
         ]);
     }
 }
