@@ -6,17 +6,10 @@
 
     <services>
         <defaults public="false" />
-
-        <service id="EMS\SubmissionBundle\Service\SubmissionClient">
+        <service id="emss.client" class="EMS\SubmissionBundle\Service\SubmissionClient">
             <argument type="service" id="EMS\ClientHelperBundle\Helper\Elasticsearch\ClientRequest"/>
             <argument type="service" id="twig"/>
             <argument type="service" id="mailer"/>
-        </service>
-
-        <!-- controllers -->
-        <service id="EMS\SubmissionBundle\Controller\SubmissionController">
-            <argument type="service" id="EMS\SubmissionBundle\Service\SubmissionClient"/>
-            <tag name="controller.service_arguments"/>
         </service>
     </services>
 </container>
