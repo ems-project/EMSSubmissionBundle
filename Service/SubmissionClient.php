@@ -3,7 +3,13 @@
 namespace EMS\SubmissionBundle\Service;
 
 use EMS\ClientHelperBundle\Helper\Elasticsearch\ClientRequest;
+use EMS\CommonBundle\Common\EMSLink;
+use EMS\FormBundle\FormConfig\FormConfig;
+use EMS\SubmissionBundle\FormConfig\SubmissionConfig;
+use EMS\SubmissionBundle\FormConfig\SubmitResponse;
+use EMS\SubmissionBundle\Handler\AbstractHandler;
 use EMS\SubmissionBundle\Submission\SubmissionConfiguration;
+use Symfony\Component\Form\FormInterface;
 
 //TODO add usefull logging.
 class SubmissionClient
@@ -11,55 +17,37 @@ class SubmissionClient
     /** @var ClientRequest */
     private $client;
 
-    /** @var \Twig_Environment */
-    private $templating;
+    /** @var \Traversable */
+    private $handlers;
 
-    /** @var \Swift_Mailer */
-    private $mailer;
-
-    public function __construct(ClientRequest $client, \Twig_Environment $templating, \Swift_Mailer $mailer)
+    public function __construct(ClientRequest $client, \Traversable $handlers)
     {
         $this->client = $client;
-        $this->templating = $templating;
-        $this->mailer = $mailer;
+        $this->handlers = $handlers;
     }
 
-    public function submit(string $id, string $locale, array $data)
+    public function submit(FormInterface $form): SubmitResponse
     {
-        $result = ($this->client->get('form_submission', $id))['_source'];
-        $configuration = new SubmissionConfiguration($result);
+        /** @var FormConfig $config */
+        $config = $form->getConfig()->getOption('config');
+        $response = new SubmitResponse();
 
-        $response = 'Submission failed, an admin should verify the configuration';
-        $data['ems_submission_locale'] = $locale;
-        switch ($configuration->getType()) {
-            case 'email':
-                $response = $this->sendByMail($configuration, $data);
-                //TODO: update response with Failed / Success of mail service
-                break;
+        foreach ($config->getSubmissions() as $submission) {
+            $this->handle($submission, $response, $form, $config);
         }
 
         return $response;
     }
 
-    private function sendByMail(SubmissionConfiguration $configuration, array $data): string
+    private function handle(SubmissionConfig $submission, SubmitResponse $response, FormInterface $form, FormConfig $config) : void
     {
-        try {
-            $message = (new \Swift_Message($this->templating->render($configuration->getSubjectTemplate(), $data)))
-                ->setFrom($this->templating->render($configuration->getOriginTemplate(), $data))
-                ->setTo($this->templating->render($configuration->getTargetTemplate(), $data))
-                ->setBody($this->templating->render($configuration->getDataTemplate(), $data));
-        } catch (\Exception $exception) {
-            return sprintf('Submission failed, contact your admin. %s', $exception->getMessage());
+        foreach ($this->handlers as $handler) {
+            if (! $handler instanceof AbstractHandler) {
+                continue;
+            }
+            if ($handler->canHandle($submission->getClass())) {
+                $response->addResponse($handler->handle($submission, $form, $config));
+            }
         }
-
-        $failedRecipients = [];
-        $this->mailer->send($message, $failedRecipients);
-
-        if ($failedRecipients !== []) {
-            return 'Submission failed. Conctact your admin.';
-        }
-
-        //TODO is this enough? or can we get more info from the mail deamon?
-        return 'Submission send by mail.';
     }
 }
