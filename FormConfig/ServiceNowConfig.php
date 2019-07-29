@@ -46,4 +46,9 @@ class ServiceNowConfig
         return $this->fieldsJson;
     }
 
+    public function getBasicAuth(): string
+    {
+        return base64_encode(sprintf('Basic %s:%s', $this->getUsername(), $this->getPassword()));
+    }
+
 }

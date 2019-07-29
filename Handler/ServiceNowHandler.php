@@ -30,7 +30,7 @@ class ServiceNowHandler extends AbstractHandler
             $response = $client->request('POST', $snow->getHost(), [
                 'headers' => [
                     'Accept' => 'application/json',
-                    'authorization' => sprintf('%s:%s', $snow->getUsername(), $snow->getPassword()),
+                    'Authorization' => $snow->getBasicAuth(),
                 ],
                 'body' => $snow->getFieldsJson(),
             ]);
