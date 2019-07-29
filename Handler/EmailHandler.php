@@ -19,7 +19,13 @@ class EmailHandler extends AbstractHandler
 
     public function handle(SubmissionConfig $submission, FormInterface $form, FormConfig $config): string
     {
-        $email = new EmailConfig($this->templating->render($submission->getEndpoint(), ['config' => $config]), $this->templating->render($submission->getMessage(), ['config' => $config]));
+        $endpointTemplate = $this->templating->createTemplate($submission->getEndpoint());
+        $endpoint = $endpointTemplate->render(['config' => $config, 'data' => $form->getData()]);
+
+        $messageTemplate = $this->templating->createTemplate($submission->getMessage());
+        $message = $messageTemplate->render(['config' => $config, 'data' => $form->getData()]);
+
+        $email = new EmailConfig($endpoint, $message);
         try {
             $message = (new \Swift_Message($email->getSubject()))
                 ->setFrom($email->getFrom())
