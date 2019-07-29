@@ -2,6 +2,8 @@
 
 namespace EMS\SubmissionBundle\FormConfig;
 
+use EMS\SubmissionBundle\Submission\RenderedSubmission;
+
 class EmailConfig
 {
     /** @var string */
@@ -13,11 +15,11 @@ class EmailConfig
     /** @var string */
     private $body;
 
-    public function __construct(string $endpoint, string $message)
+    public function __construct(RenderedSubmission $submission)
     {
-        $this->endpoint = $endpoint;
+        $this->endpoint = $submission->getEndpoint();
 
-        $config = \json_decode($message, true);
+        $config = \json_decode($submission->getMessage(), true);
         $this->from = $config['from'];
         $this->subject = $config['subject'];
         $this->body = $config['body'];
