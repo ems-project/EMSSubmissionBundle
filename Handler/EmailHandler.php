@@ -5,28 +5,27 @@ namespace EMS\SubmissionBundle\Handler;
 use EMS\FormBundle\FormConfig\FormConfig;
 use EMS\SubmissionBundle\FormConfig\EmailConfig;
 use EMS\SubmissionBundle\FormConfig\SubmissionConfig;
+use EMS\SubmissionBundle\Service\SubmissionRenderer;
 use Symfony\Component\Form\FormInterface;
 
 class EmailHandler extends AbstractHandler
 {
     /** @var \Swift_Mailer */
     private $mailer;
+    /** @var SubmissionRenderer */
+    private $renderer;
 
-    public function __construct(\Swift_Mailer $mailer)
+    public function __construct(\Swift_Mailer $mailer, SubmissionRenderer $renderer)
     {
         $this->mailer = $mailer;
+        $this->renderer = $renderer;
     }
 
     public function handle(SubmissionConfig $submission, FormInterface $form, FormConfig $config): string
     {
-        $endpointTemplate = $this->templating->createTemplate($submission->getEndpoint());
-        $endpoint = $endpointTemplate->render(['config' => $config, 'data' => $form->getData()]);
-
-        $messageTemplate = $this->templating->createTemplate($submission->getMessage());
-        $message = $messageTemplate->render(['config' => $config, 'data' => $form->getData()]);
-
         try {
-            $email = new EmailConfig($endpoint, $message);
+            $renderedSubmission = $this->renderer->render($submission, $form, $config);
+            $email = new EmailConfig($renderedSubmission);
             $message = (new \Swift_Message($email->getSubject()))
                 ->setFrom($email->getFrom())
                 ->setTo($email->getEndpoint())

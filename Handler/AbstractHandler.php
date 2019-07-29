@@ -8,14 +8,6 @@ use Symfony\Component\Form\FormInterface;
 
 abstract class AbstractHandler
 {
-    /** @var \Twig_Environment */
-    protected $templating;
-
-    public function setTemplating(\Twig_Environment $templating)
-    {
-        $this->templating = $templating;
-    }
-
     public function canHandle(string $class): bool
     {
         return $class === get_called_class();

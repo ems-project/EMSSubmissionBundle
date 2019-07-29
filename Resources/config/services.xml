@@ -10,17 +10,16 @@
             <argument type="service" id="EMS\ClientHelperBundle\Helper\Elasticsearch\ClientRequest"/>
             <argument type="tagged" tag="emss.handler"/>
         </service>
+        <service id="emss.renderer" class="EMS\SubmissionBundle\Service\SubmissionRenderer">
+            <argument type="service" id="twig" />
+        </service>
+
         <service id="emss.emailhandler" class="EMS\SubmissionBundle\Handler\EmailHandler">
             <argument type="service" id="mailer"/>
-            <call method="setTemplating">
-                <argument type="service" id="twig"/>
-            </call>
+            <argument type="service" id="emss.renderer"/>
             <tag name="emss.handler" />
         </service>
         <service id="emss.servicenowhandler" class="EMS\SubmissionBundle\Handler\ServiceNowHandler">
-            <call method="setTemplating">
-                <argument type="service" id="twig"/>
-            </call>
             <tag name="emss.handler" />
         </service>
     </services>

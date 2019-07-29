@@ -6,7 +6,7 @@ use EMS\ClientHelperBundle\Helper\Elasticsearch\ClientRequest;
 use EMS\CommonBundle\Common\EMSLink;
 use EMS\FormBundle\FormConfig\FormConfig;
 use EMS\SubmissionBundle\FormConfig\SubmissionConfig;
-use EMS\SubmissionBundle\FormConfig\SubmitResponse;
+use EMS\SubmissionBundle\Submission\SubmitResponse;
 use EMS\SubmissionBundle\Handler\AbstractHandler;
 use EMS\SubmissionBundle\Submission\SubmissionConfiguration;
 use Symfony\Component\Form\FormInterface;
