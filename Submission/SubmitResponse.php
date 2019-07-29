@@ -1,6 +1,6 @@
 <?php
 
-namespace EMS\SubmissionBundle\FormConfig;
+namespace EMS\SubmissionBundle\Submission;
 
 class SubmitResponse
 {
