@@ -18,11 +18,11 @@ class EmailConfig
     public function __construct(RenderedSubmission $submission)
     {
         $this->endpoint = $submission->getEndpoint();
+        $message = \json_decode($submission->getMessage(), true);
 
-        $config = \json_decode($submission->getMessage(), true);
-        $this->from = $config['from'];
-        $this->subject = $config['subject'];
-        $this->body = $config['body'];
+        $this->from = $message['from'];
+        $this->subject = $message['subject'];
+        $this->body = $message['body'];
     }
 
     public function getEndpoint(): string
