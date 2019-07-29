@@ -25,8 +25,8 @@ class EmailHandler extends AbstractHandler
         $messageTemplate = $this->templating->createTemplate($submission->getMessage());
         $message = $messageTemplate->render(['config' => $config, 'data' => $form->getData()]);
 
-        $email = new EmailConfig($endpoint, $message);
         try {
+            $email = new EmailConfig($endpoint, $message);
             $message = (new \Swift_Message($email->getSubject()))
                 ->setFrom($email->getFrom())
                 ->setTo($email->getEndpoint())

@@ -11,7 +11,6 @@ use EMS\SubmissionBundle\Handler\AbstractHandler;
 use EMS\SubmissionBundle\Submission\SubmissionConfiguration;
 use Symfony\Component\Form\FormInterface;
 
-//TODO add usefull logging.
 class SubmissionClient
 {
     /** @var ClientRequest */
@@ -30,6 +29,8 @@ class SubmissionClient
     {
         /** @var FormConfig $config */
         $config = $form->getConfig()->getOption('config');
+        $this->loadSubmissions($config);
+
         $response = new SubmitResponse();
 
         foreach ($config->getSubmissions() as $submission) {
@@ -48,6 +49,17 @@ class SubmissionClient
             if ($handler->canHandle($submission->getClass())) {
                 $response->addResponse($handler->handle($submission, $form, $config));
             }
+        }
+    }
+
+    private function loadSubmissions(FormConfig $config): void
+    {
+        $emsLinkSubmissions = $config->getSubmissions();
+        $config->setSubmissions([]);
+
+        foreach ($emsLinkSubmissions as $emsLinkSubmission) {
+            $submission = $this->client->getByEmsKey($emsLinkSubmission, [])['_source'];
+            $config->addSubmission(new SubmissionConfig($submission['type'], $submission['endpoint'], $submission['message']));
         }
     }
 }
