@@ -20,6 +20,7 @@
             <tag name="emss.handler" />
         </service>
         <service id="emss.servicenowhandler" class="EMS\SubmissionBundle\Handler\ServiceNowHandler">
+            <argument type="service" id="emss.renderer"/>
             <tag name="emss.handler" />
         </service>
     </services>
