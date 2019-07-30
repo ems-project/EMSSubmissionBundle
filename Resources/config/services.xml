@@ -21,6 +21,7 @@
         </service>
         <service id="emss.servicenowhandler" class="EMS\SubmissionBundle\Handler\ServiceNowHandler">
             <argument type="service" id="emss.renderer"/>
+            <argument type="string">%emss.service_now_timeout%</argument>
             <tag name="emss.handler" />
         </service>
     </services>
