@@ -14,10 +14,13 @@ class ServiceNowHandler extends AbstractHandler
 {
     /** @var SubmissionRenderer */
     private $renderer;
+    /** @var int */
+    private $timeout;
 
-    public function __construct(SubmissionRenderer $renderer)
+    public function __construct(SubmissionRenderer $renderer, int $timeout)
     {
         $this->renderer = $renderer;
+        $this->timeout = $timeout;
     }
 
     public function handle(SubmissionConfig $submission, FormInterface $form, FormConfig $config): string
@@ -33,7 +36,8 @@ class ServiceNowHandler extends AbstractHandler
                     'Content-Type' => 'application/json',
                     'Authorization' => $snow->getBasicAuth(),
                 ],
-                'body' => $snow->getFieldsJson()
+                'body' => $snow->getFieldsJson(),
+                'timeout' => $this->timeout,
             ]);
 
             $parsedResponse = new ServiceNowTableResponse($response->getContent());
