@@ -38,8 +38,7 @@ class ServiceNowHandler extends AbstractHandler
 
             $parsedResponse = new ServiceNowTableResponse($response->getContent());
             return sprintf('Ticket created with follow-up number %s', $parsedResponse->getNumber());
-
-        } catch(\Exception $exception) {
+        } catch (\Exception $exception) {
             return sprintf('Submission failed, contact your admin. %s', $exception->getMessage());
         }
     }

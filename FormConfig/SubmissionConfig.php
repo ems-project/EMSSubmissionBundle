@@ -32,6 +32,4 @@ class SubmissionConfig
     {
         return $this->message;
     }
-
-
 }
