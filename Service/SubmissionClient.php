@@ -3,7 +3,6 @@
 namespace EMS\SubmissionBundle\Service;
 
 use EMS\ClientHelperBundle\Helper\Elasticsearch\ClientRequest;
-use EMS\CommonBundle\Common\EMSLink;
 use EMS\FormBundle\FormConfig\FormConfig;
 use EMS\SubmissionBundle\FormConfig\SubmissionConfig;
 use EMS\SubmissionBundle\Submission\SubmitResponse;

@@ -20,6 +20,7 @@ class EMSSubmissionExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $container->setParameter('emss.service_now_timeout', $config['instance']['service-now-timeout']);
+        $container->setParameter('emss.default_timeout', $config['default_timeout']);
+        $container->setParameter('emss.connections', $config['connections']);
     }
 }
