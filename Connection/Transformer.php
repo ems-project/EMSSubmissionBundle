@@ -29,7 +29,7 @@ class Transformer
     private function getConnection(string $name): ServiceNowConnection
     {
         foreach ($this->connections as $connection) {
-            if (! isset($connection['connection']) || $connection['connection'] != $name ) {
+            if (! isset($connection['connection']) || $connection['connection'] != $name) {
                 continue;
             }
 
