@@ -18,9 +18,10 @@ ems_submission:
 
 The Submission content type is able to fetch these credentials by using the following placeholders:
 ```twig
-%service-now-instance-a.user% {# will be replaced with the username of the connection "service-now-instance-a" #}
-%service-now-instance-a.password% {# will be replaced with the password of the connection "service-now-instance-a" #}
+service-now-instance-a%.%user {# will be replaced with the user of the connection "service-now-instance-a" #}
+service-now-instance-a%.%password {# will be replaced with the password of the connection "service-now-instance-a" #}
 
-%service-now-instance-b.user% {# will be replaced with the username of the connection "service-now-instance-b" #}
-%service-now-instance-b.password% {# will be replaced with the password of the connection "service-now-instance-b" #}
+service-now-instance-b%.%user {# will be replaced with the username of the connection "service-now-instance-b" #}
+service-now-instance-b%.%password {# will be replaced with the password of the connection "service-now-instance-b" #}
 ```
+The separator `%.%` is chosen to allow for `.` in passwords (and user names). A user or password cannot contain the combination of charachters we use as separator!
