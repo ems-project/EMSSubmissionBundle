@@ -13,6 +13,9 @@
         <service id="emss.renderer" class="EMS\SubmissionBundle\Service\SubmissionRenderer">
             <argument type="service" id="twig" />
         </service>
+        <service id="emss.connection.transformer" class="EMS\SubmissionBundle\Connection\Transformer">
+            <argument>%emss.connections%</argument>
+        </service>
 
         <service id="emss.emailhandler" class="EMS\SubmissionBundle\Handler\EmailHandler">
             <argument type="service" id="mailer"/>
@@ -21,8 +24,17 @@
         </service>
         <service id="emss.servicenowhandler" class="EMS\SubmissionBundle\Handler\ServiceNowHandler">
             <argument type="service" id="emss.renderer"/>
-            <argument type="string">%emss.service_now_timeout%</argument>
+            <argument>%emss.default_timeout%</argument>
             <tag name="emss.handler" />
+        </service>
+
+        <!-- twig -->
+        <service id="emss.twig.extension.connection" class="EMS\SubmissionBundle\Twig\ConnectionExtension">
+            <tag name="twig.extension" />
+        </service>
+        <service id="emss.twig.runtime.connection" class="EMS\SubmissionBundle\Twig\ConnectionRuntime">
+            <argument type="service" id="emss.connection.transformer" />
+            <tag name="twig.runtime" />
         </service>
     </services>
 </container>

@@ -19,11 +19,9 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->arrayNode('instance')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->scalarNode('service-now-timeout')->defaultValue('10')->end()
-                    ->end()
+                ->scalarNode('default_timeout')->defaultValue('10')->end()
+                ->variableNode('connections')
+                    ->example('[{"connection": "conn-id", "user": "your-username": "password": "your-password"}]')
                 ->end()
             ->end()
         ;
