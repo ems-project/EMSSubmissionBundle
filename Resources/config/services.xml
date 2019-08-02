@@ -6,10 +6,6 @@
 
     <services>
         <defaults public="false" />
-        <service id="emss.client" class="EMS\SubmissionBundle\Service\SubmissionClient">
-            <argument type="service" id="EMS\ClientHelperBundle\Helper\Elasticsearch\ClientRequest"/>
-            <argument type="tagged" tag="emss.handler"/>
-        </service>
         <service id="emss.renderer" class="EMS\SubmissionBundle\Service\SubmissionRenderer">
             <argument type="service" id="twig" />
         </service>
@@ -20,12 +16,12 @@
         <service id="emss.emailhandler" class="EMS\SubmissionBundle\Handler\EmailHandler">
             <argument type="service" id="mailer"/>
             <argument type="service" id="emss.renderer"/>
-            <tag name="emss.handler" />
+            <tag name="emsf.handler" />
         </service>
         <service id="emss.servicenowhandler" class="EMS\SubmissionBundle\Handler\ServiceNowHandler">
             <argument type="service" id="emss.renderer"/>
             <argument>%emss.default_timeout%</argument>
-            <tag name="emss.handler" />
+            <tag name="emsf.handler" />
         </service>
 
         <!-- twig -->

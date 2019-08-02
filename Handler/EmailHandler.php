@@ -3,9 +3,13 @@
 namespace EMS\SubmissionBundle\Handler;
 
 use EMS\FormBundle\FormConfig\FormConfig;
+use EMS\FormBundle\Handler\AbstractHandler;
+use EMS\FormBundle\FormConfig\SubmissionConfig;
+use EMS\FormBundle\Submit\FailedResponse;
+use EMS\FormBundle\Submit\ResponseInterface;
 use EMS\SubmissionBundle\FormConfig\EmailConfig;
-use EMS\SubmissionBundle\FormConfig\SubmissionConfig;
 use EMS\SubmissionBundle\Service\SubmissionRenderer;
+use EMS\SubmissionBundle\Submit\EmailResponse;
 use Symfony\Component\Form\FormInterface;
 
 class EmailHandler extends AbstractHandler
@@ -21,7 +25,7 @@ class EmailHandler extends AbstractHandler
         $this->renderer = $renderer;
     }
 
-    public function handle(SubmissionConfig $submission, FormInterface $form, FormConfig $config): string
+    public function handle(SubmissionConfig $submission, FormInterface $form, FormConfig $config): ResponseInterface
     {
         try {
             $renderedSubmission = $this->renderer->render($submission, $form, $config);
@@ -31,16 +35,16 @@ class EmailHandler extends AbstractHandler
                 ->setTo($email->getEndpoint())
                 ->setBody($email->getBody());
         } catch (\Exception $exception) {
-            return sprintf('Submission failed, contact your admin. %s', $exception->getMessage());
+            return new FailedResponse(sprintf('Submission failed, contact your admin. %s', $exception->getMessage()));
         }
 
         $failedRecipients = [];
         $this->mailer->send($message, $failedRecipients);
 
         if ($failedRecipients !== []) {
-            return 'Submission failed. Conctact your admin.';
+            return new FailedResponse('Submission failed. Conctact your admin.');
         }
 
-        return 'Submission send by mail.';
+        return new EmailResponse();
     }
 }
