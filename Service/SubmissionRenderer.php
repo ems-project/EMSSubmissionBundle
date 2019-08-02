@@ -3,8 +3,8 @@
 namespace EMS\SubmissionBundle\Service;
 
 use EMS\FormBundle\FormConfig\FormConfig;
-use EMS\SubmissionBundle\FormConfig\SubmissionConfig;
-use EMS\SubmissionBundle\Submission\RenderedSubmission;
+use EMS\FormBundle\FormConfig\SubmissionConfig;
+use EMS\SubmissionBundle\Submit\RenderedSubmission;
 use Symfony\Component\Form\FormInterface;
 
 class SubmissionRenderer

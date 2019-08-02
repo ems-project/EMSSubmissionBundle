@@ -3,10 +3,13 @@
 namespace EMS\SubmissionBundle\Handler;
 
 use EMS\FormBundle\FormConfig\FormConfig;
+use EMS\FormBundle\Handler\AbstractHandler;
+use EMS\FormBundle\FormConfig\SubmissionConfig;
+use EMS\FormBundle\Submit\FailedResponse;
+use EMS\FormBundle\Submit\ResponseInterface;
 use EMS\SubmissionBundle\FormConfig\ServiceNowConfig;
-use EMS\SubmissionBundle\FormConfig\SubmissionConfig;
 use EMS\SubmissionBundle\Service\SubmissionRenderer;
-use EMS\SubmissionBundle\Submission\ServiceNow\ServiceNowTableResponse;
+use EMS\SubmissionBundle\Submit\ServiceNowResponse;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpClient\HttpClient;
 
@@ -23,7 +26,7 @@ class ServiceNowHandler extends AbstractHandler
         $this->timeout = $timeout;
     }
 
-    public function handle(SubmissionConfig $submission, FormInterface $form, FormConfig $config): string
+    public function handle(SubmissionConfig $submission, FormInterface $form, FormConfig $config): ResponseInterface
     {
         try {
             $renderedSubmission = $this->renderer->render($submission, $form, $config);
@@ -40,10 +43,9 @@ class ServiceNowHandler extends AbstractHandler
                 'timeout' => $this->timeout,
             ]);
 
-            $parsedResponse = new ServiceNowTableResponse($response->getContent());
-            return sprintf('Ticket created with follow-up number %s', $parsedResponse->getNumber());
+            return new ServiceNowResponse($response->getContent());
         } catch (\Exception $exception) {
-            return sprintf('Submission failed, contact your admin. %s', $exception->getMessage());
+            return new FailedResponse(sprintf('Submission failed, contact your admin. %s', $exception->getMessage()));
         }
     }
 }

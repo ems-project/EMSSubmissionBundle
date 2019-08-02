@@ -2,7 +2,7 @@
 
 namespace EMS\SubmissionBundle\FormConfig;
 
-use EMS\SubmissionBundle\Submission\RenderedSubmission;
+use EMS\SubmissionBundle\Submit\RenderedSubmission;
 
 class ServiceNowConfig
 {

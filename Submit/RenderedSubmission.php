@@ -1,8 +1,8 @@
 <?php
 
-namespace EMS\SubmissionBundle\FormConfig;
+namespace EMS\SubmissionBundle\Submit;
 
-class SubmissionConfig
+class RenderedSubmission
 {
     /** @var string */
     private $class;
