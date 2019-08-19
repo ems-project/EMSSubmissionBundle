@@ -23,11 +23,8 @@ class Transformer
         }
 
         $conn = $this->getConnection($path[0]);
-        if ($conn === null) {
-            return $path[0];
-        }
 
-        return $conn->callByKey($path[1]);
+        return $conn === null ? $path[0] : $conn->callByKey($path[1]);
     }
 
     private function getConnection(string $name): ?ServiceNowConnection
