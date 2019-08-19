@@ -23,10 +23,14 @@ class Transformer
         }
 
         $conn = $this->getConnection($path[0]);
+        if (! $conn instanceof ServiceNowConnection) {
+            return $path[0];
+        }
+
         return $conn->callByKey($path[1]);
     }
 
-    private function getConnection(string $name): ServiceNowConnection
+    private function getConnection(string $name): ?ServiceNowConnection
     {
         foreach ($this->connections as $connection) {
             if (! isset($connection['connection']) || $connection['connection'] != $name) {
@@ -35,5 +39,7 @@ class Transformer
 
             return new ServiceNowConnection($connection);
         }
+
+        return null;
     }
 }
