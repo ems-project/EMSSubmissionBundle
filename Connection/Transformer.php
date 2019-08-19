@@ -23,7 +23,7 @@ class Transformer
         }
 
         $conn = $this->getConnection($path[0]);
-        if (! $conn instanceof ServiceNowConnection) {
+        if ($conn === null) {
             return $path[0];
         }
 
