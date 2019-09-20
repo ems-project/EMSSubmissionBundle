@@ -2,9 +2,9 @@
 
 namespace EMS\SubmissionBundle\Submit;
 
-use EMS\FormBundle\Submit\ResponseInterface;
+use EMS\FormBundle\Submit\AbstractResponse;
 
-class EmailResponse implements ResponseInterface
+class EmailResponse extends AbstractResponse
 {
     public function getResponse(): string
     {

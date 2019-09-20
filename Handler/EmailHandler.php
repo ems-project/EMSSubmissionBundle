@@ -5,8 +5,9 @@ namespace EMS\SubmissionBundle\Handler;
 use EMS\FormBundle\FormConfig\FormConfig;
 use EMS\FormBundle\Handler\AbstractHandler;
 use EMS\FormBundle\FormConfig\SubmissionConfig;
+use EMS\FormBundle\Submit\AbstractResponse;
 use EMS\FormBundle\Submit\FailedResponse;
-use EMS\FormBundle\Submit\ResponseInterface;
+use EMS\FormBundle\Submit\ResponseCollector;
 use EMS\SubmissionBundle\FormConfig\EmailConfig;
 use EMS\SubmissionBundle\Service\SubmissionRenderer;
 use EMS\SubmissionBundle\Submit\EmailResponse;
@@ -25,10 +26,10 @@ class EmailHandler extends AbstractHandler
         $this->renderer = $renderer;
     }
 
-    public function handle(SubmissionConfig $submission, FormInterface $form, FormConfig $config): ResponseInterface
+    public function handle(SubmissionConfig $submission, FormInterface $form, FormConfig $config, AbstractResponse $response = null): AbstractResponse
     {
         try {
-            $renderedSubmission = $this->renderer->render($submission, $form, $config);
+            $renderedSubmission = $this->renderer->render($submission, $form, $config, $response);
             $email = new EmailConfig($renderedSubmission);
             $message = (new \Swift_Message($email->getSubject()))
                 ->setFrom($email->getFrom())
