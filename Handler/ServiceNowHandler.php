@@ -5,7 +5,9 @@ namespace EMS\SubmissionBundle\Handler;
 use EMS\FormBundle\FormConfig\FormConfig;
 use EMS\FormBundle\Handler\AbstractHandler;
 use EMS\FormBundle\FormConfig\SubmissionConfig;
+use EMS\FormBundle\Submit\AbstractResponse;
 use EMS\FormBundle\Submit\FailedResponse;
+use EMS\FormBundle\Submit\ResponseCollector;
 use EMS\FormBundle\Submit\ResponseInterface;
 use EMS\SubmissionBundle\FormConfig\ServiceNowConfig;
 use EMS\SubmissionBundle\Service\SubmissionRenderer;
@@ -26,10 +28,10 @@ class ServiceNowHandler extends AbstractHandler
         $this->timeout = $timeout;
     }
 
-    public function handle(SubmissionConfig $submission, FormInterface $form, FormConfig $config): ResponseInterface
+    public function handle(SubmissionConfig $submission, FormInterface $form, FormConfig $config, AbstractResponse $previousResponse = null): AbstractResponse
     {
         try {
-            $renderedSubmission = $this->renderer->render($submission, $form, $config);
+            $renderedSubmission = $this->renderer->render($submission, $form, $config, $previousResponse);
             $snow = new ServiceNowConfig($renderedSubmission);
 
             $client = HttpClient::create();
