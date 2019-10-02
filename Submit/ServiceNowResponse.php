@@ -6,22 +6,23 @@ use EMS\FormBundle\Submit\AbstractResponse;
 
 class ServiceNowResponse extends AbstractResponse
 {
-    /** @var string */
-    private $number;
-
-    public function __construct(string $json, AbstractResponse $previousResponse = null)
+    public function __construct(string $json)
     {
-        parent::__construct($previousResponse);
-        $this->number = \json_decode($json, true)['result']['number'];
+        parent::__construct($this->deriveStatus($json), $json);
     }
 
-    public function getResponse(): string
+    private function deriveStatus(string $json): string
     {
-        return sprintf('Ticket created with follow-up number %s', $this->number);
-    }
+        $data = \json_decode($json, true);
 
-    public function getNumber(): string
-    {
-        return $this->number;
+        if (\json_last_error() !== JSON_ERROR_NONE) {
+            return self::STATUS_ERROR;
+        }
+
+        if (isset($data['status']) && $data['status'] === 'failure') {
+            return self::STATUS_ERROR;
+        }
+
+        return self::STATUS_SUCCESS;
     }
 }
