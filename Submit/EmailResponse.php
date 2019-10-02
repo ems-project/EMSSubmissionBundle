@@ -6,8 +6,8 @@ use EMS\FormBundle\Submit\AbstractResponse;
 
 class EmailResponse extends AbstractResponse
 {
-    public function getResponse(): string
+    public function __construct(string $status)
     {
-        return 'Submission send by mail.';
+        parent::__construct($status, 'Submission send by mail.');
     }
 }

@@ -26,10 +26,10 @@ class EmailHandler extends AbstractHandler
         $this->renderer = $renderer;
     }
 
-    public function handle(SubmissionConfig $submission, FormInterface $form, FormConfig $config, AbstractResponse $response = null): AbstractResponse
+    public function handle(SubmissionConfig $submission, FormInterface $form, FormConfig $config, AbstractResponse $previousResponse = null): AbstractResponse
     {
         try {
-            $renderedSubmission = $this->renderer->render($submission, $form, $config, $response);
+            $renderedSubmission = $this->renderer->render($submission, $form, $config, $previousResponse);
             $email = new EmailConfig($renderedSubmission);
             $message = (new \Swift_Message($email->getSubject()))
                 ->setFrom($email->getFrom())
@@ -46,6 +46,6 @@ class EmailHandler extends AbstractHandler
             return new FailedResponse('Submission failed. Conctact your admin.');
         }
 
-        return new EmailResponse();
+        return new EmailResponse(AbstractResponse::STATUS_SUCCESS);
     }
 }

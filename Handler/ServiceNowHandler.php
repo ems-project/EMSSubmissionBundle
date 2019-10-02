@@ -7,8 +7,6 @@ use EMS\FormBundle\Handler\AbstractHandler;
 use EMS\FormBundle\FormConfig\SubmissionConfig;
 use EMS\FormBundle\Submit\AbstractResponse;
 use EMS\FormBundle\Submit\FailedResponse;
-use EMS\FormBundle\Submit\ResponseCollector;
-use EMS\FormBundle\Submit\ResponseInterface;
 use EMS\SubmissionBundle\FormConfig\ServiceNowConfig;
 use EMS\SubmissionBundle\Service\SubmissionRenderer;
 use EMS\SubmissionBundle\Submit\ServiceNowResponse;
@@ -42,7 +40,7 @@ class ServiceNowHandler extends AbstractHandler
                     'Authorization' => $snow->getBasicAuth(),
                 ],
                 'body' => $snow->getFieldsJson(),
-                'timeout' => $this->timeout,
+                'timeout' => $this->timeout
             ]);
 
             return new ServiceNowResponse($response->getContent());
