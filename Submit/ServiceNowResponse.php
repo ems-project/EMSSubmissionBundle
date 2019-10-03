@@ -11,6 +11,16 @@ class ServiceNowResponse extends AbstractResponse
         parent::__construct($this->deriveStatus($json), $json);
     }
 
+    public function getResultProperty(string $property): string
+    {
+        $decodedData = \json_decode($this->data, true);
+        if (\json_last_error() !== JSON_ERROR_NONE) {
+            return '';
+        }
+
+        return $decodedData['result'][$property] ?? '';
+    }
+
     private function deriveStatus(string $json): string
     {
         $data = \json_decode($json, true);
