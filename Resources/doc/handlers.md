@@ -55,7 +55,7 @@ The message can access the filled in data of the form, for example submitted fie
 ### ServiceNow <a name="servicenow"/>
 Sends data to a Service Now REST endpoint. 
 
-The endpoint field contains the host, user, and password to connect to the REST endpoint. Connection parameters are fetched using the [connection configuration](/config.md#connection)
+The endpoint field contains the host, user, and password to connect to the REST endpoint. Connection parameters are fetched using the [connection configuration](/Resources/doc/config.md#connection)
 ```twig 
 //endpoint field
 {
