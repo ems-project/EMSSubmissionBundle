@@ -22,7 +22,7 @@ class EmailConfig
 
         $this->from = $message['from'];
         $this->subject = $message['subject'];
-        $this->body = $message['body'];
+        $this->body = preg_replace('/^&quot;|&quot;$/', '', $message['body']);
     }
 
     public function getEndpoint(): string
