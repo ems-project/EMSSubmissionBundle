@@ -38,7 +38,7 @@ Email sender, subject, and body are defined in the message field using the "from
 ```
 
 The message can access the filled in data of the form, for example submitted fields "email", "name", "firstname". Use the following approach if you want to include newlines in your email body.
-```json 
+```twig 
 //message field
 {% set body %}
     Email {{ data.email }}
