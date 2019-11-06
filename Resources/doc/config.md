@@ -15,7 +15,7 @@ ems_submission:
 ## Default Timeout
 Whenever a form is submitted using our handlers, we should limit the amount of time that is allowed for the request to succeed. The `default_timeout` requires a number that represents the allowed number of seconds before we timeout waiting for external feedback.
 
-## Connections
+## Connections <a name="connection" />
 To integrate with external services like ServiceNow we need credentials. Those are passed using the configuration of the bundle to prevent disclosure of the password in the ElasticMS backend and Elasticsearch cluster.
 The 'connections' parameter allows to add one or more connection configurations as follows:
 ```yaml 
