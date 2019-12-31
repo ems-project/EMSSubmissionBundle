@@ -17,9 +17,9 @@ abstract class AbstractFormDataTransformer
     protected function getFieldsByTypes(array $types): array
     {
         $typeFields = [];
-        foreach($this->getFields($this->form->all()) as $field)
+        foreach ($this->getFields($this->form->all()) as $field)
         {
-            if(in_array($this->getFieldType($field), $types)) {
+            if (in_array($this->getFieldType($field), $types)) {
                 $typeFields[] = $field;
             }
         }
@@ -30,11 +30,11 @@ abstract class AbstractFormDataTransformer
     protected function getFields(array $form): array
     {
         $fields = [];
-        foreach($form as $field)
+        foreach ($form as $field)
         {
             $children = $field->all();
 
-            if(!empty($children)) {
+            if (!empty($children)) {
                 $fields = array_merge($fields, $this->getFields($children));
             } else {
                 $fields[] = $field;
@@ -51,8 +51,8 @@ abstract class AbstractFormDataTransformer
 
     protected function arrayReplace(array $array, string $find, string $replace): array
     {
-        if(is_array($array)) {
-            foreach($array as $k =>$v) {
+        if (is_array($array)) {
+            foreach ($array as $k => $v) {
                 if(is_array($array[$k])) {
                     $array[$k] = $this->arrayReplace($array[$k], $find, $replace);
                 } else {
@@ -62,6 +62,7 @@ abstract class AbstractFormDataTransformer
                 }
             }
         }
+
         return $array;
     }
 }

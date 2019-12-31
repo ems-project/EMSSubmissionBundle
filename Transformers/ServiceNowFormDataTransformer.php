@@ -15,7 +15,7 @@ class ServiceNowFormDataTransformer extends AbstractFormDataTransformer
     {
         $newFields = $this->getNewFieldTimeFormatValues();
 
-        foreach($newFields as $k => $v) {
+        foreach ($newFields as $k => $v) {
             $data = $this->arrayReplace($data, $k, $v);
         }
 
@@ -29,13 +29,11 @@ class ServiceNowFormDataTransformer extends AbstractFormDataTransformer
         $types = [
             'Symfony\Component\Form\Extension\Core\Type\TimeType'
         ];
-        foreach($this->getFieldsByTypes($types) as $field) {
+
+        foreach ($this->getFieldsByTypes($types) as $field) {
             $newFields[$field->getName()] = $field->getNormData()->format('Y-m-d H:i:s');
         }
 
         return $newFields;
     }
-
-
-
 }
