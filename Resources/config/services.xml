@@ -9,6 +9,9 @@
         <service id="emss.renderer" class="EMS\SubmissionBundle\Service\SubmissionRenderer">
             <argument type="service" id="twig" />
         </service>
+        <service id="emss.servicenowrenderer" class="EMS\SubmissionBundle\Service\ServiceNowSubmissionRenderer">
+            <argument type="service" id="twig" />
+        </service>
         <service id="emss.connection.transformer" class="EMS\SubmissionBundle\Connection\Transformer">
             <argument>%emss.connections%</argument>
         </service>
@@ -19,7 +22,7 @@
             <tag name="emsf.handler" />
         </service>
         <service id="emss.servicenowhandler" class="EMS\SubmissionBundle\Handler\ServiceNowHandler">
-            <argument type="service" id="emss.renderer"/>
+            <argument type="service" id="emss.servicenowrenderer"/>
             <argument>%emss.default_timeout%</argument>
             <tag name="emsf.handler" />
         </service>

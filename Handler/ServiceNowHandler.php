@@ -8,19 +8,19 @@ use EMS\FormBundle\FormConfig\SubmissionConfig;
 use EMS\FormBundle\Submit\AbstractResponse;
 use EMS\FormBundle\Submit\FailedResponse;
 use EMS\SubmissionBundle\FormConfig\ServiceNowConfig;
-use EMS\SubmissionBundle\Service\SubmissionRenderer;
+use EMS\SubmissionBundle\Service\ServiceNowSubmissionRenderer;
 use EMS\SubmissionBundle\Submit\ServiceNowResponse;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpClient\HttpClient;
 
 class ServiceNowHandler extends AbstractHandler
 {
-    /** @var SubmissionRenderer */
+    /** @var ServiceNowSubmissionRenderer */
     private $renderer;
     /** @var int */
     private $timeout;
 
-    public function __construct(SubmissionRenderer $renderer, int $timeout)
+    public function __construct(ServiceNowSubmissionRenderer $renderer, int $timeout)
     {
         $this->renderer = $renderer;
         $this->timeout = $timeout;
