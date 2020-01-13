@@ -48,7 +48,27 @@ The message can access the filled in data of the form, for example submitted fie
 {
     "from": "{{ data.email }}", 
     "subject": "Email Form subject", 
-    "body": "{{ body|json_encode }}"
+    "body": "{{ body|json_encode }}",
+}
+```
+
+Its the same for the attachments. (One attachment per line)
+```twig 
+//message field
+{% set body %}
+    Email {{ data.email }}
+    Name {{ data.name }}
+    Firstname {{ data.firstname }}
+{% endset %}
+{% set attachments %}
+    {{data.file_1}}
+    {{data.file_2}}
+{% endset %}
+{
+    "from": "{{ data.email }}", 
+    "subject": "Email Form subject", 
+    "body": "{{ body|json_encode }}",
+    "attachments": "{{ attachments }}"
 }
 ```
 

@@ -14,6 +14,8 @@ class EmailConfig
     private $subject;
     /** @var string */
     private $body;
+    /** @var array */
+    private $attachments;
 
     public function __construct(RenderedSubmission $submission)
     {
@@ -23,6 +25,10 @@ class EmailConfig
         $this->from = $message['from'];
         $this->subject = $message['subject'];
         $this->body = preg_replace('/^&quot;|&quot;$/', '', $message['body']);
+
+        $this->attachments = preg_replace('/^&quot;|&quot;$/', '', $message['attachments']);
+        $this->attachments = trim($this->attachments);
+        $this->attachments = preg_split("/\r\n|\n|\r/", $this->attachments);
     }
 
     public function getEndpoint(): string
@@ -42,5 +48,10 @@ class EmailConfig
     public function getBody(): string
     {
         return $this->body;
+    }
+
+    public function getAttachments(): array
+    {
+        return $this->attachments;
     }
 }

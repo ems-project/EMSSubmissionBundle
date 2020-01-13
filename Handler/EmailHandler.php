@@ -2,6 +2,7 @@
 
 namespace EMS\SubmissionBundle\Handler;
 
+use EMS\FormBundle\Components\Field\File;
 use EMS\FormBundle\FormConfig\FormConfig;
 use EMS\FormBundle\Handler\AbstractHandler;
 use EMS\FormBundle\FormConfig\SubmissionConfig;
@@ -35,6 +36,8 @@ class EmailHandler extends AbstractHandler
                 ->setFrom($email->getFrom())
                 ->setTo($email->getEndpoint())
                 ->setBody($email->getBody());
+
+            $message = $this->addAttachments($message, $email->getAttachments());
         } catch (\Exception $exception) {
             return new FailedResponse(sprintf('Submission failed, contact your admin. %s', $exception->getMessage()));
         }
@@ -47,5 +50,16 @@ class EmailHandler extends AbstractHandler
         }
 
         return new EmailResponse(AbstractResponse::STATUS_SUCCESS);
+    }
+
+    private function addAttachments(\Swift_Message $message, $attachments): \Swift_Message
+    {
+        foreach($attachments as $attachment) {
+            if(!empty($attachment)) {
+                $message->attach(\Swift_Attachment::fromPath($attachment));
+            }
+        }
+
+        return $message;
     }
 }
