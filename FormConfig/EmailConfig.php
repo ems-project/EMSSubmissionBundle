@@ -26,8 +26,7 @@ class EmailConfig
         $this->subject = $message['subject'];
         $this->body = preg_replace('/^&quot;|&quot;$/', '', $message['body']);
 
-        $this->attachments = preg_replace('/^&quot;|&quot;$/', '', $message['attachments']);
-        $this->attachments = trim($this->attachments);
+        $this->attachments = trim(preg_replace('/^&quot;|&quot;$/', '', $message['attachments']));
         $this->attachments = preg_split("/\r\n|\n|\r/", $this->attachments);
     }
 
