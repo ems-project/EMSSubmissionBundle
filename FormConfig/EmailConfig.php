@@ -58,7 +58,7 @@ class EmailConfig
         return $this->attachments;
     }
 
-    private function sanitiseQuotes(string $string): string
+    private function sanitiseQuotes(string $string): ?string
     {
         return preg_replace('/^&quot;|&quot;$/', '', $string);
     }
