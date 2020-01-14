@@ -13,9 +13,9 @@ class EmailConfig
     /** @var string */
     private $subject;
     /** @var string */
-    private $body;
+    private $body = '';
     /** @var array */
-    private $attachments;
+    private $attachments = [] ;
 
     public function __construct(RenderedSubmission $submission)
     {
@@ -24,8 +24,14 @@ class EmailConfig
 
         $this->from = $message['from'];
         $this->subject = $message['subject'];
-        $this->body =(!empty($message['body'])) ? $this->sanitiseBody($message['body']) : '';
-        $this->attachments = (!empty($message['attachments'])) ? $this->sanitiseAttachments($message['attachments']) : [];
+
+        if (!empty($message['body'])) {
+            $this->body = $this->sanitiseQuotes($message['body']);
+        }
+
+        if (!empty($message['attachments'])) {
+            $this->attachments = $this->sanitiseAttachments($message['attachments']);
+        }
     }
 
     public function getEndpoint(): string
@@ -52,19 +58,21 @@ class EmailConfig
         return $this->attachments;
     }
 
-    private function sanitiseBody(string $body): string
+    private function sanitiseQuotes(string $string): string
     {
-        $body = preg_replace('/^&quot;|&quot;$/', '', $body);
-
-        return $body;
+        return preg_replace('/^&quot;|&quot;$/', '', $string);
     }
 
-    private function sanitiseAttachments(string $attachments): array
+    private function sanitiseAttachments(array $attachments): array
     {
-        $attachments = preg_replace('/^&quot;|&quot;$/', '', $attachments);
-        $attachments = trim($attachments);
-        $attachments = preg_split("/\r\n|\n|\r/", $attachments);
+        $callback = function ($attachment) {
+            return $this->sanitiseQuotes($attachment);
+        };
 
-        return $attachments;
+        $func = function ($item) use (&$func, &$callback) {
+            return is_array($item) ? array_map($func, $item) : call_user_func($callback, $item);
+        };
+
+        return array_map($func, $attachments);
     }
 }

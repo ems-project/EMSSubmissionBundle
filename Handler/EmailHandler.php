@@ -37,7 +37,7 @@ class EmailHandler extends AbstractHandler
                 ->setTo($email->getEndpoint())
                 ->setBody($email->getBody());
 
-            $message = $this->addAttachments($message, $email->getAttachments());
+            $this->addAttachments($message, $email->getAttachments());
         } catch (\Exception $exception) {
             return new FailedResponse(sprintf('Submission failed, contact your admin. %s', $exception->getMessage()));
         }
@@ -52,14 +52,12 @@ class EmailHandler extends AbstractHandler
         return new EmailResponse(AbstractResponse::STATUS_SUCCESS);
     }
 
-    private function addAttachments(\Swift_Message $message, $attachments): \Swift_Message
+    private function addAttachments(\Swift_Message $message, array $attachments): void
     {
         foreach ($attachments as $attachment) {
-            if (!empty($attachment)) {
-                $message->attach(\Swift_Attachment::fromPath($attachment));
-            }
+            $message->attach(
+                \Swift_Attachment::fromPath($attachment['pathname'], $attachment['mimeType'])->setFilename($attachment['originalName'])
+            );
         }
-
-        return $message;
     }
 }

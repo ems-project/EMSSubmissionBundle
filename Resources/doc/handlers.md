@@ -52,7 +52,7 @@ The message can access the filled in data of the form, for example submitted fie
 }
 ```
 
-Its the same for the attachments with 1 attachment per line.
+To include one or multiple attachments to your email, declare them to a variable as shown below.
 ```twig 
 //message field
 {% set body %}
@@ -60,15 +60,17 @@ Its the same for the attachments with 1 attachment per line.
     Name {{ data.name }}
     Firstname {{ data.firstname }}
 {% endset %}
-{% set attachments %}
-    {{data.file_1}}
-    {{data.file_2}}
-{% endset %}
 {
-    "from": "{{ data.email }}", 
-    "subject": "Email Form subject", 
-    "body": "{{ body|json_encode }}",
-    "attachments": "{{ attachments }}"
+  "from": "{{ data.email }}",
+  "subject": "Email Form subject",
+  "body": "{{ body|json_encode }}",
+  "attachments": {
+      "file_1": {
+          "pathname": "{{ data.file_1.getPathname()|json_encode }}",
+          "originalName": "{{ data.file_1.getClientOriginalName() }}",
+          "mimeType": "{{ data.file_1.getClientMimeType() }}"
+        }
+    }
 }
 ```
 
