@@ -52,7 +52,7 @@ The message can access the filled in data of the form, for example submitted fie
 }
 ```
 
-Its the same for the attachments. (One attachment per line)
+Its the same for the attachments with 1 attachment per line.
 ```twig 
 //message field
 {% set body %}
