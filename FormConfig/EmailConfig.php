@@ -24,10 +24,8 @@ class EmailConfig
 
         $this->from = $message['from'];
         $this->subject = $message['subject'];
-        $this->body = preg_replace('/^&quot;|&quot;$/', '', $message['body']);
-
-        $this->attachments = trim(preg_replace('/^&quot;|&quot;$/', '', $message['attachments']));
-        $this->attachments = preg_split("/\r\n|\n|\r/", $this->attachments);
+        $this->body =(!empty($message['body'])) ? $this->sanitiseBody($message['body']) : '';
+        $this->attachments = (!empty($message['attachments'])) ? $this->sanitiseAttachments($message['attachments']) : [];
     }
 
     public function getEndpoint(): string
@@ -52,5 +50,21 @@ class EmailConfig
     public function getAttachments(): array
     {
         return $this->attachments;
+    }
+
+    private function sanitiseBody(string $body): string
+    {
+        $body = preg_replace('/^&quot;|&quot;$/', '', $body);
+
+        return $body;
+    }
+
+    private function sanitiseAttachments(string $attachments): array
+    {
+        $attachments = preg_replace('/^&quot;|&quot;$/', '', $attachments);
+        $attachments = trim($attachments);
+        $attachments = preg_split("/\r\n|\n|\r/", $attachments);
+
+        return $attachments;
     }
 }
