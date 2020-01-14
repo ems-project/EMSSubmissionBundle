@@ -54,8 +54,8 @@ class EmailHandler extends AbstractHandler
 
     private function addAttachments(\Swift_Message $message, $attachments): \Swift_Message
     {
-        foreach($attachments as $attachment) {
-            if(!empty($attachment)) {
+        foreach ($attachments as $attachment) {
+            if (!empty($attachment)) {
                 $message->attach(\Swift_Attachment::fromPath($attachment));
             }
         }
