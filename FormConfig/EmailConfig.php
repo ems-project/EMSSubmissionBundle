@@ -13,7 +13,9 @@ class EmailConfig
     /** @var string */
     private $subject;
     /** @var string */
-    private $body;
+    private $body = '';
+    /** @var array */
+    private $attachments = [] ;
 
     public function __construct(RenderedSubmission $submission)
     {
@@ -22,7 +24,14 @@ class EmailConfig
 
         $this->from = $message['from'];
         $this->subject = $message['subject'];
-        $this->body = preg_replace('/^&quot;|&quot;$/', '', $message['body']);
+
+        if (!empty($message['body'])) {
+            $this->body = $this->sanitiseQuotes($message['body']);
+        }
+
+        if (!empty($message['attachments'])) {
+            $this->attachments = $this->sanitiseAttachments($message['attachments']);
+        }
     }
 
     public function getEndpoint(): string
@@ -42,5 +51,24 @@ class EmailConfig
     public function getBody(): string
     {
         return $this->body;
+    }
+
+    public function getAttachments(): array
+    {
+        return $this->attachments;
+    }
+
+    private function sanitiseQuotes(string $string)
+    {
+        return preg_replace('/^&quot;|&quot;$/', '', $string);
+    }
+
+    private function sanitiseAttachments(array $attachments): array
+    {
+        $recursiveSanitizer = function ($attachment) use (&$recursiveSanitizer) {
+            return \is_array($attachment) ? \array_map($recursiveSanitizer, $attachment) : $this->sanitiseQuotes($attachment);
+        };
+
+        return \array_map($recursiveSanitizer, $attachments);
     }
 }

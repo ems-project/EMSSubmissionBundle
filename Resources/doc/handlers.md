@@ -52,6 +52,28 @@ The message can access the filled in data of the form, for example submitted fie
 }
 ```
 
+To include one or multiple attachments to your email, declare them to a variable as shown below.
+```twig 
+//message field
+{% set body %}
+    Email {{ data.email }}
+    Name {{ data.name }}
+    Firstname {{ data.firstname }}
+{% endset %}
+{
+  "from": "{{ data.email }}",
+  "subject": "Email Form subject",
+  "body": "{{ body|json_encode }}",
+  "attachments": {
+      "file_1": {
+          "pathname": "{{ data.file_1.getPathname()|json_encode }}",
+          "originalName": "{{ data.file_1.getClientOriginalName() }}",
+          "mimeType": "{{ data.file_1.getClientMimeType() }}"
+        }
+    }
+}
+```
+
 ### ServiceNow <a name="servicenow"/>
 Sends data to a Service Now REST endpoint. 
 
