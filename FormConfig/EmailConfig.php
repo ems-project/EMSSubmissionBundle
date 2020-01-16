@@ -65,14 +65,10 @@ class EmailConfig
 
     private function sanitiseAttachments(array $attachments): array
     {
-        $callback = function ($attachment) {
-            return $this->sanitiseQuotes($attachment);
+        $recursiveSanitizer = function ($attachment) use (&$recursiveSanitizer) {
+            return \is_array($attachment) ? \array_map($recursiveSanitizer, $attachment) : $this->sanitiseQuotes($attachment);
         };
 
-        $func = function ($item) use (&$func, &$callback) {
-            return is_array($item) ? array_map($func, $item) : call_user_func($callback, $item);
-        };
-
-        return array_map($func, $attachments);
+        return \array_map($recursiveSanitizer, $attachments);
     }
 }
