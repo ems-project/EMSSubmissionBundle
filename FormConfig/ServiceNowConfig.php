@@ -20,9 +20,9 @@ class ServiceNowConfig
     private $password;
 
     /** @var string */
-    private $body;
+    private $body = '';
     /** @var array */
-    private $attachments = [] ;
+    private $attachments = [];
 
     public function __construct(RenderedSubmission $submission)
     {
@@ -42,7 +42,9 @@ class ServiceNowConfig
             $this->bodyEndpoint = $endpoint['attachmentEndpoint'];
         }
 
-        $this->body = \json_encode($message['body']);
+        if (!empty($message['body'])) {
+            $this->body = \json_encode($message['body']);
+        }
 
         if (!empty($message['attachments'])) {
             $this->attachments = $this->sanitiseAttachments($message['attachments']);

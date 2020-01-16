@@ -57,9 +57,9 @@ class ServiceNowHandler extends AbstractHandler
         $client = HttpClient::create();
 
         foreach ($snow->getAttachments() as $attachment) {
-            try {
-                $binaries = \fread(\fopen($attachment['pathname'], "r"), \filesize($attachment['pathname']));
+            $binary = $this->getBinaryFile($attachment['pathname']);
 
+            try {
                 $client->request('POST', $snow->getAttachmentEndpoint(), [
                     'query' => [
                         'file_name' => $attachment['originalName'],
@@ -70,11 +70,18 @@ class ServiceNowHandler extends AbstractHandler
                         'Content-Type' => $attachment['mimeType'],
                         'Authorization' => $snow->getBasicAuth(),
                     ],
-                    'body' => $binaries
+                    'body' => $binary
                 ]);
             } catch (\Exception $exception) {
                 return new FailedResponse(\sprintf('Attachment submission failed, contact your admin. %s', $exception->getMessage()));
             }
+        }
+    }
+
+    private function getBinaryFile($pathname)
+    {
+        if($file = \fopen($pathname, "r") && $size = \filesize($pathname)) {
+            return \fread($file, $size);
         }
     }
 }
