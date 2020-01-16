@@ -33,19 +33,48 @@ class ServiceNowHandler extends AbstractHandler
             $snow = new ServiceNowConfig($renderedSubmission);
 
             $client = HttpClient::create();
-            $response = $client->request('POST', $snow->getHost(), [
+            $response = $client->request('POST', $snow->getBodyEndpoint(), [
                 'headers' => [
                     'Accept' => 'application/json',
                     'Content-Type' => 'application/json',
                     'Authorization' => $snow->getBasicAuth(),
                 ],
-                'body' => $snow->getFieldsJson(),
+                'body' => $snow->getBody(),
                 'timeout' => $this->timeout
             ]);
 
-            return new ServiceNowResponse($response->getContent());
+            $serviceNowResponse = new ServiceNowResponse($response->getContent());
+            $this->addAttachments($serviceNowResponse, $snow);
+
+            return $serviceNowResponse;
         } catch (\Exception $exception) {
-            return new FailedResponse(sprintf('Submission failed, contact your admin. %s', $exception->getMessage()));
+            return new FailedResponse(\sprintf('Submission failed, contact your admin. %s', $exception->getMessage()));
+        }
+    }
+
+    private function addAttachments(ServiceNowResponse $response, ServiceNowConfig $snow)
+    {
+        $client = HttpClient::create();
+
+        foreach ($snow->getAttachments() as $attachment) {
+            try {
+                $binaries = \fread(\fopen($attachment['pathname'], "r"), \filesize($attachment['pathname']));
+
+                $client->request('POST', $snow->getAttachmentEndpoint(), [
+                    'query' => [
+                        'file_name' => $attachment['originalName'],
+                        'table_name' => $snow->getTable(),
+                        'table_sys_id' => $response->getResultProperty('sys_id'),
+                    ],
+                    'headers' => [
+                        'Content-Type' => $attachment['mimeType'],
+                        'Authorization' => $snow->getBasicAuth(),
+                    ],
+                    'body' => $binaries
+                ]);
+            } catch (\Exception $exception) {
+                return new FailedResponse(\sprintf('Attachment submission failed, contact your admin. %s', $exception->getMessage()));
+            }
         }
     }
 }
