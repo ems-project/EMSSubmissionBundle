@@ -4,7 +4,7 @@ namespace EMS\SubmissionBundle\FormConfig;
 
 use EMS\SubmissionBundle\Submit\RenderedSubmission;
 
-class EmailConfig
+class EmailConfig extends AbstractConfig
 {
     /** @var string */
     private $endpoint;
@@ -56,19 +56,5 @@ class EmailConfig
     public function getAttachments(): array
     {
         return $this->attachments;
-    }
-
-    private function sanitiseQuotes(string $string)
-    {
-        return preg_replace('/^&quot;|&quot;$/', '', $string);
-    }
-
-    private function sanitiseAttachments(array $attachments): array
-    {
-        $recursiveSanitizer = function ($attachment) use (&$recursiveSanitizer) {
-            return \is_array($attachment) ? \array_map($recursiveSanitizer, $attachment) : $this->sanitiseQuotes($attachment);
-        };
-
-        return \array_map($recursiveSanitizer, $attachments);
     }
 }

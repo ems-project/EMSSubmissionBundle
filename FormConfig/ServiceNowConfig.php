@@ -4,7 +4,7 @@ namespace EMS\SubmissionBundle\FormConfig;
 
 use EMS\SubmissionBundle\Submit\RenderedSubmission;
 
-class ServiceNowConfig
+class ServiceNowConfig extends AbstractConfig
 {
     /** @var string */
     private $host;
@@ -85,19 +85,5 @@ class ServiceNowConfig
     {
         $credentials = \base64_encode(\sprintf('%s:%s', $this->getUsername(), $this->getPassword()));
         return \sprintf('Basic %s', $credentials);
-    }
-
-    private function sanitiseQuotes(string $string)
-    {
-        return \preg_replace('/^&quot;|&quot;$/', '', $string);
-    }
-
-    private function sanitiseAttachments(array $attachments): array
-    {
-        $recursiveSanitizer = function ($attachment) use (&$recursiveSanitizer) {
-            return \is_array($attachment) ? \array_map($recursiveSanitizer, $attachment) : $this->sanitiseQuotes($attachment);
-        };
-
-        return \array_map($recursiveSanitizer, $attachments);
     }
 }
