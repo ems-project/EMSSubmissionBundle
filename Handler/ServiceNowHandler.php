@@ -19,11 +19,14 @@ class ServiceNowHandler extends AbstractHandler
     private $renderer;
     /** @var int */
     private $timeout;
+    /** @var HttpClient */
+    private $client;
 
     public function __construct(SubmissionRenderer $renderer, int $timeout)
     {
         $this->renderer = $renderer;
         $this->timeout = $timeout;
+        $this->client = HttpClient::create();
     }
 
     public function handle(SubmissionConfig $submission, FormInterface $form, FormConfig $config, AbstractResponse $previousResponse = null): AbstractResponse
@@ -32,8 +35,7 @@ class ServiceNowHandler extends AbstractHandler
             $renderedSubmission = $this->renderer->render($submission, $form, $config, $previousResponse);
             $snow = new ServiceNowConfig($renderedSubmission);
 
-            $client = HttpClient::create();
-            $response = $client->request('POST', $snow->getBodyEndpoint(), [
+            $response = $this->client->request('POST', $snow->getBodyEndpoint(), [
                 'headers' => [
                     'Accept' => 'application/json',
                     'Content-Type' => 'application/json',
@@ -52,36 +54,46 @@ class ServiceNowHandler extends AbstractHandler
         }
     }
 
-    private function addAttachments(ServiceNowResponse $response, ServiceNowConfig $snow)
+    private function addAttachments(ServiceNowResponse $response, ServiceNowConfig $config): void
     {
-        $client = HttpClient::create();
-
-        foreach ($snow->getAttachments() as $attachment) {
+        foreach ($config->getAttachments() as $attachment) {
             $binary = $this->getBinaryFile($attachment['pathname']);
 
-            try {
-                $client->request('POST', $snow->getAttachmentEndpoint(), [
-                    'query' => [
-                        'file_name' => $attachment['originalName'],
-                        'table_name' => $snow->getTable(),
-                        'table_sys_id' => $response->getResultProperty('sys_id'),
-                    ],
-                    'headers' => [
-                        'Content-Type' => $attachment['mimeType'],
-                        'Authorization' => $snow->getBasicAuth(),
-                    ],
-                    'body' => $binary
-                ]);
-            } catch (\Exception $exception) {
-                return new FailedResponse(\sprintf('Attachment submission failed, contact your admin. %s', $exception->getMessage()));
+            if (!empty($binary)) {
+                $this->postAttachment($response, $config, $attachment, $binary);
             }
         }
     }
 
-    private function getBinaryFile($pathname)
+    private function getBinaryFile(string $pathname): ?string
     {
-        if($file = \fopen($pathname, "r") && $size = \filesize($pathname)) {
-            return \fread($file, $size);
+        $file = \fopen($pathname, "r");
+        $size = \filesize($pathname);
+
+        if (!$file || !$size) {
+            return null;
+        }
+
+        return \fread($file, $size);
+    }
+
+    private function postAttachment(ServiceNowResponse $response, ServiceNowConfig $config, array $attachment, string $binary)
+    {
+        try {
+            $this->client->request('POST', $config->getAttachmentEndpoint(), [
+                'query' => [
+                    'file_name' => $attachment['originalName'],
+                    'table_name' => $config->getTable(),
+                    'table_sys_id' => $response->getResultProperty('sys_id'),
+                ],
+                'headers' => [
+                    'Content-Type' => $attachment['mimeType'],
+                    'Authorization' => $config->getBasicAuth(),
+                ],
+                'body' => $binary
+            ]);
+        } catch (\Exception $exception) {
+            return new FailedResponse(\sprintf('Attachment submission failed, contact your admin. %s', $exception->getMessage()));
         }
     }
 }
