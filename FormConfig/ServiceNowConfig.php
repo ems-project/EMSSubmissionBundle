@@ -43,7 +43,8 @@ class ServiceNowConfig
         }
 
         if (!empty($message['body'])) {
-            $this->body = \json_encode($message['body']);
+            $body = \json_encode($message['body']);
+            $this->body = (!empty($body)) ? $body : '';
         }
 
         if (!empty($message['attachments'])) {

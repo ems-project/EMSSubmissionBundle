@@ -12,6 +12,7 @@ use EMS\SubmissionBundle\Service\SubmissionRenderer;
 use EMS\SubmissionBundle\Submit\ServiceNowResponse;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpClient\HttpClient;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ServiceNowHandler extends AbstractHandler
 {
@@ -19,7 +20,7 @@ class ServiceNowHandler extends AbstractHandler
     private $renderer;
     /** @var int */
     private $timeout;
-    /** @var HttpClient */
+    /** @var HttpClientInterface */
     private $client;
 
     public function __construct(SubmissionRenderer $renderer, int $timeout)
@@ -74,7 +75,13 @@ class ServiceNowHandler extends AbstractHandler
             return null;
         }
 
-        return \fread($file, $size);
+        $binary = \fread($file, $size);
+
+        if (!$binary) {
+            return null;
+        }
+
+        return $binary;
     }
 
     private function postAttachment(ServiceNowResponse $response, ServiceNowConfig $config, array $attachment, string $binary)
