@@ -11,9 +11,9 @@ class ServiceNowConfig
     /** @var string */
     private $table;
     /** @var string */
-    private $bodyEndpoint = '/api/now/table';
+    private $bodyEndpoint;
     /** @var string */
-    private $attachmentEndpoint = '/api/now/attachment/file';
+    private $attachmentEndpoint;
     /** @var string */
     private $username;
     /** @var string */
@@ -33,14 +33,8 @@ class ServiceNowConfig
         $this->table = $endpoint['table'];
         $this->username = $endpoint['username'];
         $this->password = $endpoint['password'];
-
-        if (!empty($endpoint['bodyEndpoint'])) {
-            $this->bodyEndpoint = $endpoint['bodyEndpoint'];
-        }
-
-        if (!empty($endpoint['attachmentEndpoint'])) {
-            $this->bodyEndpoint = $endpoint['attachmentEndpoint'];
-        }
+        $this->bodyEndpoint = ($endpoint['bodyEndpoint']) ?? '/api/now/table';
+        $this->attachmentEndpoint = ($endpoint['attachmentEndpoint']) ?? '/api/now/attachment/file';
 
         if (!empty($message['body'])) {
             $body = \json_encode($message['body']);
