@@ -23,6 +23,11 @@
             <argument>%emss.default_timeout%</argument>
             <tag name="emsf.handler" />
         </service>
+        <service id="emss.pdfhandler" class="EMS\SubmissionBundle\Handler\PdfHandler">
+            <argument type="service" id="emss.renderer"/>
+            <argument type="service" id="emsch.common.pdf_generator"/>
+            <tag name="emsf.handler" />
+        </service>
 
         <!-- twig -->
         <service id="emss.twig.extension.connection" class="EMS\SubmissionBundle\Twig\ConnectionExtension">
