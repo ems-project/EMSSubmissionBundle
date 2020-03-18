@@ -17,6 +17,7 @@ Depending on the handler type, the endpoint and message fields contain a simple 
 ## Overview
 * [Email](#email)
 * [ServiceNow](#servicenow)
+* [PDF](#pdf)
 
 ## Handlers
 
@@ -136,5 +137,35 @@ To include one or multiple attachments to your email, declare them as shown belo
             "mimeType": "{{ data.file_1.getClientMimeType() }}"
         }
     }
+}
+```
+
+### PDF <a name="pdf"/>
+
+Write data in a PDF and store it at the endpoint 
+
+#### Endpoint
+
+```twig 
+//endpoint field
+{
+    "repository": "/var/app/",
+    "directory": "20210131_a"
+}
+```
+
+#### Message
+
+The message field contains the filename and the data to be write in the PDF, for example:
+```twig 
+//message field
+{% set body %}
+    Email {{ data.email }}
+    Name {{ data.name }}
+    Firstname {{ data.firstname }}
+{% endset %}
+{
+    "filename": "20210131_a.pdf",
+    "body": "{{ body|json_encode }}",
 }
 ```
