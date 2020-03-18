@@ -23,7 +23,7 @@ final class PdfHandler extends AbstractHandler
     /** @var PdfGenerator */
     private $pdfGenerator;
 
-    public function __construct(SubmissionRenderer $renderer,  PdfGenerator $pdfGenerator)
+    public function __construct(SubmissionRenderer $renderer, PdfGenerator $pdfGenerator)
     {
         $this->renderer = $renderer;
         $this->pdfGenerator = $pdfGenerator;
