@@ -30,6 +30,9 @@ class ServiceNowHandler extends AbstractHandler
         $this->client = HttpClient::create();
     }
 
+    /**
+     * @param FormInterface<FormInterface> $form
+     */
     public function handle(SubmissionConfig $submission, FormInterface $form, FormConfig $config, AbstractResponse $previousResponse = null): AbstractResponse
     {
         try {
@@ -51,7 +54,7 @@ class ServiceNowHandler extends AbstractHandler
 
             return $serviceNowResponse;
         } catch (\Exception $exception) {
-            return new FailedResponse(\sprintf('Submission failed, contact your admin. %s', $exception->getMessage()));
+            return new FailedResponse(\sprintf('Submission failed, contact your admin. (%s)', $exception->getMessage()));
         }
     }
 
@@ -84,7 +87,10 @@ class ServiceNowHandler extends AbstractHandler
         return $binary;
     }
 
-    private function postAttachment(ServiceNowResponse $response, ServiceNowConfig $config, array $attachment, string $binary)
+    /**
+     * @param array<array> $attachment
+     */
+    private function postAttachment(ServiceNowResponse $response, ServiceNowConfig $config, array $attachment, string $binary): void
     {
         try {
             $this->client->request('POST', $config->getAttachmentEndpoint(), [
@@ -100,7 +106,7 @@ class ServiceNowHandler extends AbstractHandler
                 'body' => $binary
             ]);
         } catch (\Exception $exception) {
-            return new FailedResponse(\sprintf('Attachment submission failed, contact your admin. %s', $exception->getMessage()));
+            throw new \Exception(\sprintf('Attachment submission failed: %s', $exception->getMessage()));
         }
     }
 }

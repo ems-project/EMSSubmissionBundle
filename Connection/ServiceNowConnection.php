@@ -9,13 +9,16 @@ class ServiceNowConnection
     /** @var string */
     private $password;
 
+    /**
+     * @param array{'connection': string, 'user': string, 'password': string} $connection
+     */
     public function __construct(array $connection)
     {
         $this->user = $connection['user'] ?? '';
         $this->password = $connection['password'] ?? '';
     }
 
-    public function callByKey($key): string
+    public function callByKey(string $key): string
     {
         $method = sprintf('get%s', ucfirst($key));
 

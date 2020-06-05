@@ -18,7 +18,10 @@ class SubmissionRenderer
         $this->templating = $templating;
     }
 
-    public function render(SubmissionConfig $submission, FormInterface $form, FormConfig $config, AbstractResponse $response = null)
+    /**
+     * @param FormInterface<FormInterface> $form
+     */
+    public function render(SubmissionConfig $submission, FormInterface $form, FormConfig $config, AbstractResponse $response = null): RenderedSubmission
     {
         $endpointTemplate = $this->templating->createTemplate($submission->getEndpoint());
         $endpoint = $endpointTemplate->render(['config' => $config, 'data' => $form->getData()]);

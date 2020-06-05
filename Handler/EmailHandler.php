@@ -27,6 +27,9 @@ class EmailHandler extends AbstractHandler
         $this->renderer = $renderer;
     }
 
+    /**
+     * @param FormInterface<FormInterface> $form
+     */
     public function handle(SubmissionConfig $submission, FormInterface $form, FormConfig $config, AbstractResponse $previousResponse = null): AbstractResponse
     {
         try {
@@ -52,6 +55,9 @@ class EmailHandler extends AbstractHandler
         return new EmailResponse(AbstractResponse::STATUS_SUCCESS);
     }
 
+    /**
+     * @param array<array> $attachments
+     */
     private function addAttachments(\Swift_Message $message, array $attachments): void
     {
         foreach ($attachments as $attachment) {

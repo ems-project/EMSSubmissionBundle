@@ -14,7 +14,7 @@ class EmailConfig extends AbstractConfig
     private $subject;
     /** @var string */
     private $body = '';
-    /** @var array */
+    /** @var array<array> */
     private $attachments = [] ;
 
     public function __construct(RenderedSubmission $submission)
@@ -26,7 +26,7 @@ class EmailConfig extends AbstractConfig
         $this->subject = $message['subject'];
 
         if (!empty($message['body'])) {
-            $this->body = $this->sanitiseQuotes($message['body']);
+            $this->body = $this->sanitiseQuotes($message['body']) ?? '';
         }
 
         if (!empty($message['attachments'])) {
@@ -53,6 +53,9 @@ class EmailConfig extends AbstractConfig
         return $this->body;
     }
 
+    /**
+     * @return array<array>
+     */
     public function getAttachments(): array
     {
         return $this->attachments;
