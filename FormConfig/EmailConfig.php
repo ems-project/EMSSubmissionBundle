@@ -14,7 +14,7 @@ class EmailConfig extends AbstractConfig
     private $subject;
     /** @var string */
     private $body = '';
-    /** @var array<array> */
+    /** @var array<array-key, string> */
     private $attachments = [] ;
 
     public function __construct(RenderedSubmission $submission)
@@ -54,7 +54,7 @@ class EmailConfig extends AbstractConfig
     }
 
     /**
-     * @return array<array>
+     * @return array<array-key, string>
      */
     public function getAttachments(): array
     {

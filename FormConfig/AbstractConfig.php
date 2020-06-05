@@ -12,7 +12,7 @@ abstract class AbstractConfig
     /**
      * @param array<array> $attachments
      *
-     * @return array<array>
+     * @return array<array-key, string>
      */
     protected function sanitiseAttachments(array $attachments): array
     {

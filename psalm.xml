@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<psalm errorBaseline="psalm-baseline.xml">
+    <projectFiles>
+        <directory name="." />
+        <ignoreFiles>
+            <file name="DependencyInjection/Configuration.php" />
+            <directory name="vendor"/>
+        </ignoreFiles>
+    </projectFiles>
+</psalm>

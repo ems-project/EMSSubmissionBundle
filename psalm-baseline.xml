@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="3.11.5@3c60609c218d4d4b3b257728b8089094e5c6c6c2">
+  <file src="C:/dev/laragon/www/elasticms-skeleton/contrib/src/vendor/elasticms/submission-bundle/FormConfig/AbstractConfig.php">
+    <InvalidReturnStatement occurrences="1">
+      <code>\array_map($recursiveSanitizer, $attachments)</code>
+    </InvalidReturnStatement>
+    <InvalidReturnType occurrences="1">
+      <code>array&lt;array-key, string&gt;</code>
+    </InvalidReturnType>
+    <MissingClosureParamType occurrences="1">
+      <code>$attachment</code>
+    </MissingClosureParamType>
+    <MissingClosureReturnType occurrences="1">
+      <code>function ($attachment) use (&amp;$recursiveSanitizer) {</code>
+    </MissingClosureReturnType>
+  </file>
+  <file src="C:/dev/laragon/www/elasticms-skeleton/contrib/src/vendor/elasticms/submission-bundle/Handler/EmailHandler.php">
+    <InvalidArgument occurrences="1">
+      <code>$email-&gt;getAttachments()</code>
+    </InvalidArgument>
+    <MoreSpecificImplementedParamType occurrences="1">
+      <code>$form</code>
+    </MoreSpecificImplementedParamType>
+    <TooManyTemplateParams occurrences="1">
+      <code>FormInterface&lt;FormInterface&gt;</code>
+    </TooManyTemplateParams>
+  </file>
+  <file src="C:/dev/laragon/www/elasticms-skeleton/contrib/src/vendor/elasticms/submission-bundle/Handler/ServiceNowHandler.php">
+    <InvalidArgument occurrences="1">
+      <code>$attachment</code>
+    </InvalidArgument>
+    <InvalidArrayOffset occurrences="1">
+      <code>$attachment['pathname']</code>
+    </InvalidArrayOffset>
+    <MoreSpecificImplementedParamType occurrences="1">
+      <code>$form</code>
+    </MoreSpecificImplementedParamType>
+    <TooManyTemplateParams occurrences="1">
+      <code>FormInterface&lt;FormInterface&gt;</code>
+    </TooManyTemplateParams>
+  </file>
+  <file src="C:/dev/laragon/www/elasticms-skeleton/contrib/src/vendor/elasticms/submission-bundle/Service/SubmissionRenderer.php">
+    <TooManyTemplateParams occurrences="1">
+      <code>FormInterface&lt;FormInterface&gt;</code>
+    </TooManyTemplateParams>
+  </file>
+</files>

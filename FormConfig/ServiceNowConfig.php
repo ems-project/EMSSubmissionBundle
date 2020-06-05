@@ -21,7 +21,7 @@ class ServiceNowConfig extends AbstractConfig
 
     /** @var string */
     private $body = '';
-    /** @var array<array> */
+    /** @var array<array-key, string> */
     private $attachments = [];
 
     public function __construct(RenderedSubmission $submission)
@@ -77,7 +77,7 @@ class ServiceNowConfig extends AbstractConfig
     }
 
     /**
-     * @return array<array>
+     * @return array<array-key, string>
      */
     public function getAttachments(): array
     {

@@ -7,13 +7,14 @@ use EMS\FormBundle\FormConfig\SubmissionConfig;
 use EMS\FormBundle\Submit\AbstractResponse;
 use EMS\SubmissionBundle\Submit\RenderedSubmission;
 use Symfony\Component\Form\FormInterface;
+use Twig\Environment;
 
 class SubmissionRenderer
 {
-    /** @var \Twig_Environment */
+    /** @var Environment */
     protected $templating;
 
-    public function __construct(\Twig_Environment $templating)
+    public function __construct(Environment $templating)
     {
         $this->templating = $templating;
     }
