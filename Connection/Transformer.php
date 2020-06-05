@@ -4,14 +4,22 @@ namespace EMS\SubmissionBundle\Connection;
 
 class Transformer
 {
-    /** @var array */
+    /**
+     * @var array<array{'connection': string, 'user': string, 'password': string}>
+     */
     private $connections;
 
+    /**
+     * @param array<array{'connection': string, 'user': string, 'password': string}> $connections
+     */
     public function __construct(array $connections)
     {
         $this->connections = $connections;
     }
 
+    /**
+     * @param array<string> $path ['service-now-instance-a', 'password']
+     */
     public function transform(array $path): string
     {
         if (empty($path)) {
