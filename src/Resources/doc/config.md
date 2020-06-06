@@ -30,7 +30,7 @@ Each configuration has a "connection", "user", and "password" entry.
 An infinite amount of keys can be added to this configuration, only the "connection" key is obligatory.
 
 ### Fetch credentials for your service.
-An example endpoint configuration to integrate with ServiceNow has access to the user/pass of the "service-now-instance-a" using the [emss_connection](/Resources/doc/twig.md) filter:
+An example endpoint configuration to integrate with ServiceNow has access to the user/pass of the "service-now-instance-a" using the [emss_connection](/src/Resources/doc/twig.md) filter:
 ```twig
 {
     "host": "https://example.service-now.com/api/now/table/my_table_name",
