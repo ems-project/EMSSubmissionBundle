@@ -11,18 +11,18 @@ use EMS\SubmissionBundle\Handler\EmailHandler;
 use EMS\SubmissionBundle\Tests\Functional\AbstractFunctionalTest;
 use Swift_Events_SendEvent;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+
+;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 final class EmailHandlerTest extends AbstractFunctionalTest
 {
     /** @var EmailHandler */
-    protected $emailHandler;
+    private $emailHandler;
     /** @var \Swift_Mailer */
-    protected $mailer;
+    private $mailer;
 
     protected function setUp(): void
     {
@@ -59,15 +59,6 @@ final class EmailHandlerTest extends AbstractFunctionalTest
 
     public function testSubmitMultipleFiles(): void
     {
-        $data = ['name' => 'David', 'files' => [
-            new UploadedFile(__DIR__ . '/../../files/attachment.txt', 'attachment.txt', 'text/plain'),
-            new UploadedFile(__DIR__ . '/../../files/attachment2.txt', 'attachment2.txt', 'text/plain'),
-        ]];
-        $form = $this->formFactory->createBuilder(FormType::class, $data, [])
-            ->add('name', TextType::class)
-            ->add('files', FileType::class, ['multiple' => true])
-            ->getForm();
-
         $endpoint = 'test@example.com';
         $message = json_encode([
             'from' => 'noreply@test.test',
@@ -87,7 +78,7 @@ final class EmailHandlerTest extends AbstractFunctionalTest
             ]
         ]);
 
-        $handle = $this->handle($form, $endpoint, $message, function (Swift_Events_SendEvent $evt) {
+        $handle = $this->handle($this->createUploadFilesForm(), $endpoint, $message, function (Swift_Events_SendEvent $evt) {
             $this->assertEquals('attachment.txt | attachment2.txt', $evt->getMessage()->getBody());
 
             /** @var \Swift_Attachment[] $children */
@@ -177,8 +168,7 @@ final class EmailHandlerTest extends AbstractFunctionalTest
                 }
                 public function sendPerformed(Swift_Events_SendEvent $evt)
                 {
-                    $callback = $this->callback;
-                    $callback($evt);
+                    ($this->callback)($evt);
                 }
             });
         }

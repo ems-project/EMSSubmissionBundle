@@ -23,6 +23,7 @@ final class ConnectionExtensionTest extends TestCase
             'user' => 'david',
             'password' => 'its_a_secret',
         ]]);
+        $this->assertEquals('', $transformer->transform([]));
 
         $def = new Definition(ConnectionRuntime::class, [$transformer]);
 
@@ -33,7 +34,10 @@ final class ConnectionExtensionTest extends TestCase
             new ArrayLoader([
                 'testGetUser.html.twig' => "{{ 'service-now-instance-a%.%user'|emss_connection }}",
                 'testGetPassword.html.twig' => "{{ 'service-now-instance-a%.%password'|emss_connection }}",
+                'testUnknownConnection.html.twig' => "{{ 'service-now-unknown%.%user'|emss_connection }}",
+                'testMethodNotExists.html.twig' => "{{ 'service-now-instance-a%.%methodTest'|emss_connection }}",
                 'testEmpty.html.twig' => "{{ ''|emss_connection }}",
+                'testOnlySeparator.html.twig' => "{{ '%.%'|emss_connection }}",
             ]),
             ['debug' => true, 'cache' => false, 'autoescape' => 'html', 'optimizations' => 0]
         );
@@ -42,6 +46,9 @@ final class ConnectionExtensionTest extends TestCase
 
         $this->assertEquals('david', $twig->render('testGetUser.html.twig', []));
         $this->assertEquals('its_a_secret', $twig->render('testGetPassword.html.twig', []));
+        $this->assertEquals('service-now-unknown', $twig->render('testUnknownConnection.html.twig', []));
+        $this->assertEquals('methodTest', $twig->render('testMethodNotExists.html.twig', []));
         $this->assertEquals('', $twig->render('testEmpty.html.twig', []));
+        $this->assertEquals('', $twig->render('testOnlySeparator.html.twig', []));
     }
 }

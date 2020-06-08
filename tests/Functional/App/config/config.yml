@@ -1,14 +1,26 @@
 ems_submission:
-  default_timeout: '10'
+  default_timeout: '19'
   connections:
-    - { connection: "service-now-instance-a", user: "instance-a-username", password: "instance-a-password"}
+    - { connection: "service-now-instance-a", user: "userA", password: "passB"}
 
 swiftmailer:
   disable_delivery: true
 
+twig:
+  debug: true
+
 services:
+  _defaults:
+    public: true
+
+  EMS\SubmissionBundle\Tests\Functional\App\ResponseFactory:
+  EMS\SubmissionBundle\Tests\Functional\App\HttpClient:
+    arguments: ['@EMS\SubmissionBundle\Tests\Functional\App\ResponseFactory']
+  Symfony\Contracts\HttpClient\HttpClientInterface:
+    alias: 'EMS\SubmissionBundle\Tests\Functional\App\HttpClient'
+
   # alias the service so we can access it in the tests
   functional_test.emss.emailhandler:
     alias: emss.emailhandler
-    public: true
-
+  functional_test.emss.servicenowhandler:
+    alias: emss.servicenowhandler

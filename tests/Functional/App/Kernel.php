@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace EMS\SubmissionBundle\Tests\Functional\App;
 
 use EMS\SubmissionBundle\EMSSubmissionBundle;
+use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle;
+use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
-use Twig\Loader\ArrayLoader;
 
 final class Kernel extends BaseKernel
 {
@@ -29,21 +28,13 @@ final class Kernel extends BaseKernel
         return [
             new EMSSubmissionBundle(),
             new SwiftmailerBundle(),
+            new FrameworkBundle(),
+            new TwigBundle(),
         ];
     }
 
     public function registerContainerConfiguration(LoaderInterface $loader): void
     {
         $loader->load(__DIR__ . '/config/config.yml');
-    }
-
-    protected function build(ContainerBuilder $container): void
-    {
-        $definitionTwig = new Definition(\Twig_Environment::class, [
-            new Definition(ArrayLoader::class, [[]]),
-            ['debug' => true, 'cache' => false]
-        ]);
-
-        $container->setDefinition('twig', $definitionTwig);
     }
 }

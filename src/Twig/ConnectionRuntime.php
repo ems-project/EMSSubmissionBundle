@@ -17,12 +17,6 @@ class ConnectionRuntime implements RuntimeExtensionInterface
 
     public function transform(string $content): string
     {
-        $path = preg_split('/%\.%/', $content);
-
-        if (! is_array($path)) {
-            return $content;
-        }
-        
-        return $this->transformer->transform($path);
+        return $this->transformer->transform(explode('%.%', $content));
     }
 }

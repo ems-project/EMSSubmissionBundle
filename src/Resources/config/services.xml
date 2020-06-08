@@ -20,6 +20,7 @@
         </service>
         <service id="emss.servicenowhandler" class="EMS\SubmissionBundle\Handler\ServiceNowHandler">
             <argument type="service" id="emss.renderer"/>
+            <argument type="service" id="Symfony\Contracts\HttpClient\HttpClientInterface"/>
             <argument>%emss.default_timeout%</argument>
             <tag name="emsf.handler" />
         </service>

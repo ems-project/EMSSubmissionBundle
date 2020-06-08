@@ -20,8 +20,10 @@
 		"php" : "^7.2",
 		"ext-json": "*",
 		"elasticms/form-bundle" : "~1.2.2",
+		"symfony/framework-bundle": "^4.4",
 		"symfony/http-client": "^4.4",
 		"symfony/swiftmailer-bundle": "^3.4",
+		"symfony/twig-bundle": "^4.4",
 		"twig/twig" : "~2.10.0"
     },
 	"require-dev" : {

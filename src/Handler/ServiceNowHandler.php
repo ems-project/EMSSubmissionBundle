@@ -11,7 +11,6 @@ use EMS\SubmissionBundle\FormConfig\ServiceNowConfig;
 use EMS\SubmissionBundle\Service\SubmissionRenderer;
 use EMS\SubmissionBundle\Submit\ServiceNowResponse;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ServiceNowHandler extends AbstractHandler
@@ -23,11 +22,11 @@ class ServiceNowHandler extends AbstractHandler
     /** @var HttpClientInterface */
     private $client;
 
-    public function __construct(SubmissionRenderer $renderer, int $timeout)
+    public function __construct(SubmissionRenderer $renderer, HttpClientInterface $httpClient, int $timeout)
     {
         $this->renderer = $renderer;
         $this->timeout = $timeout;
-        $this->client = HttpClient::create();
+        $this->client = $httpClient;
     }
 
     /**

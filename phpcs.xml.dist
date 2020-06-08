@@ -9,6 +9,7 @@
     <exclude-pattern>*/\.gitignore</exclude-pattern>
     <exclude-pattern>*/LICENSE</exclude-pattern>
     <exclude-pattern>*/php*\.*</exclude-pattern>
+    <exclude-pattern>*/tests/tmp/*</exclude-pattern>
     <exclude-pattern>*/README\.md</exclude-pattern>
 
     <arg name="basepath" value="."/>
