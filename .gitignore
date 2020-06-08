@@ -1,5 +1,5 @@
 /composer.lock
 /phpunit.xml
 /vendor/
-/tmp/
+/tests/tmp/
 /.phpunit.result.cache
