@@ -16,7 +16,7 @@ final class Kernel extends BaseKernel
 {
     public function getCacheDir()
     {
-        return __DIR__ . '/../../tmp/cache/' .$this->environment;
+        return __DIR__ . '/../../tmp/cache/' . $this->environment;
     }
 
     public function getLogDir()
