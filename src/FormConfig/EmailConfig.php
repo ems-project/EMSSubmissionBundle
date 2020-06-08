@@ -22,8 +22,8 @@ class EmailConfig extends AbstractConfig
         $this->endpoint = $submission->getEndpoint();
         $message = \json_decode($submission->getMessage(), true);
 
-        $this->from = $message['from'];
-        $this->subject = $message['subject'];
+        $this->from = $message['from'] ?? 'noreply@elasticms.eu';
+        $this->subject = $message['subject'] ?? 'Email submission';
 
         if (!empty($message['body'])) {
             $this->body = $this->sanitiseQuotes($message['body']) ?? '';
