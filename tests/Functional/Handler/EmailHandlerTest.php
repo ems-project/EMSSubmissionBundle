@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
-final class EmailHandlerTest  extends AbstractFunctionalTest
+final class EmailHandlerTest extends AbstractFunctionalTest
 {
     /** @var EmailHandler */
     protected $emailHandler;
@@ -163,7 +163,7 @@ final class EmailHandlerTest  extends AbstractFunctionalTest
         $formConfig = new FormConfig('1', 'nl', 'nl');
 
         if ($emailAssert) {
-            $this->mailer->registerPlugin(new class($emailAssert) implements \Swift_Events_SendListener {
+            $this->mailer->registerPlugin(new class ($emailAssert) implements \Swift_Events_SendListener {
                 /** @var callable */
                 private $callback;
 
