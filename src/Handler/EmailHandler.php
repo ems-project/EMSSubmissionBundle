@@ -2,13 +2,11 @@
 
 namespace EMS\SubmissionBundle\Handler;
 
-use EMS\FormBundle\Components\Field\File;
 use EMS\FormBundle\FormConfig\FormConfig;
-use EMS\FormBundle\Handler\AbstractHandler;
 use EMS\FormBundle\FormConfig\SubmissionConfig;
+use EMS\FormBundle\Handler\AbstractHandler;
 use EMS\FormBundle\Submit\AbstractResponse;
 use EMS\FormBundle\Submit\FailedResponse;
-use EMS\FormBundle\Submit\ResponseCollector;
 use EMS\SubmissionBundle\FormConfig\EmailConfig;
 use EMS\SubmissionBundle\Service\SubmissionRenderer;
 use EMS\SubmissionBundle\Submit\EmailResponse;

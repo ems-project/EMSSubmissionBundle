@@ -20,14 +20,14 @@ final class EMSSubmissionExtensionTest extends TestCase
                 [
                     'connection' => 'service-now-instance-a',
                     'user' => 'userA',
-                    'password' => 'secret'
+                    'password' => 'secret',
                 ],
                 [
                     'connection' => 'service-now-instance-b',
                     'user' => 'userB',
-                    'password' => 'secret2'
-                ]
-            ]
+                    'password' => 'secret2',
+                ],
+            ],
         ]);
         $container->compile();
 

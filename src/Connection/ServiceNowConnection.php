@@ -22,7 +22,7 @@ class ServiceNowConnection
     {
         $method = sprintf('get%s', ucfirst($key));
 
-        if (! method_exists($this, $method)) {
+        if (!method_exists($this, $method)) {
             return $key;
         }
 

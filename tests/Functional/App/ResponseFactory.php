@@ -9,7 +9,7 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 
 final class ResponseFactory
 {
-    /** @var null|callable */
+    /** @var callable|null */
     private $callback;
 
     public function __invoke(string $method, string $url, array $options = []): ResponseInterface
