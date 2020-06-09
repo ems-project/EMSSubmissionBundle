@@ -2,7 +2,6 @@
 
 namespace EMS\SubmissionBundle\Handler;
 
-use EMS\FormBundle\Components\Field\File;
 use EMS\FormBundle\FormConfig\FormConfig;
 use EMS\FormBundle\FormConfig\SubmissionConfig;
 use EMS\FormBundle\Handler\AbstractHandler;

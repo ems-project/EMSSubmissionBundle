@@ -35,11 +35,12 @@ matrix:
 before_install:
   - if [[ "$SNIFF" == "1" ]]; then find ~/.phpenv -name xdebug.ini -delete; fi
   # Install PHP CodeSniffer.
-  - if [[ "$SNIFF" == "1" ]]; then composer self-update; fi
-  - if [[ "$SNIFF" == "1" ]]; then composer install; fi
+  - if [[ "$SNIFF" == "1" ]]; then travis_retry composer self-update; fi
+  - if [[ "$SNIFF" == "1" ]]; then composer global require symfony/flex; fi
   - phpenv rehash
 
 install:
+  - if [[ "$SNIFF" == "1" ]]; then composer update --prefer-dist --no-progress --no-suggest --ansi; fi
   - if [[ "$SNIFF" == "1" ]]; then ./vendor/bin/simple-phpunit install; fi
 
 script:
