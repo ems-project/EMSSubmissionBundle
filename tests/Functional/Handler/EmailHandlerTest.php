@@ -11,9 +11,9 @@ use EMS\SubmissionBundle\Handler\EmailHandler;
 use EMS\SubmissionBundle\Tests\Functional\AbstractFunctionalTest;
 use Swift_Events_SendEvent;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormInterface;
 
 final class EmailHandlerTest extends AbstractFunctionalTest
 {
@@ -32,7 +32,7 @@ final class EmailHandlerTest extends AbstractFunctionalTest
 
     public function testSubmitFormData(): void
     {
-        $data = ['name' => 'David', 'email' => 'user1@test.test',];
+        $data = ['name' => 'David', 'email' => 'user1@test.test'];
         $form = $this->formFactory->createBuilder(FormType::class, $data, [])
             ->add('name', TextType::class)
             ->add('email', EmailType::class)
@@ -42,7 +42,7 @@ final class EmailHandlerTest extends AbstractFunctionalTest
         $message = json_encode([
             'from' => 'noreply@test.test',
             'subject' => 'Test submission',
-            'body' => 'Hi my name is {{ data.name }}'
+            'body' => 'Hi my name is {{ data.name }}',
         ]);
 
         $handle = $this->handle($form, $endpoint, $message, function (Swift_Events_SendEvent $evt) {
@@ -66,14 +66,14 @@ final class EmailHandlerTest extends AbstractFunctionalTest
                 'file1' => [
                     'pathname' => '{{ data.files.0.getPathname()|json_encode }}',
                     'originalName' => '{{ data.files.0.getClientOriginalName() }}',
-                    'mimeType' => '{{ data.files.0.getClientMimeType() }}'
+                    'mimeType' => '{{ data.files.0.getClientMimeType() }}',
                 ],
                 'file2' => [
                     'pathname' => '{{ data.files.1.getPathname()|json_encode }}',
                     'originalName' => '{{ data.files.1.getClientOriginalName() }}',
-                    'mimeType' => '{{ data.files.1.getClientMimeType() }}'
-                ]
-            ]
+                    'mimeType' => '{{ data.files.1.getClientMimeType() }}',
+                ],
+            ],
         ]);
 
         $handle = $this->handle($this->createUploadFilesForm(), $endpoint, $message, function (Swift_Events_SendEvent $evt) {
@@ -98,7 +98,7 @@ final class EmailHandlerTest extends AbstractFunctionalTest
         $message = json_encode([
             'from' => 'noreply@test.test',
             'subject' => 'Test submission',
-            'body' => 'example'
+            'body' => 'example',
         ]);
         $handle = $this->handle($form, '', $message);
 
@@ -130,7 +130,7 @@ final class EmailHandlerTest extends AbstractFunctionalTest
         $message = json_encode(['from' => 'noreply@elasticms.eu']);
         $form = $this->formFactory->createBuilder(FormType::class, [], [])->getForm();
 
-        $this->mailer->registerPlugin(new class implements \Swift_Events_SendListener {
+        $this->mailer->registerPlugin(new class() implements \Swift_Events_SendListener {
             public function beforeSendPerformed(Swift_Events_SendEvent $evt)
             {
                 throw new \Swift_RfcComplianceException('test');
@@ -153,7 +153,7 @@ final class EmailHandlerTest extends AbstractFunctionalTest
         $formConfig = new FormConfig('1', 'nl', 'nl');
 
         if ($emailAssert) {
-            $this->mailer->registerPlugin(new class ($emailAssert) implements \Swift_Events_SendListener {
+            $this->mailer->registerPlugin(new class($emailAssert) implements \Swift_Events_SendListener {
                 /** @var callable */
                 private $callback;
 
@@ -165,6 +165,7 @@ final class EmailHandlerTest extends AbstractFunctionalTest
                 public function beforeSendPerformed(Swift_Events_SendEvent $evt)
                 {
                 }
+
                 public function sendPerformed(Swift_Events_SendEvent $evt)
                 {
                     ($this->callback)($evt);

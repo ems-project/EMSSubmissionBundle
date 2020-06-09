@@ -38,9 +38,9 @@ abstract class AbstractFunctionalTest extends TestCase
         $data = [
             'name' => 'David',
             'files' => [
-                new UploadedFile(__DIR__ . '/../files/attachment.txt', 'attachment.txt', 'text/plain'),
-                new UploadedFile(__DIR__ . '/../files/attachment2.txt', 'attachment2.txt', 'text/plain'),
-            ]
+                new UploadedFile(__DIR__.'/../files/attachment.txt', 'attachment.txt', 'text/plain'),
+                new UploadedFile(__DIR__.'/../files/attachment2.txt', 'attachment2.txt', 'text/plain'),
+            ],
         ];
 
         return $this->formFactory->createBuilder(FormType::class, $data, [])

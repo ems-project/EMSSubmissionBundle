@@ -14,7 +14,7 @@ class ServiceNowResponse extends AbstractResponse
     public function getResultProperty(string $property): string
     {
         $decodedData = \json_decode($this->data, true);
-        if (\json_last_error() !== JSON_ERROR_NONE) {
+        if (JSON_ERROR_NONE !== \json_last_error()) {
             return '';
         }
 
@@ -25,11 +25,11 @@ class ServiceNowResponse extends AbstractResponse
     {
         $data = \json_decode($json, true);
 
-        if (\json_last_error() !== JSON_ERROR_NONE) {
+        if (JSON_ERROR_NONE !== \json_last_error()) {
             return self::STATUS_ERROR;
         }
 
-        if (isset($data['status']) && $data['status'] === 'failure') {
+        if (isset($data['status']) && 'failure' === $data['status']) {
             return self::STATUS_ERROR;
         }
 

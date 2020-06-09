@@ -48,12 +48,12 @@ class ServiceNowConfig extends AbstractConfig
 
     public function getBodyEndpoint(): string
     {
-        return $this->host . $this->bodyEndpoint . '/' . $this->table;
+        return $this->host.$this->bodyEndpoint.'/'.$this->table;
     }
 
     public function getAttachmentEndpoint(): string
     {
-        return $this->host . $this->attachmentEndpoint;
+        return $this->host.$this->attachmentEndpoint;
     }
 
     public function getTable(): string
@@ -87,6 +87,7 @@ class ServiceNowConfig extends AbstractConfig
     public function getBasicAuth(): string
     {
         $credentials = \base64_encode(\sprintf('%s:%s', $this->getUsername(), $this->getPassword()));
+
         return \sprintf('Basic %s', $credentials);
     }
 }

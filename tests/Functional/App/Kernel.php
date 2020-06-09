@@ -15,12 +15,12 @@ final class Kernel extends BaseKernel
 {
     public function getCacheDir()
     {
-        return __DIR__ . '/../../tmp/cache/' . $this->environment;
+        return __DIR__.'/../../tmp/cache/'.$this->environment;
     }
 
     public function getLogDir()
     {
-        return __DIR__ . '/../../tmp/log';
+        return __DIR__.'/../../tmp/log';
     }
 
     public function registerBundles(): array
@@ -35,6 +35,6 @@ final class Kernel extends BaseKernel
 
     public function registerContainerConfiguration(LoaderInterface $loader): void
     {
-        $loader->load(__DIR__ . '/config/config.yml');
+        $loader->load(__DIR__.'/config/config.yml');
     }
 }

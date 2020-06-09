@@ -48,25 +48,25 @@ final class ServiceNowHandlerTest extends AbstractFunctionalTest
             'table' => 'table_name',
             'bodyEndpoint' => '/api/now/v1/table',
             'username' => "{{'service-now-instance-a%.%user'|emss_connection}}",
-            'password' => "{{'service-now-instance-a%.%password'|emss_connection}}"
+            'password' => "{{'service-now-instance-a%.%password'|emss_connection}}",
         ]);
 
         $message = json_encode([
            'body' => [
                'title' => 'Test serviceNow',
-               'name' => '{{ data.name }}'
-           ]
+               'name' => '{{ data.name }}',
+           ],
         ]);
 
         $this->responseFactory->setCallback(function (string $method, string $url, array $options = []) {
-            if ($method === 'POST' && $url === 'https://example.service-now.com/api/now/v1/table/table_name') {
+            if ('POST' === $method && 'https://example.service-now.com/api/now/v1/table/table_name' === $url) {
                 $this->assertEquals('{"title":"Test serviceNow","name":"David"}', $options['body']);
                 $this->assertEquals('19', $options['timeout']); //see config.yml
 
                 $this->assertSame([
                     'Accept: application/json',
                     'Content-Type: application/json',
-                    \sprintf('Authorization: Basic %s', $this->credentials)
+                    \sprintf('Authorization: Basic %s', $this->credentials),
                 ], $options['headers']);
 
                 return new MockResponse('{"message": "example"}');
@@ -89,38 +89,38 @@ final class ServiceNowHandlerTest extends AbstractFunctionalTest
             'bodyEndpoint' => '/api/now/v1/table',
             'attachmentEndpoint' => '/api/now/v1/attachment/file',
             'username' => "{{'service-now-instance-a%.%user'|emss_connection}}",
-            'password' => "{{'service-now-instance-a%.%password'|emss_connection}}"
+            'password' => "{{'service-now-instance-a%.%password'|emss_connection}}",
         ]);
 
         $message = json_encode([
             'body' => [
                 'title' => 'Test serviceNow',
-                'name' => '{{ data.name }}'
+                'name' => '{{ data.name }}',
             ],
             'attachments' => [
                 'file1' => [
                     'pathname' => '{{ data.files.0.getPathname()|json_encode }}',
                     'originalName' => '{{ data.files.0.getClientOriginalName() }}',
-                    'mimeType' => '{{ data.files.0.getClientMimeType() }}'
+                    'mimeType' => '{{ data.files.0.getClientMimeType() }}',
                 ],
                 'file2' => [
                     'pathname' => '{{ data.files.1.getPathname()|json_encode }}',
                     'originalName' => '{{ data.files.1.getClientOriginalName() }}',
-                    'mimeType' => '{{ data.files.1.getClientMimeType() }}'
-                ]
-            ]
+                    'mimeType' => '{{ data.files.1.getClientMimeType() }}',
+                ],
+            ],
         ]);
 
         $attachmentUrl = 'https://example.service-now.com/api/now/v1/attachment/file';
         $sysId = 98765;
         $attachmentUrls = [
-            $attachmentUrl . '?file_name=attachment.txt&table_name=table_name&table_sys_id=' . $sysId,
-            $attachmentUrl . '?file_name=attachment2.txt&table_name=table_name&table_sys_id=' . $sysId,
+            $attachmentUrl.'?file_name=attachment.txt&table_name=table_name&table_sys_id='.$sysId,
+            $attachmentUrl.'?file_name=attachment2.txt&table_name=table_name&table_sys_id='.$sysId,
         ];
 
         $this->responseFactory->setCallback(
             function (string $method, string $url, array $options = []) use ($attachmentUrls, $sysId) {
-                if ($url === 'https://example.service-now.com/api/now/v1/table/table_name') {
+                if ('https://example.service-now.com/api/now/v1/table/table_name' === $url) {
                     return new MockResponse(\json_encode(['result' => ['sys_id' => $sysId]]));
                 }
 
@@ -152,7 +152,7 @@ final class ServiceNowHandlerTest extends AbstractFunctionalTest
             'bodyEndpoint' => '/api/now/v1/table',
             'attachmentEndpoint' => '/api/now/v1/attachment/file',
             'username' => "{{'service-now-instance-a%.%user'|emss_connection}}",
-            'password' => "{{'service-now-instance-a%.%password'|emss_connection}}"
+            'password' => "{{'service-now-instance-a%.%password'|emss_connection}}",
         ]);
         $message = json_encode([
             'body' => '',
@@ -160,13 +160,13 @@ final class ServiceNowHandlerTest extends AbstractFunctionalTest
                 'file1' => [
                     'pathname' => '{{ data.files.0.getPathname()|json_encode }}',
                     'originalName' => '{{ data.files.0.getClientOriginalName() }}',
-                    'mimeType' => '{{ data.files.0.getClientMimeType() }}'
-                ]
-            ]
+                    'mimeType' => '{{ data.files.0.getClientMimeType() }}',
+                ],
+            ],
         ]);
 
         $this->responseFactory->setCallback(function (string $method, string $url, array $options = []) {
-            if ($url === 'https://example.service-now.com/api/now/v1/table/table_name') {
+            if ('https://example.service-now.com/api/now/v1/table/table_name' === $url) {
                 return new MockResponse('{"message": "upload success"}');
             }
 

@@ -3,8 +3,8 @@
 namespace EMS\SubmissionBundle\Handler;
 
 use EMS\FormBundle\FormConfig\FormConfig;
-use EMS\FormBundle\Handler\AbstractHandler;
 use EMS\FormBundle\FormConfig\SubmissionConfig;
+use EMS\FormBundle\Handler\AbstractHandler;
 use EMS\FormBundle\Submit\AbstractResponse;
 use EMS\FormBundle\Submit\FailedResponse;
 use EMS\SubmissionBundle\FormConfig\ServiceNowConfig;
@@ -45,7 +45,7 @@ class ServiceNowHandler extends AbstractHandler
                     'Authorization' => $snow->getBasicAuth(),
                 ],
                 'body' => $snow->getBody(),
-                'timeout' => $this->timeout
+                'timeout' => $this->timeout,
             ]);
 
             $serviceNowResponse = new ServiceNowResponse($response->getContent());
@@ -70,7 +70,7 @@ class ServiceNowHandler extends AbstractHandler
 
     private function getBinaryFile(string $pathname): ?string
     {
-        $file = \fopen($pathname, "r");
+        $file = \fopen($pathname, 'r');
         $size = \filesize($pathname);
 
         if (!$file || !$size) {
@@ -102,7 +102,7 @@ class ServiceNowHandler extends AbstractHandler
                     'Content-Type' => $attachment['mimeType'],
                     'Authorization' => $config->getBasicAuth(),
                 ],
-                'body' => $binary
+                'body' => $binary,
             ]);
         } catch (\Exception $exception) {
             throw new \Exception(\sprintf('Attachment submission failed: %s', $exception->getMessage()));
