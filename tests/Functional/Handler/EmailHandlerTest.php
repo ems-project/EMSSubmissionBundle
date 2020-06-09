@@ -12,8 +12,6 @@ use EMS\SubmissionBundle\Tests\Functional\AbstractFunctionalTest;
 use Swift_Events_SendEvent;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\FormInterface;
-
-;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
@@ -110,7 +108,7 @@ final class EmailHandlerTest extends AbstractFunctionalTest
         );
     }
 
-    public function testInvalidMessage(): void
+    public function testEmptyMessage(): void
     {
         $form = $this->formFactory->createBuilder(FormType::class, [], [])->getForm();
 
@@ -122,13 +120,14 @@ final class EmailHandlerTest extends AbstractFunctionalTest
         });
 
         $this->assertEquals(
-            '{"status":"success","data":"Submission send by mail."}',
+            '{"status":"error","data":"Submission failed, contact your admin. From email address not defined."}',
             $handle->getResponse()
         );
     }
 
     public function testFailedRecipients(): void
     {
+        $message = json_encode(['from' => 'noreply@elasticms.eu']);
         $form = $this->formFactory->createBuilder(FormType::class, [], [])->getForm();
 
         $this->mailer->registerPlugin(new class implements \Swift_Events_SendListener {
@@ -144,7 +143,7 @@ final class EmailHandlerTest extends AbstractFunctionalTest
 
         $this->assertEquals(
             '{"status":"error","data":"Submission failed. Conctact your admin."}',
-            $this->handle($form, 'user@example.com', '')->getResponse()
+            $this->handle($form, 'user@example.com', $message)->getResponse()
         );
     }
 
