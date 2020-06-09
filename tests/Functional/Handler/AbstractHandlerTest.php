@@ -58,6 +58,7 @@ abstract class AbstractHandlerTest extends AbstractFunctionalTest
     protected function createFormUploadFiles(): FormInterface
     {
         $data = [
+            'info' => 'Uploaded 2 files',
             'files' => [
                 new UploadedFile(__DIR__.'/../../files/attachment.txt', 'attachment.txt', 'text/plain'),
                 new UploadedFile(__DIR__.'/../../files/attachment2.txt', 'attachment2.txt', 'text/plain'),
@@ -65,6 +66,7 @@ abstract class AbstractHandlerTest extends AbstractFunctionalTest
         ];
 
         return $this->formFactory->createBuilder(FormType::class, $data, [])
+            ->add('info', TextType::class)
             ->add('files', FileType::class, ['multiple' => true])
             ->getForm();
     }

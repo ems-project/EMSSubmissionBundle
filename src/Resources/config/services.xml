@@ -12,20 +12,6 @@
         <service id="emss.connection.transformer" class="EMS\SubmissionBundle\Connection\Transformer">
             <argument>%emss.connections%</argument>
         </service>
-
-        <service id="emss.emailhandler" class="EMS\SubmissionBundle\Handler\EmailHandler">
-            <argument type="service" id="mailer"/>
-            <argument type="service" id="emss.renderer"/>
-            <tag name="emsf.handler" />
-        </service>
-        <service id="emss.servicenowhandler" class="EMS\SubmissionBundle\Handler\ServiceNowHandler">
-            <argument type="service" id="emss.renderer"/>
-            <argument type="service" id="Symfony\Contracts\HttpClient\HttpClientInterface"/>
-            <argument>%emss.default_timeout%</argument>
-            <tag name="emsf.handler" />
-        </service>
-
-        <!-- twig -->
         <service id="emss.twig.extension.connection" class="EMS\SubmissionBundle\Twig\ConnectionExtension">
             <tag name="twig.extension" />
         </service>

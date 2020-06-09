@@ -6,14 +6,19 @@ ems_submission:
 swiftmailer:
   disable_delivery: true
 
+framework:
+  router:
+    resource: 'routes.yml'
+    strict_requirements: ~
+
 twig:
   debug: true
+  strict_variables: true
+  exception_controller: null
 
 services:
-  _defaults:
-    public: true
-
   EMS\SubmissionBundle\Tests\Functional\App\ResponseFactory:
+    public: true
   EMS\SubmissionBundle\Tests\Functional\App\HttpClient:
     arguments: ['@EMS\SubmissionBundle\Tests\Functional\App\ResponseFactory']
   Symfony\Contracts\HttpClient\HttpClientInterface:
@@ -21,6 +26,8 @@ services:
 
   # alias the service so we can access it in the tests
   functional_test.emss.emailhandler:
+    public: true
     alias: emss.emailhandler
   functional_test.emss.servicenowhandler:
+    public: true
     alias: emss.servicenowhandler

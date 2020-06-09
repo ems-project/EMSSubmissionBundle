@@ -6,7 +6,6 @@ namespace EMS\SubmissionBundle\Tests\Functional\Handler;
 
 use EMS\FormBundle\Handler\AbstractHandler;
 use Swift_Events_SendEvent;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 
 final class EmailHandlerTest extends AbstractHandlerTest
 {
@@ -111,7 +110,6 @@ final class EmailHandlerTest extends AbstractHandlerTest
     public function testFailedRecipients(): void
     {
         $message = json_encode(['from' => 'noreply@elasticms.eu']);
-        $form = $this->formFactory->createBuilder(FormType::class, [], [])->getForm();
 
         $this->mailer->registerPlugin(new class() implements \Swift_Events_SendListener {
             public function beforeSendPerformed(Swift_Events_SendEvent $evt)
@@ -126,7 +124,7 @@ final class EmailHandlerTest extends AbstractHandlerTest
 
         $this->assertEquals(
             '{"status":"error","data":"Submission failed. Conctact your admin."}',
-            $this->handle($form, 'user@example.com', $message)->getResponse()
+            $this->handle($this->createForm(), 'user@example.com', $message)->getResponse()
         );
     }
 

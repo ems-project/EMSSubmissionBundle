@@ -80,7 +80,7 @@ final class ServiceNowHandlerTest extends AbstractHandlerTest
         $message = json_encode([
             'body' => [
                 'title' => 'Test serviceNow',
-                'name' => '{{ data.name }}',
+                'info' => '{{ data.info }}',
             ],
             'attachments' => [
                 'file1' => [
@@ -106,6 +106,8 @@ final class ServiceNowHandlerTest extends AbstractHandlerTest
         $this->responseFactory->setCallback(
             function (string $method, string $url, array $options = []) use ($attachmentUrls, $sysId) {
                 if ('https://example.service-now.com/api/now/v1/table/table_name' === $url) {
+                    $this->assertEquals('{"title":"Test serviceNow","info":"Uploaded 2 files"}', $options['body']);
+
                     return new MockResponse(\json_encode(['result' => ['sys_id' => $sysId]]));
                 }
 

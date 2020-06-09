@@ -19,7 +19,8 @@
 	"require" : {
 		"php" : "^7.2",
 		"ext-json": "*",
-		"elasticms/form-bundle" : "~1.2.2",
+		"elasticms/form-bundle" : "^1.2",
+		"elasticms/common-bundle" : "^1.8",
 		"symfony/framework-bundle": "^4.4",
 		"symfony/http-client": "^4.4",
 		"symfony/swiftmailer-bundle": "^3.4",

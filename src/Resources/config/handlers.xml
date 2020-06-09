@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services
+        http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <defaults public="false" />
+        <service id="emss.emailhandler" class="EMS\SubmissionBundle\Handler\EmailHandler">
+            <argument type="service" id="mailer"/>
+            <argument type="service" id="emss.renderer"/>
+            <tag name="emsf.handler" />
+        </service>
+        <service id="emss.servicenowhandler" class="EMS\SubmissionBundle\Handler\ServiceNowHandler">
+            <argument type="service" id="emss.renderer"/>
+            <argument type="service" id="Symfony\Contracts\HttpClient\HttpClientInterface"/>
+            <argument>%emss.default_timeout%</argument>
+            <tag name="emsf.handler" />
+        </service>
+    </services>
+</container>

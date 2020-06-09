@@ -9,6 +9,7 @@
 >
     <php>
         <ini name="error_reporting" value="-1" />
+        <env name="SYMFONY_PHPUNIT_VERSION" value="8.3"/>
         <env name="SYMFONY_DEPRECATIONS_HELPER" value="max[self]=0"/>
     </php>
     <testsuites>
@@ -21,4 +22,8 @@
             <directory>./src/</directory>
         </whitelist>
     </filter>
+
+    <extensions>
+        <extension class="EMS\SubmissionBundle\Tests\Functional\App\ClearLogCacheListener"></extension>
+    </extensions>
 </phpunit>

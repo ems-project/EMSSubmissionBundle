@@ -10,9 +10,9 @@ class Configuration implements ConfigurationInterface
 {
     public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = new TreeBuilder();
+        $treeBuilder = new TreeBuilder('ems_submission');
         /* @var $rootNode ArrayNodeDefinition */
-        $rootNode = $treeBuilder->root('ems_submission');
+        $rootNode = $treeBuilder->getRootNode();
 
         $rootNode
             ->children()
