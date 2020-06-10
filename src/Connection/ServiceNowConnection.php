@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace EMS\SubmissionBundle\Connection;
 
-class ServiceNowConnection
+final class ServiceNowConnection
 {
     /** @var string */
     private $user;

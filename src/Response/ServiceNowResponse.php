@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace EMS\SubmissionBundle\Response;
 
 use EMS\FormBundle\Submit\AbstractResponse;
 
-class ServiceNowResponse extends AbstractResponse
+final class ServiceNowResponse extends AbstractResponse
 {
     public function __construct(string $json)
     {

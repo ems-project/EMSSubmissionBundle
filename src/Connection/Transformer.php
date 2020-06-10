@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace EMS\SubmissionBundle\Connection;
 
-class Transformer
+final class Transformer
 {
     /**
      * @var array<array{'connection': string, 'user': string, 'password': string}>

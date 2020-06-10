@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace EMS\SubmissionBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
@@ -7,7 +9,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 
-class EMSSubmissionExtension extends Extension
+final class EMSSubmissionExtension extends Extension
 {
     /**
      * @param array<array> $configs

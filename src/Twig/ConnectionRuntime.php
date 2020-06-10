@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace EMS\SubmissionBundle\Twig;
 
 use EMS\SubmissionBundle\Connection\Transformer;
 use Twig\Extension\RuntimeExtensionInterface;
 
-class ConnectionRuntime implements RuntimeExtensionInterface
+final class ConnectionRuntime implements RuntimeExtensionInterface
 {
     /** @var Transformer */
     private $transformer;

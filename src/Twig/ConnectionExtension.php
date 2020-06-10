@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace EMS\SubmissionBundle\Twig;
 
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 
-class ConnectionExtension extends abstractExtension
+final class ConnectionExtension extends abstractExtension
 {
     public function getFilters()
     {
