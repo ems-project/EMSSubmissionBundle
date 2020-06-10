@@ -6,7 +6,7 @@
 
     <services>
         <defaults public="false" />
-        <service id="emss.renderer" class="EMS\SubmissionBundle\Service\SubmissionRenderer">
+        <service id="emss.config.factory" class="EMS\SubmissionBundle\Config\ConfigFactory">
             <argument type="service" id="twig" />
         </service>
         <service id="emss.connection.transformer" class="EMS\SubmissionBundle\Connection\Transformer">

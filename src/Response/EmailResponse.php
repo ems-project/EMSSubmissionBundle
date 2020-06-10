@@ -1,6 +1,6 @@
 <?php
 
-namespace EMS\SubmissionBundle\Submit;
+namespace EMS\SubmissionBundle\Response;
 
 use EMS\FormBundle\Submit\AbstractResponse;
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace EMS\SubmissionBundle\Handler;
 
 use EMS\FormBundle\FormConfig\FormConfig;
@@ -7,24 +9,24 @@ use EMS\FormBundle\FormConfig\SubmissionConfig;
 use EMS\FormBundle\Handler\AbstractHandler;
 use EMS\FormBundle\Submit\AbstractResponse;
 use EMS\FormBundle\Submit\FailedResponse;
-use EMS\SubmissionBundle\FormConfig\ServiceNowConfig;
-use EMS\SubmissionBundle\Service\SubmissionRenderer;
-use EMS\SubmissionBundle\Submit\ServiceNowResponse;
+use EMS\SubmissionBundle\Config\ConfigFactory;
+use EMS\SubmissionBundle\Request\ServiceNowRequest;
+use EMS\SubmissionBundle\Response\ServiceNowResponse;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class ServiceNowHandler extends AbstractHandler
+final class ServiceNowHandler extends AbstractHandler
 {
-    /** @var SubmissionRenderer */
-    private $renderer;
+    /** @var ConfigFactory */
+    private $configFactory;
     /** @var int */
     private $timeout;
     /** @var HttpClientInterface */
     private $client;
 
-    public function __construct(SubmissionRenderer $renderer, HttpClientInterface $httpClient, int $timeout)
+    public function __construct(ConfigFactory $configFactory, HttpClientInterface $httpClient, int $timeout)
     {
-        $this->renderer = $renderer;
+        $this->configFactory = $configFactory;
         $this->timeout = $timeout;
         $this->client = $httpClient;
     }
@@ -35,8 +37,8 @@ class ServiceNowHandler extends AbstractHandler
     public function handle(SubmissionConfig $submission, FormInterface $form, FormConfig $config, AbstractResponse $previousResponse = null): AbstractResponse
     {
         try {
-            $renderedSubmission = $this->renderer->render($submission, $form, $config, $previousResponse);
-            $snow = new ServiceNowConfig($renderedSubmission);
+            $config = $this->configFactory->create($submission, $form, $config, $previousResponse);
+            $snow = new ServiceNowRequest($config);
 
             $response = $this->client->request('POST', $snow->getBodyEndpoint(), [
                 'headers' => [
@@ -57,13 +59,13 @@ class ServiceNowHandler extends AbstractHandler
         }
     }
 
-    private function addAttachments(ServiceNowResponse $response, ServiceNowConfig $config): void
+    private function addAttachments(ServiceNowResponse $response, ServiceNowRequest $request): void
     {
-        foreach ($config->getAttachments() as $attachment) {
+        foreach ($request->getAttachments() as $attachment) {
             $binary = $this->getBinaryFile($attachment['pathname']);
 
             if (!empty($binary)) {
-                $this->postAttachment($response, $config, $attachment, $binary);
+                $this->postAttachment($response, $request, $attachment, $binary);
             }
         }
     }
@@ -89,18 +91,18 @@ class ServiceNowHandler extends AbstractHandler
     /**
      * @param array<array> $attachment
      */
-    private function postAttachment(ServiceNowResponse $response, ServiceNowConfig $config, array $attachment, string $binary): void
+    private function postAttachment(ServiceNowResponse $response, ServiceNowRequest $request, array $attachment, string $binary): void
     {
         try {
-            $this->client->request('POST', $config->getAttachmentEndpoint(), [
+            $this->client->request('POST', $request->getAttachmentEndpoint(), [
                 'query' => [
                     'file_name' => $attachment['originalName'],
-                    'table_name' => $config->getTable(),
+                    'table_name' => $request->getTable(),
                     'table_sys_id' => $response->getResultProperty('sys_id'),
                 ],
                 'headers' => [
                     'Content-Type' => $attachment['mimeType'],
-                    'Authorization' => $config->getBasicAuth(),
+                    'Authorization' => $request->getBasicAuth(),
                 ],
                 'body' => $binary,
             ]);

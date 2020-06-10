@@ -20,7 +20,7 @@ final class EmailHandlerTest extends AbstractHandlerTest
 
     protected function getHandler(): AbstractHandler
     {
-        return $this->container->get('functional_test.emss.emailhandler');
+        return $this->container->get('functional_test.emss.handler.email');
     }
 
     public function testSubmitFormData(): void

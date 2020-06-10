@@ -8,7 +8,6 @@ use EMS\FormBundle\FormConfig\FormConfig;
 use EMS\FormBundle\FormConfig\SubmissionConfig;
 use EMS\FormBundle\Handler\AbstractHandler;
 use EMS\FormBundle\Submit\AbstractResponse;
-use EMS\SubmissionBundle\Handler\EmailHandler;
 use EMS\SubmissionBundle\Tests\Functional\AbstractFunctionalTest;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -34,10 +33,12 @@ abstract class AbstractHandlerTest extends AbstractFunctionalTest
 
     protected function handle(FormInterface $form, string $endpoint, string $message): AbstractResponse
     {
-        $submission = new SubmissionConfig(EmailHandler::class, $endpoint, $message);
+        $handler = $this->getHandler();
+
+        $submission = new SubmissionConfig(get_class($handler), $endpoint, $message);
         $formConfig = new FormConfig('1', 'nl', 'nl');
 
-        return $this->getHandler()->handle($submission, $form, $formConfig);
+        return $handler->handle($submission, $form, $formConfig);
     }
 
     protected function createForm(): FormInterface

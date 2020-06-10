@@ -25,7 +25,7 @@ final class ServiceNowHandlerTest extends AbstractHandlerTest
 
     protected function getHandler(): AbstractHandler
     {
-        return $this->container->get('functional_test.emss.servicenowhandler');
+        return $this->container->get('functional_test.emss.handler.service_now');
     }
 
     public function testSubmitFormData(): void

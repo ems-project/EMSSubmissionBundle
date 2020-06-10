@@ -1,10 +1,12 @@
 <?php
 
-namespace EMS\SubmissionBundle\FormConfig;
+declare(strict_types=1);
 
-use EMS\SubmissionBundle\Submit\RenderedSubmission;
+namespace EMS\SubmissionBundle\Request;
 
-class ServiceNowConfig extends AbstractConfig
+use EMS\SubmissionBundle\Config\Config;
+
+final class ServiceNowRequest extends AbstractRequest
 {
     /** @var string */
     private $host;
@@ -24,10 +26,10 @@ class ServiceNowConfig extends AbstractConfig
     /** @var array<array> */
     private $attachments = [];
 
-    public function __construct(RenderedSubmission $submission)
+    public function __construct(Config $config)
     {
-        $endpoint = \json_decode($submission->getEndpoint(), true);
-        $message = \json_decode($submission->getMessage(), true);
+        $endpoint = \json_decode($config->getEndpoint(), true);
+        $message = \json_decode($config->getMessage(), true);
 
         $this->host = $endpoint['host'];
         $this->table = $endpoint['table'];

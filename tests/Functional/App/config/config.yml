@@ -25,9 +25,9 @@ services:
     alias: 'EMS\SubmissionBundle\Tests\Functional\App\HttpClient'
 
   # alias the service so we can access it in the tests
-  functional_test.emss.emailhandler:
+  functional_test.emss.handler.email:
     public: true
-    alias: emss.emailhandler
-  functional_test.emss.servicenowhandler:
+    alias: emss.handler.email
+  functional_test.emss.handler.service_now:
     public: true
-    alias: emss.servicenowhandler
+    alias: emss.handler.service_now
