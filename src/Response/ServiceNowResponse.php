@@ -20,7 +20,11 @@ final class ServiceNowResponse extends AbstractResponse
             return '';
         }
 
-        return $decodedData['result'][$property] ?? '';
+        if (isset($decodedData['result'][$property])) {
+            return (string) $decodedData['result'][$property];
+        }
+
+        return '';
     }
 
     private function deriveStatus(string $json): string
