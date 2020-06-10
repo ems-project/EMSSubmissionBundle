@@ -4,25 +4,14 @@ declare(strict_types=1);
 
 namespace EMS\SubmissionBundle\Tests\Functional\Handler;
 
-use EMS\FormBundle\FormConfig\FormConfig;
-use EMS\FormBundle\FormConfig\SubmissionConfig;
-use EMS\FormBundle\Submit\AbstractResponse;
-use EMS\SubmissionBundle\Handler\EmailHandler;
-use EMS\SubmissionBundle\Handler\ServiceNowHandler;
-use EMS\SubmissionBundle\Tests\Functional\AbstractFunctionalTest;
+use EMS\FormBundle\Handler\AbstractHandler;
 use EMS\SubmissionBundle\Tests\Functional\App\ResponseFactory;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpClient\Response\MockResponse;
 
-final class ServiceNowHandlerTest extends AbstractFunctionalTest
+final class ServiceNowHandlerTest extends AbstractHandlerTest
 {
     /** @var string */
     private $credentials;
-    /** @var ServiceNowHandler */
-    private $serviceNowHandler;
     /** @var ResponseFactory */
     private $responseFactory;
 
@@ -31,18 +20,16 @@ final class ServiceNowHandlerTest extends AbstractFunctionalTest
         parent::setUp();
 
         $this->credentials = \base64_encode(\sprintf('%s:%s', 'userA', 'passB')); //see config.yml
-        $this->serviceNowHandler = $this->container->get('functional_test.emss.servicenowhandler');
         $this->responseFactory = $this->container->get(ResponseFactory::class);
+    }
+
+    protected function getHandler(): AbstractHandler
+    {
+        return $this->container->get('functional_test.emss.handler.service_now');
     }
 
     public function testSubmitFormData(): void
     {
-        $data = ['name' => 'David', 'email' => 'user1@test.test'];
-        $form = $this->formFactory->createBuilder(FormType::class, $data, [])
-            ->add('name', TextType::class)
-            ->add('email', EmailType::class)
-            ->getForm();
-
         $endpoint = json_encode([
             'host' => 'https://example.service-now.com',
             'table' => 'table_name',
@@ -50,17 +37,16 @@ final class ServiceNowHandlerTest extends AbstractFunctionalTest
             'username' => "{{'service-now-instance-a%.%user'|emss_connection}}",
             'password' => "{{'service-now-instance-a%.%password'|emss_connection}}",
         ]);
-
         $message = json_encode([
            'body' => [
                'title' => 'Test serviceNow',
-               'name' => '{{ data.name }}',
+               'name' => '{{ data.first_name }}',
            ],
         ]);
 
         $this->responseFactory->setCallback(function (string $method, string $url, array $options = []) {
             if ('POST' === $method && 'https://example.service-now.com/api/now/v1/table/table_name' === $url) {
-                $this->assertEquals('{"title":"Test serviceNow","name":"David"}', $options['body']);
+                $this->assertEquals('{"title":"Test serviceNow","name":"testFirstName"}', $options['body']);
                 $this->assertEquals('19', $options['timeout']); //see config.yml
 
                 $this->assertSame([
@@ -77,7 +63,7 @@ final class ServiceNowHandlerTest extends AbstractFunctionalTest
 
         $this->assertEquals(
             '{"status":"success","data":"{\"message\": \"example\"}"}',
-            $this->handle($form, $endpoint, $message)->getResponse()
+            $this->handle($this->createForm(), $endpoint, $message)->getResponse()
         );
     }
 
@@ -91,11 +77,10 @@ final class ServiceNowHandlerTest extends AbstractFunctionalTest
             'username' => "{{'service-now-instance-a%.%user'|emss_connection}}",
             'password' => "{{'service-now-instance-a%.%password'|emss_connection}}",
         ]);
-
         $message = json_encode([
             'body' => [
                 'title' => 'Test serviceNow',
-                'name' => '{{ data.name }}',
+                'info' => '{{ data.info }}',
             ],
             'attachments' => [
                 'file1' => [
@@ -121,6 +106,8 @@ final class ServiceNowHandlerTest extends AbstractFunctionalTest
         $this->responseFactory->setCallback(
             function (string $method, string $url, array $options = []) use ($attachmentUrls, $sysId) {
                 if ('https://example.service-now.com/api/now/v1/table/table_name' === $url) {
+                    $this->assertEquals('{"title":"Test serviceNow","info":"Uploaded 2 files"}', $options['body']);
+
                     return new MockResponse(\json_encode(['result' => ['sys_id' => $sysId]]));
                 }
 
@@ -140,7 +127,7 @@ final class ServiceNowHandlerTest extends AbstractFunctionalTest
 
         $this->assertEquals(
             '{"status":"success","data":"{\"result\":{\"sys_id\":98765}}"}',
-            $this->handle($this->createUploadFilesForm(), $endpoint, $message)->getResponse()
+            $this->handle($this->createFormUploadFiles(), $endpoint, $message)->getResponse()
         );
     }
 
@@ -175,15 +162,7 @@ final class ServiceNowHandlerTest extends AbstractFunctionalTest
 
         $this->assertEquals(
             '{"status":"error","data":"Submission failed, contact your admin. (Attachment submission failed: HTTP 404 returned for \"https:\/\/example.service-now.com\/api\/now\/v1\/attachment\/file?file_name=attachment.txt&table_name=table_name&table_sys_id=\".)"}',
-            $this->handle($this->createUploadFilesForm(), $endpoint, $message)->getResponse()
+            $this->handle($this->createFormUploadFiles(), $endpoint, $message)->getResponse()
         );
-    }
-
-    private function handle(FormInterface $form, string $endpoint, string $message): AbstractResponse
-    {
-        $submission = new SubmissionConfig(EmailHandler::class, $endpoint, $message);
-        $formConfig = new FormConfig('1', 'nl', 'nl');
-
-        return $this->serviceNowHandler->handle($submission, $form, $formConfig);
     }
 }

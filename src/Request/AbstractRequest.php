@@ -1,8 +1,10 @@
 <?php
 
-namespace EMS\SubmissionBundle\FormConfig;
+declare(strict_types=1);
 
-abstract class AbstractConfig
+namespace EMS\SubmissionBundle\Request;
+
+abstract class AbstractRequest
 {
     protected function sanitiseQuotes(string $string): ?string
     {

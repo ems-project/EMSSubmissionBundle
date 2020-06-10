@@ -4,55 +4,45 @@ declare(strict_types=1);
 
 namespace EMS\SubmissionBundle\Tests\Functional\Handler;
 
-use EMS\FormBundle\FormConfig\FormConfig;
-use EMS\FormBundle\FormConfig\SubmissionConfig;
-use EMS\FormBundle\Submit\AbstractResponse;
-use EMS\SubmissionBundle\Handler\EmailHandler;
-use EMS\SubmissionBundle\Tests\Functional\AbstractFunctionalTest;
+use EMS\FormBundle\Handler\AbstractHandler;
 use Swift_Events_SendEvent;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\FormInterface;
 
-final class EmailHandlerTest extends AbstractFunctionalTest
+final class EmailHandlerTest extends AbstractHandlerTest
 {
-    /** @var EmailHandler */
-    private $emailHandler;
     /** @var \Swift_Mailer */
     private $mailer;
 
     protected function setUp(): void
     {
         parent::setUp();
-
-        $this->emailHandler = $this->container->get('functional_test.emss.emailhandler');
         $this->mailer = $this->container->get('mailer');
+    }
+
+    protected function getHandler(): AbstractHandler
+    {
+        return $this->container->get('functional_test.emss.handler.email');
     }
 
     public function testSubmitFormData(): void
     {
-        $data = ['name' => 'David', 'email' => 'user1@test.test'];
-        $form = $this->formFactory->createBuilder(FormType::class, $data, [])
-            ->add('name', TextType::class)
-            ->add('email', EmailType::class)
-            ->getForm();
-
         $endpoint = '{{ data.email }}';
         $message = json_encode([
             'from' => 'noreply@test.test',
             'subject' => 'Test submission',
-            'body' => 'Hi my name is {{ data.name }}',
+            'body' => 'Hi my name is {{ data.first_name }} {{ data.last_name }}',
         ]);
 
-        $handle = $this->handle($form, $endpoint, $message, function (Swift_Events_SendEvent $evt) {
+        $this->mailListener(function (Swift_Events_SendEvent $evt) {
             $this->assertEquals(['user1@test.test'], array_keys($evt->getMessage()->getTo()));
             $this->assertEquals(['noreply@test.test'], array_keys($evt->getMessage()->getFrom()));
             $this->assertEquals('Test submission', $evt->getMessage()->getSubject());
-            $this->assertEquals('Hi my name is David', $evt->getMessage()->getBody());
+            $this->assertEquals('Hi my name is testFirstName testLastName', $evt->getMessage()->getBody());
         });
 
-        $this->assertEquals('{"status":"success","data":"Submission send by mail."}', $handle->getResponse());
+        $this->assertEquals(
+            '{"status":"success","data":"Submission send by mail."}',
+            $this->handle($this->createForm(), $endpoint, $message)->getResponse()
+        );
     }
 
     public function testSubmitMultipleFiles(): void
@@ -76,7 +66,7 @@ final class EmailHandlerTest extends AbstractFunctionalTest
             ],
         ]);
 
-        $handle = $this->handle($this->createUploadFilesForm(), $endpoint, $message, function (Swift_Events_SendEvent $evt) {
+        $this->mailListener(function (Swift_Events_SendEvent $evt) {
             $this->assertEquals('attachment.txt | attachment2.txt', $evt->getMessage()->getBody());
 
             /** @var \Swift_Attachment[] $children */
@@ -89,46 +79,37 @@ final class EmailHandlerTest extends AbstractFunctionalTest
             $this->assertEquals('Text example attachment2', $children[1]->getBody());
         });
 
-        $this->assertEquals('{"status":"success","data":"Submission send by mail."}', $handle->getResponse());
+        $this->assertEquals(
+            '{"status":"success","data":"Submission send by mail."}',
+            $this->handle($this->createFormUploadFiles(), $endpoint, $message)->getResponse()
+        );
     }
 
     public function testEmptyEndpoint(): void
     {
-        $form = $this->formFactory->createBuilder(FormType::class, [], [])->getForm();
         $message = json_encode([
             'from' => 'noreply@test.test',
             'subject' => 'Test submission',
             'body' => 'example',
         ]);
-        $handle = $this->handle($form, '', $message);
 
         $this->assertEquals(
             '{"status":"error","data":"Submission failed, contact your admin. Address in mailbox given [] does not comply with RFC 2822, 3.6.2."}',
-            $handle->getResponse()
+            $this->handle($this->createForm(), '', $message)->getResponse()
         );
     }
 
     public function testEmptyMessage(): void
     {
-        $form = $this->formFactory->createBuilder(FormType::class, [], [])->getForm();
-
-        $handle = $this->handle($form, 'user@example.com', '', function (Swift_Events_SendEvent $evt) {
-            $this->assertEquals(['user@example.com'], array_keys($evt->getMessage()->getTo()));
-            $this->assertEquals(['noreply@elasticms.eu'], array_keys($evt->getMessage()->getFrom()));
-            $this->assertEquals('Email submission', $evt->getMessage()->getSubject());
-            $this->assertEquals('', $evt->getMessage()->getBody());
-        });
-
         $this->assertEquals(
             '{"status":"error","data":"Submission failed, contact your admin. From email address not defined."}',
-            $handle->getResponse()
+            $this->handle($this->createForm(), 'user@example.com', '')->getResponse()
         );
     }
 
     public function testFailedRecipients(): void
     {
         $message = json_encode(['from' => 'noreply@elasticms.eu']);
-        $form = $this->formFactory->createBuilder(FormType::class, [], [])->getForm();
 
         $this->mailer->registerPlugin(new class() implements \Swift_Events_SendListener {
             public function beforeSendPerformed(Swift_Events_SendEvent $evt)
@@ -143,36 +124,29 @@ final class EmailHandlerTest extends AbstractFunctionalTest
 
         $this->assertEquals(
             '{"status":"error","data":"Submission failed. Conctact your admin."}',
-            $this->handle($form, 'user@example.com', $message)->getResponse()
+            $this->handle($this->createForm(), 'user@example.com', $message)->getResponse()
         );
     }
 
-    private function handle(FormInterface $form, string $endpoint, string $message, callable $emailAssert = null): AbstractResponse
+    private function mailListener(callable $callback): void
     {
-        $submission = new SubmissionConfig(EmailHandler::class, $endpoint, $message);
-        $formConfig = new FormConfig('1', 'nl', 'nl');
+        $this->mailer->registerPlugin(new class($callback) implements \Swift_Events_SendListener {
+            /** @var callable */
+            private $callback;
 
-        if ($emailAssert) {
-            $this->mailer->registerPlugin(new class($emailAssert) implements \Swift_Events_SendListener {
-                /** @var callable */
-                private $callback;
+            public function __construct(callable $callback)
+            {
+                $this->callback = $callback;
+            }
 
-                public function __construct(callable $callback)
-                {
-                    $this->callback = $callback;
-                }
+            public function beforeSendPerformed(Swift_Events_SendEvent $evt)
+            {
+            }
 
-                public function beforeSendPerformed(Swift_Events_SendEvent $evt)
-                {
-                }
-
-                public function sendPerformed(Swift_Events_SendEvent $evt)
-                {
-                    ($this->callback)($evt);
-                }
-            });
-        }
-
-        return $this->emailHandler->handle($submission, $form, $formConfig);
+            public function sendPerformed(Swift_Events_SendEvent $evt)
+            {
+                ($this->callback)($evt);
+            }
+        });
     }
 }

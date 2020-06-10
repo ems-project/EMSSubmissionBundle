@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace EMS\SubmissionBundle\Handler;
 
 use EMS\FormBundle\FormConfig\FormConfig;
@@ -7,22 +9,22 @@ use EMS\FormBundle\FormConfig\SubmissionConfig;
 use EMS\FormBundle\Handler\AbstractHandler;
 use EMS\FormBundle\Submit\AbstractResponse;
 use EMS\FormBundle\Submit\FailedResponse;
-use EMS\SubmissionBundle\FormConfig\EmailConfig;
-use EMS\SubmissionBundle\Service\SubmissionRenderer;
-use EMS\SubmissionBundle\Submit\EmailResponse;
+use EMS\SubmissionBundle\Config\ConfigFactory;
+use EMS\SubmissionBundle\Request\EmailRequest;
+use EMS\SubmissionBundle\Response\EmailResponse;
 use Symfony\Component\Form\FormInterface;
 
-class EmailHandler extends AbstractHandler
+final class EmailHandler extends AbstractHandler
 {
+    /** @var ConfigFactory */
+    private $configFactory;
     /** @var \Swift_Mailer */
     private $mailer;
-    /** @var SubmissionRenderer */
-    private $renderer;
 
-    public function __construct(\Swift_Mailer $mailer, SubmissionRenderer $renderer)
+    public function __construct(ConfigFactory $configFactory, \Swift_Mailer $mailer)
     {
+        $this->configFactory = $configFactory;
         $this->mailer = $mailer;
-        $this->renderer = $renderer;
     }
 
     /**
@@ -31,14 +33,14 @@ class EmailHandler extends AbstractHandler
     public function handle(SubmissionConfig $submission, FormInterface $form, FormConfig $config, AbstractResponse $previousResponse = null): AbstractResponse
     {
         try {
-            $renderedSubmission = $this->renderer->render($submission, $form, $config, $previousResponse);
-            $email = new EmailConfig($renderedSubmission);
-            $message = (new \Swift_Message($email->getSubject()))
-                ->setFrom($email->getFrom())
-                ->setTo($email->getEndpoint())
-                ->setBody($email->getBody());
+            $config = $this->configFactory->create($submission, $form, $config, $previousResponse);
+            $emailRequest = new EmailRequest($config);
+            $message = (new \Swift_Message($emailRequest->getSubject()))
+                ->setFrom($emailRequest->getFrom())
+                ->setTo($emailRequest->getEndpoint())
+                ->setBody($emailRequest->getBody());
 
-            $this->addAttachments($message, $email->getAttachments());
+            $this->addAttachments($message, $emailRequest->getAttachments());
         } catch (\Exception $exception) {
             return new FailedResponse(sprintf('Submission failed, contact your admin. %s', $exception->getMessage()));
         }

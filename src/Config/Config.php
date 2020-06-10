@@ -1,8 +1,10 @@
 <?php
 
-namespace EMS\SubmissionBundle\Submit;
+declare(strict_types=1);
 
-class RenderedSubmission
+namespace EMS\SubmissionBundle\Config;
+
+final class Config
 {
     /** @var string */
     private $class;

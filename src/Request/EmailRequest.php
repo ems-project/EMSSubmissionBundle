@@ -1,10 +1,12 @@
 <?php
 
-namespace EMS\SubmissionBundle\FormConfig;
+declare(strict_types=1);
 
-use EMS\SubmissionBundle\Submit\RenderedSubmission;
+namespace EMS\SubmissionBundle\Request;
 
-class EmailConfig extends AbstractConfig
+use EMS\SubmissionBundle\Config\Config;
+
+final class EmailRequest extends AbstractRequest
 {
     /** @var string */
     private $endpoint;
@@ -17,10 +19,10 @@ class EmailConfig extends AbstractConfig
     /** @var array<array> */
     private $attachments = [];
 
-    public function __construct(RenderedSubmission $submission)
+    public function __construct(Config $config)
     {
-        $this->endpoint = $submission->getEndpoint();
-        $message = \json_decode($submission->getMessage(), true);
+        $this->endpoint = $config->getEndpoint();
+        $message = \json_decode($config->getMessage(), true);
 
         if (!isset($message['from'])) {
             throw new \Exception(sprintf('From email address not defined.'));

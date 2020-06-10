@@ -1,10 +1,12 @@
 <?php
 
-namespace EMS\SubmissionBundle\Submit;
+declare(strict_types=1);
+
+namespace EMS\SubmissionBundle\Response;
 
 use EMS\FormBundle\Submit\AbstractResponse;
 
-class EmailResponse extends AbstractResponse
+final class EmailResponse extends AbstractResponse
 {
     public function __construct(string $status)
     {
