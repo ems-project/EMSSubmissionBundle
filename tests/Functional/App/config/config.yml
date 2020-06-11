@@ -28,6 +28,9 @@ services:
   functional_test.emss.handler.email:
     public: true
     alias: emss.handler.email
+  functional_test.emss.handler.pdf:
+    public: true
+    alias: emss.handler.pdf
   functional_test.emss.handler.service_now:
     public: true
     alias: emss.handler.service_now

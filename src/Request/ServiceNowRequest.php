@@ -6,7 +6,7 @@ namespace EMS\SubmissionBundle\Request;
 
 use EMS\SubmissionBundle\Config\Config;
 
-final class ServiceNowRequest extends AbstractRequest
+final class ServiceNowRequest
 {
     /** @var string */
     private $host;
@@ -44,7 +44,7 @@ final class ServiceNowRequest extends AbstractRequest
         }
 
         if (!empty($message['attachments'])) {
-            $this->attachments = $this->sanitiseAttachments($message['attachments']);
+            $this->attachments = $message['attachments'];
         }
     }
 

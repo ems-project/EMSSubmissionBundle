@@ -11,6 +11,11 @@
             <argument type="service" id="mailer"/>
             <tag name="emsf.handler" />
         </service>
+        <service id="emss.handler.pdf" class="EMS\SubmissionBundle\Handler\PdfHandler">
+            <argument type="service" id="emss.config.factory"/>
+            <argument type="service" id="EMS\CommonBundle\Service\Pdf\PdfPrinterInterface"/>
+            <tag name="emsf.handler" />
+        </service>
         <service id="emss.handler.service_now" class="EMS\SubmissionBundle\Handler\ServiceNowHandler">
             <argument type="service" id="emss.config.factory"/>
             <argument type="service" id="Symfony\Contracts\HttpClient\HttpClientInterface"/>

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace EMS\SubmissionBundle\Tests\Functional\Handler;
 
-use EMS\FormBundle\Handler\AbstractHandler;
+use EMS\FormBundle\Submission\AbstractHandler;
 use Swift_Events_SendEvent;
 
 final class EmailHandlerTest extends AbstractHandlerTest
@@ -48,35 +48,19 @@ final class EmailHandlerTest extends AbstractHandlerTest
     public function testSubmitMultipleFiles(): void
     {
         $endpoint = 'test@example.com';
-        $message = json_encode([
-            'from' => 'noreply@test.test',
-            'subject' => 'Test multiple file upload',
-            'body' => "{{ data.files|map(v => v.getClientOriginalName())|join(' | ') }}",
-            'attachments' => [
-                'file1' => [
-                    'pathname' => '{{ data.files.0.getPathname()|json_encode }}',
-                    'originalName' => '{{ data.files.0.getClientOriginalName() }}',
-                    'mimeType' => '{{ data.files.0.getClientMimeType() }}',
-                ],
-                'file2' => [
-                    'pathname' => '{{ data.files.1.getPathname()|json_encode }}',
-                    'originalName' => '{{ data.files.1.getClientOriginalName() }}',
-                    'mimeType' => '{{ data.files.1.getClientMimeType() }}',
-                ],
-            ],
-        ]);
+        $message = file_get_contents(__DIR__.'/../fixtures/twig/message_email.twig');
 
         $this->mailListener(function (Swift_Events_SendEvent $evt) {
             $this->assertEquals('attachment.txt | attachment2.txt', $evt->getMessage()->getBody());
 
-            /** @var \Swift_Attachment[] $children */
-            $children = $evt->getMessage()->getChildren();
+            /** @var \Swift_Attachment[] $attachments */
+            $attachments = $evt->getMessage()->getChildren();
 
-            $this->assertEquals('attachment.txt', $children[0]->getFilename());
-            $this->assertEquals('Text example attachment', $children[0]->getBody());
+            $this->assertEquals('attachment.txt', $attachments[0]->getFilename());
+            $this->assertEquals('Text example attachment', $attachments[0]->getBody());
 
-            $this->assertEquals('attachment2.txt', $children[1]->getFilename());
-            $this->assertEquals('Text example attachment2', $children[1]->getBody());
+            $this->assertEquals('attachment2.txt', $attachments[1]->getFilename());
+            $this->assertEquals('Text example attachment2', $attachments[1]->getBody());
         });
 
         $this->assertEquals(

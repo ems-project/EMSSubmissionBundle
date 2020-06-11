@@ -6,8 +6,10 @@ namespace EMS\SubmissionBundle\Tests\Functional\Handler;
 
 use EMS\FormBundle\FormConfig\FormConfig;
 use EMS\FormBundle\FormConfig\SubmissionConfig;
-use EMS\FormBundle\Handler\AbstractHandler;
-use EMS\FormBundle\Submit\AbstractResponse;
+use EMS\FormBundle\Submission\AbstractHandler;
+use EMS\FormBundle\Submission\HandleRequest;
+use EMS\FormBundle\Submission\HandleResponseCollector;
+use EMS\FormBundle\Submission\HandleResponseInterface;
 use EMS\SubmissionBundle\Tests\Functional\AbstractFunctionalTest;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -22,36 +24,42 @@ abstract class AbstractHandlerTest extends AbstractFunctionalTest
 {
     /** @var FormFactoryInterface */
     protected $formFactory;
+    /** @var FormConfig */
+    protected $formConfig;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->formFactory = Forms::createFormFactoryBuilder()->getFormFactory();
+        $this->formConfig = new FormConfig('1', 'nl', 'test_test');
     }
 
     abstract protected function getHandler(): AbstractHandler;
 
-    protected function handle(FormInterface $form, string $endpoint, string $message): AbstractResponse
+    protected function handle(FormInterface $form, string $endpoint, string $message): HandleResponseInterface
     {
         $handler = $this->getHandler();
+        $submissionConfig = new SubmissionConfig(get_class($handler), $endpoint, $message);
 
-        $submission = new SubmissionConfig(get_class($handler), $endpoint, $message);
-        $formConfig = new FormConfig('1', 'nl', 'nl');
+        $handleRequest = new HandleRequest($form, $this->formConfig, new HandleResponseCollector(), $submissionConfig);
 
-        return $handler->handle($submission, $form, $formConfig);
+        return $handler->handle($handleRequest);
     }
 
-    protected function createForm(): FormInterface
+    protected function createForm(array $data = []): FormInterface
     {
-        $data = [
-            'first_name' => 'testFirstName',
-            'last_name' => 'testLastName',
-            'email' => 'user1@test.test',
-        ];
+        if (null == $data) {
+            $data = [
+                'first_name' => 'testFirstName',
+                'last_name' => 'testLastName',
+                'email' => 'user1@test.test',
+            ];
+        }
 
         return $this->formFactory->createBuilder(FormType::class, $data, [])
             ->add('first_name', TextType::class)
             ->add('last_name', TextType::class)
+            ->add('info', TextType::class)
             ->add('email', EmailType::class)
             ->getForm();
     }
@@ -61,8 +69,8 @@ abstract class AbstractHandlerTest extends AbstractFunctionalTest
         $data = [
             'info' => 'Uploaded 2 files',
             'files' => [
-                new UploadedFile(__DIR__.'/../../files/attachment.txt', 'attachment.txt', 'text/plain'),
-                new UploadedFile(__DIR__.'/../../files/attachment2.txt', 'attachment2.txt', 'text/plain'),
+                new UploadedFile(__DIR__.'/../fixtures/files/attachment.txt', 'attachment.txt', 'text/plain'),
+                new UploadedFile(__DIR__.'/../fixtures/files/attachment2.txt', 'attachment2.txt', 'text/plain'),
             ],
         ];
 

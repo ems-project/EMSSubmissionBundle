@@ -6,7 +6,7 @@ namespace EMS\SubmissionBundle\Request;
 
 use EMS\SubmissionBundle\Config\Config;
 
-final class EmailRequest extends AbstractRequest
+final class EmailRequest
 {
     /** @var string */
     private $endpoint;
@@ -17,7 +17,7 @@ final class EmailRequest extends AbstractRequest
     /** @var string */
     private $body = '';
     /** @var array<array> */
-    private $attachments = [];
+    private $attachments;
 
     public function __construct(Config $config)
     {
@@ -30,14 +30,8 @@ final class EmailRequest extends AbstractRequest
 
         $this->from = $message['from'];
         $this->subject = $message['subject'] ?? 'Email submission';
-
-        if (!empty($message['body'])) {
-            $this->body = $this->sanitiseQuotes($message['body']) ?? '';
-        }
-
-        if (!empty($message['attachments'])) {
-            $this->attachments = $this->sanitiseAttachments($message['attachments']);
-        }
+        $this->body = $message['body'] ?? '';
+        $this->attachments = $message['attachments'] ?? [];
     }
 
     public function getEndpoint(): string
