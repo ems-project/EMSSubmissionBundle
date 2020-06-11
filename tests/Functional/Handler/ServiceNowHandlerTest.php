@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace EMS\SubmissionBundle\Tests\Functional\Handler;
 
-use EMS\FormBundle\Handler\AbstractHandler;
+use EMS\FormBundle\Submission\AbstractHandler;
 use EMS\SubmissionBundle\Tests\Functional\App\ResponseFactory;
 use Symfony\Component\HttpClient\Response\MockResponse;
 
@@ -77,24 +77,7 @@ final class ServiceNowHandlerTest extends AbstractHandlerTest
             'username' => "{{'service-now-instance-a%.%user'|emss_connection}}",
             'password' => "{{'service-now-instance-a%.%password'|emss_connection}}",
         ]);
-        $message = json_encode([
-            'body' => [
-                'title' => 'Test serviceNow',
-                'info' => '{{ data.info }}',
-            ],
-            'attachments' => [
-                'file1' => [
-                    'pathname' => '{{ data.files.0.getPathname()|json_encode }}',
-                    'originalName' => '{{ data.files.0.getClientOriginalName() }}',
-                    'mimeType' => '{{ data.files.0.getClientMimeType() }}',
-                ],
-                'file2' => [
-                    'pathname' => '{{ data.files.1.getPathname()|json_encode }}',
-                    'originalName' => '{{ data.files.1.getClientOriginalName() }}',
-                    'mimeType' => '{{ data.files.1.getClientMimeType() }}',
-                ],
-            ],
-        ]);
+        $message = file_get_contents(__DIR__.'/../fixtures/twig/message_service_now.twig');
 
         $attachmentUrl = 'https://example.service-now.com/api/now/v1/attachment/file';
         $sysId = 98765;
@@ -109,6 +92,10 @@ final class ServiceNowHandlerTest extends AbstractHandlerTest
                     $this->assertEquals('{"title":"Test serviceNow","info":"Uploaded 2 files"}', $options['body']);
 
                     return new MockResponse(\json_encode(['result' => ['sys_id' => $sysId]]));
+                }
+
+                if ($url === $attachmentUrls[0]) {
+                    $this->assertEquals('Text example attachment', $options['body']);
                 }
 
                 if (in_array($url, $attachmentUrls)) {
@@ -141,16 +128,7 @@ final class ServiceNowHandlerTest extends AbstractHandlerTest
             'username' => "{{'service-now-instance-a%.%user'|emss_connection}}",
             'password' => "{{'service-now-instance-a%.%password'|emss_connection}}",
         ]);
-        $message = json_encode([
-            'body' => '',
-            'attachments' => [
-                'file1' => [
-                    'pathname' => '{{ data.files.0.getPathname()|json_encode }}',
-                    'originalName' => '{{ data.files.0.getClientOriginalName() }}',
-                    'mimeType' => '{{ data.files.0.getClientMimeType() }}',
-                ],
-            ],
-        ]);
+        $message = file_get_contents(__DIR__.'/../fixtures/twig/message_service_now.twig');
 
         $this->responseFactory->setCallback(function (string $method, string $url, array $options = []) {
             if ('https://example.service-now.com/api/now/v1/table/table_name' === $url) {

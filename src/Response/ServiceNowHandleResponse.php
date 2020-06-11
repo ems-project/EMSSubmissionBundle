@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace EMS\SubmissionBundle\Response;
 
-use EMS\FormBundle\Submit\AbstractResponse;
+use EMS\FormBundle\Submission\AbstractHandleResponse;
 
-final class ServiceNowResponse extends AbstractResponse
+final class ServiceNowHandleResponse extends AbstractHandleResponse
 {
     public function __construct(string $json)
     {

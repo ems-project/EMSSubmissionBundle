@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace EMS\SubmissionBundle\Config;
 
-use EMS\FormBundle\FormConfig\FormConfig;
-use EMS\FormBundle\FormConfig\SubmissionConfig;
-use EMS\FormBundle\Submit\AbstractResponse;
-use Symfony\Component\Form\FormInterface;
+use EMS\FormBundle\Submission\HandleRequestInterface;
 use Twig\Environment;
 
 final class ConfigFactory
@@ -20,17 +17,20 @@ final class ConfigFactory
         $this->templating = $templating;
     }
 
-    /**
-     * @param FormInterface<FormInterface> $form
-     */
-    public function create(SubmissionConfig $submission, FormInterface $form, FormConfig $config, AbstractResponse $response = null): Config
+    public function create(HandleRequestInterface $handleRequest): Config
     {
-        $endpointTemplate = $this->templating->createTemplate($submission->getEndpoint());
-        $endpoint = $endpointTemplate->render(['config' => $config, 'data' => $form->getData()]);
+        $context = [
+            'config' => $handleRequest->getFormConfig(),
+            'data' => $handleRequest->getFormData(),
+            'request' => $handleRequest,
+        ];
 
-        $messageTemplate = $this->templating->createTemplate($submission->getMessage());
-        $message = $messageTemplate->render(['config' => $config, 'data' => $form->getData(), 'previous' => $response]);
+        $endpointTemplate = $this->templating->createTemplate($handleRequest->getEndPoint());
+        $endpoint = $endpointTemplate->render($context);
 
-        return new Config($submission->getClass(), $endpoint, $message);
+        $messageTemplate = $this->templating->createTemplate($handleRequest->getMessage());
+        $message = $messageTemplate->render($context);
+
+        return new Config($endpoint, $message);
     }
 }

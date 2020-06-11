@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace EMS\SubmissionBundle\Handler;
 
-use EMS\FormBundle\FormConfig\FormConfig;
-use EMS\FormBundle\FormConfig\SubmissionConfig;
-use EMS\FormBundle\Handler\AbstractHandler;
-use EMS\FormBundle\Submit\AbstractResponse;
-use EMS\FormBundle\Submit\FailedResponse;
+use EMS\FormBundle\Submission\AbstractHandler;
+use EMS\FormBundle\Submission\FailedHandleResponse;
+use EMS\FormBundle\Submission\HandleRequestInterface;
+use EMS\FormBundle\Submission\HandleResponseInterface;
 use EMS\SubmissionBundle\Config\ConfigFactory;
 use EMS\SubmissionBundle\Request\EmailRequest;
-use EMS\SubmissionBundle\Response\EmailResponse;
-use Symfony\Component\Form\FormInterface;
+use EMS\SubmissionBundle\Response\EmailHandleResponse;
 
 final class EmailHandler extends AbstractHandler
 {
@@ -27,43 +25,51 @@ final class EmailHandler extends AbstractHandler
         $this->mailer = $mailer;
     }
 
-    /**
-     * @param FormInterface<FormInterface> $form
-     */
-    public function handle(SubmissionConfig $submission, FormInterface $form, FormConfig $config, AbstractResponse $previousResponse = null): AbstractResponse
+    public function handle(HandleRequestInterface $handleRequest): HandleResponseInterface
     {
         try {
-            $config = $this->configFactory->create($submission, $form, $config, $previousResponse);
+            $config = $this->configFactory->create($handleRequest);
             $emailRequest = new EmailRequest($config);
             $message = (new \Swift_Message($emailRequest->getSubject()))
                 ->setFrom($emailRequest->getFrom())
                 ->setTo($emailRequest->getEndpoint())
                 ->setBody($emailRequest->getBody());
 
-            $this->addAttachments($message, $emailRequest->getAttachments());
+            foreach ($this->createAttachments($emailRequest) as $attachment) {
+                $message->attach($attachment);
+            }
         } catch (\Exception $exception) {
-            return new FailedResponse(sprintf('Submission failed, contact your admin. %s', $exception->getMessage()));
+            return new FailedHandleResponse(sprintf('Submission failed, contact your admin. %s', $exception->getMessage()));
         }
 
         $failedRecipients = [];
         $this->mailer->send($message, $failedRecipients);
 
         if ($failedRecipients !== []) {
-            return new FailedResponse('Submission failed. Conctact your admin.');
+            return new FailedHandleResponse('Submission failed. Conctact your admin.');
         }
 
-        return new EmailResponse(AbstractResponse::STATUS_SUCCESS);
+        return new EmailHandleResponse($message);
     }
 
     /**
-     * @param array<array> $attachments
+     * @return \Traversable<\Swift_Attachment>
      */
-    private function addAttachments(\Swift_Message $message, array $attachments): void
+    private function createAttachments(EmailRequest $emailRequest): \Traversable
     {
-        foreach ($attachments as $attachment) {
-            $message->attach(
-                \Swift_Attachment::fromPath($attachment['pathname'], $attachment['mimeType'])->setFilename($attachment['originalName'])
-            );
+        foreach ($emailRequest->getAttachments() as $attachment) {
+            if (isset($attachment['pdf']) && isset($attachment['filename'])) {
+                $data = base64_decode($attachment['pdf']);
+
+                yield new \Swift_Attachment($data, $attachment['filename'], 'application/pdf');
+                continue;
+            }
+
+            if (isset($attachment['pathname']) && isset($attachment['mimeType']) && isset($attachment['originalName'])) {
+                $swiftAttachment = \Swift_Attachment::fromPath($attachment['pathname'], $attachment['mimeType']);
+                $swiftAttachment->setFilename($attachment['originalName']);
+                yield $swiftAttachment;
+            }
         }
     }
 }

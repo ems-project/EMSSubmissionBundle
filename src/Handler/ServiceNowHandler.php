@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace EMS\SubmissionBundle\Handler;
 
-use EMS\FormBundle\FormConfig\FormConfig;
-use EMS\FormBundle\FormConfig\SubmissionConfig;
-use EMS\FormBundle\Handler\AbstractHandler;
-use EMS\FormBundle\Submit\AbstractResponse;
-use EMS\FormBundle\Submit\FailedResponse;
+use EMS\FormBundle\Submission\AbstractHandler;
+use EMS\FormBundle\Submission\FailedHandleResponse;
+use EMS\FormBundle\Submission\HandleRequestInterface;
+use EMS\FormBundle\Submission\HandleResponseInterface;
 use EMS\SubmissionBundle\Config\ConfigFactory;
 use EMS\SubmissionBundle\Request\ServiceNowRequest;
-use EMS\SubmissionBundle\Response\ServiceNowResponse;
-use Symfony\Component\Form\FormInterface;
+use EMS\SubmissionBundle\Response\ServiceNowHandleResponse;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class ServiceNowHandler extends AbstractHandler
@@ -31,13 +29,10 @@ final class ServiceNowHandler extends AbstractHandler
         $this->client = $httpClient;
     }
 
-    /**
-     * @param FormInterface<FormInterface> $form
-     */
-    public function handle(SubmissionConfig $submission, FormInterface $form, FormConfig $config, AbstractResponse $previousResponse = null): AbstractResponse
+    public function handle(HandleRequestInterface $handleRequest): HandleResponseInterface
     {
         try {
-            $config = $this->configFactory->create($submission, $form, $config, $previousResponse);
+            $config = $this->configFactory->create($handleRequest);
             $snow = new ServiceNowRequest($config);
 
             $response = $this->client->request('POST', $snow->getBodyEndpoint(), [
@@ -50,16 +45,16 @@ final class ServiceNowHandler extends AbstractHandler
                 'timeout' => $this->timeout,
             ]);
 
-            $serviceNowResponse = new ServiceNowResponse($response->getContent());
+            $serviceNowResponse = new ServiceNowHandleResponse($response->getContent());
             $this->addAttachments($serviceNowResponse, $snow);
 
             return $serviceNowResponse;
         } catch (\Exception $exception) {
-            return new FailedResponse(\sprintf('Submission failed, contact your admin. (%s)', $exception->getMessage()));
+            return new FailedHandleResponse(\sprintf('Submission failed, contact your admin. (%s)', $exception->getMessage()));
         }
     }
 
-    private function addAttachments(ServiceNowResponse $response, ServiceNowRequest $request): void
+    private function addAttachments(ServiceNowHandleResponse $response, ServiceNowRequest $request): void
     {
         foreach ($request->getAttachments() as $attachment) {
             $binary = $this->getBinaryFile($attachment['pathname']);
@@ -91,7 +86,7 @@ final class ServiceNowHandler extends AbstractHandler
     /**
      * @param array<array> $attachment
      */
-    private function postAttachment(ServiceNowResponse $response, ServiceNowRequest $request, array $attachment, string $binary): void
+    private function postAttachment(ServiceNowHandleResponse $response, ServiceNowRequest $request, array $attachment, string $binary): void
     {
         try {
             $this->client->request('POST', $request->getAttachmentEndpoint(), [
