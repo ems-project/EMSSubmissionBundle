@@ -28,10 +28,13 @@ final class PdfHandleResponse extends AbstractHandleResponse
         return $this->pdfRequest->getPdf()->getFilename();
     }
 
-    public function getContent(bool $encode = true): string
+    public function getContent(): string
     {
-        $content = $this->pdfOutput->make();
+        return base64_encode($this->getContentRaw());
+    }
 
-        return $encode ? base64_encode($content) : $content;
+    public function getContentRaw(): string
+    {
+        return $this->pdfOutput->make();
     }
 }

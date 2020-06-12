@@ -69,6 +69,6 @@ final class PdfHandlerTest extends AbstractHandlerTest
 
         $this->assertEquals('{"status":"success","data":"Submission send by mail."}', $emailResponse->getResponse());
         $this->assertEquals('test.pdf', $attachments[0]->getFilename());
-        $this->assertNotEmpty($pdfResponse->getContent(false), $attachments[0]->getBody());
+        $this->assertEquals($pdfResponse->getContentRaw(), $attachments[0]->getBody());
     }
 }

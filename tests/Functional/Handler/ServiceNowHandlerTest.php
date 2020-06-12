@@ -14,6 +14,8 @@ final class ServiceNowHandlerTest extends AbstractHandlerTest
     private $credentials;
     /** @var ResponseFactory */
     private $responseFactory;
+    /** @var array */
+    private $endpoint;
 
     protected function setUp(): void
     {
@@ -21,6 +23,14 @@ final class ServiceNowHandlerTest extends AbstractHandlerTest
 
         $this->credentials = \base64_encode(\sprintf('%s:%s', 'userA', 'passB')); //see config.yml
         $this->responseFactory = $this->container->get(ResponseFactory::class);
+        $this->endpoint = [
+            'host' => 'https://example.service-now.com',
+            'table' => 'table_name',
+            'bodyEndpoint' => '/api/now/v1/table',
+            'attachmentEndpoint' => '/api/now/v1/attachment/file',
+            'username' => "{{'service-now-instance-a%.%user'|emss_connection}}",
+            'password' => "{{'service-now-instance-a%.%password'|emss_connection}}",
+        ];
     }
 
     protected function getHandler(): AbstractHandler
@@ -30,13 +40,6 @@ final class ServiceNowHandlerTest extends AbstractHandlerTest
 
     public function testSubmitFormData(): void
     {
-        $endpoint = json_encode([
-            'host' => 'https://example.service-now.com',
-            'table' => 'table_name',
-            'bodyEndpoint' => '/api/now/v1/table',
-            'username' => "{{'service-now-instance-a%.%user'|emss_connection}}",
-            'password' => "{{'service-now-instance-a%.%password'|emss_connection}}",
-        ]);
         $message = json_encode([
            'body' => [
                'title' => 'Test serviceNow',
@@ -63,20 +66,12 @@ final class ServiceNowHandlerTest extends AbstractHandlerTest
 
         $this->assertEquals(
             '{"status":"success","data":"{\"message\": \"example\"}"}',
-            $this->handle($this->createForm(), $endpoint, $message)->getResponse()
+            $this->handle($this->createForm(), json_encode($this->endpoint), $message)->getResponse()
         );
     }
 
     public function testSubmitMultipleFiles(): void
     {
-        $endpoint = json_encode([
-            'host' => 'https://example.service-now.com',
-            'table' => 'table_name',
-            'bodyEndpoint' => '/api/now/v1/table',
-            'attachmentEndpoint' => '/api/now/v1/attachment/file',
-            'username' => "{{'service-now-instance-a%.%user'|emss_connection}}",
-            'password' => "{{'service-now-instance-a%.%password'|emss_connection}}",
-        ]);
         $message = file_get_contents(__DIR__.'/../fixtures/twig/message_service_now.twig');
 
         $attachmentUrl = 'https://example.service-now.com/api/now/v1/attachment/file';
@@ -114,20 +109,12 @@ final class ServiceNowHandlerTest extends AbstractHandlerTest
 
         $this->assertEquals(
             '{"status":"success","data":"{\"result\":{\"sys_id\":98765}}"}',
-            $this->handle($this->createFormUploadFiles(), $endpoint, $message)->getResponse()
+            $this->handle($this->createFormUploadFiles(), json_encode($this->endpoint), $message)->getResponse()
         );
     }
 
     public function testPostAttachmentFails()
     {
-        $endpoint = json_encode([
-            'host' => 'https://example.service-now.com',
-            'table' => 'table_name',
-            'bodyEndpoint' => '/api/now/v1/table',
-            'attachmentEndpoint' => '/api/now/v1/attachment/file',
-            'username' => "{{'service-now-instance-a%.%user'|emss_connection}}",
-            'password' => "{{'service-now-instance-a%.%password'|emss_connection}}",
-        ]);
         $message = file_get_contents(__DIR__.'/../fixtures/twig/message_service_now.twig');
 
         $this->responseFactory->setCallback(function (string $method, string $url, array $options = []) {
@@ -140,7 +127,53 @@ final class ServiceNowHandlerTest extends AbstractHandlerTest
 
         $this->assertEquals(
             '{"status":"error","data":"Submission failed, contact your admin. (Attachment submission failed: HTTP 404 returned for \"https:\/\/example.service-now.com\/api\/now\/v1\/attachment\/file?file_name=attachment.txt&table_name=table_name&table_sys_id=\".)"}',
-            $this->handle($this->createFormUploadFiles(), $endpoint, $message)->getResponse()
+            $this->handle($this->createFormUploadFiles(), json_encode($this->endpoint), $message)->getResponse()
+        );
+    }
+
+    public function testResponseFailure()
+    {
+        $message = file_get_contents(__DIR__.'/../fixtures/twig/message_service_now.twig');
+        $fileUrl = 'https://example.service-now.com/api/now/v1/attachment/file?file_name=attachment.txt&table_name=table_name&table_sys_id=';
+
+        $this->responseFactory->setCallback(function (string $method, string $url, array $options = []) use ($fileUrl) {
+            if ('POST' === $method && 'https://example.service-now.com/api/now/v1/table/table_name' === $url) {
+                return new MockResponse('{"status": "failure", "message": "example"}');
+            }
+
+            if ($fileUrl === $url) {
+                $this->assertEmpty($options['query']['table_sys_id']);
+            }
+
+            return new MockResponse('{}');
+        });
+
+        $this->assertEquals(
+            '{"status":"error","data":"{\"status\": \"failure\", \"message\": \"example\"}"}',
+            $this->handle($this->createFormUploadFiles(), json_encode($this->endpoint), $message)->getResponse()
+        );
+    }
+
+    public function testResponseInvalidJson()
+    {
+        $message = file_get_contents(__DIR__.'/../fixtures/twig/message_service_now.twig');
+        $fileUrl = 'https://example.service-now.com/api/now/v1/attachment/file?file_name=attachment.txt&table_name=table_name&table_sys_id=';
+
+        $this->responseFactory->setCallback(function (string $method, string $url, array $options = []) use ($fileUrl) {
+            if ('POST' === $method && 'https://example.service-now.com/api/now/v1/table/table_name' === $url) {
+                return new MockResponse('invalid json test');
+            }
+
+            if ($fileUrl === $url) {
+                $this->assertEmpty($options['query']['table_sys_id']);
+            }
+
+            return new MockResponse('{}');
+        });
+
+        $this->assertEquals(
+            '{"status":"error","data":"invalid json test"}',
+            $this->handle($this->createFormUploadFiles(), json_encode($this->endpoint), $message)->getResponse()
         );
     }
 }

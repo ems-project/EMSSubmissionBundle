@@ -11,6 +11,7 @@ use EMS\FormBundle\Submission\HandleResponseInterface;
 use EMS\SubmissionBundle\Config\ConfigFactory;
 use EMS\SubmissionBundle\Request\ServiceNowRequest;
 use EMS\SubmissionBundle\Response\ServiceNowHandleResponse;
+use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class ServiceNowHandler extends AbstractHandler
@@ -33,20 +34,23 @@ final class ServiceNowHandler extends AbstractHandler
     {
         try {
             $config = $this->configFactory->create($handleRequest);
-            $snow = new ServiceNowRequest($config);
+            $serviceNowRequest = new ServiceNowRequest($config);
 
-            $response = $this->client->request('POST', $snow->getBodyEndpoint(), [
+            $response = $this->client->request('POST', $serviceNowRequest->getBodyEndpoint(), [
                 'headers' => [
                     'Accept' => 'application/json',
                     'Content-Type' => 'application/json',
-                    'Authorization' => $snow->getBasicAuth(),
+                    'Authorization' => $serviceNowRequest->getBasicAuth(),
                 ],
-                'body' => $snow->getBody(),
+                'body' => $serviceNowRequest->getBody(),
                 'timeout' => $this->timeout,
             ]);
 
             $serviceNowResponse = new ServiceNowHandleResponse($response->getContent());
-            $this->addAttachments($serviceNowResponse, $snow);
+
+            foreach ($serviceNowRequest->getAttachments() as $attachment) {
+                $this->postAttachment($serviceNowResponse, $serviceNowRequest, $attachment);
+            }
 
             return $serviceNowResponse;
         } catch (\Exception $exception) {
@@ -54,41 +58,14 @@ final class ServiceNowHandler extends AbstractHandler
         }
     }
 
-    private function addAttachments(ServiceNowHandleResponse $response, ServiceNowRequest $request): void
-    {
-        foreach ($request->getAttachments() as $attachment) {
-            $binary = $this->getBinaryFile($attachment['pathname']);
-
-            if (!empty($binary)) {
-                $this->postAttachment($response, $request, $attachment, $binary);
-            }
-        }
-    }
-
-    private function getBinaryFile(string $pathname): ?string
-    {
-        $file = \fopen($pathname, 'r');
-        $size = \filesize($pathname);
-
-        if (!$file || !$size) {
-            return null;
-        }
-
-        $binary = \fread($file, $size);
-
-        if (!$binary) {
-            return null;
-        }
-
-        return $binary;
-    }
-
     /**
-     * @param array<array> $attachment
+     * @param array<string> $attachment
      */
-    private function postAttachment(ServiceNowHandleResponse $response, ServiceNowRequest $request, array $attachment, string $binary): void
+    private function postAttachment(ServiceNowHandleResponse $response, ServiceNowRequest $request, array $attachment): void
     {
         try {
+            $file = new SplFileInfo($attachment['pathname'], '', '');
+
             $this->client->request('POST', $request->getAttachmentEndpoint(), [
                 'query' => [
                     'file_name' => $attachment['originalName'],
@@ -99,7 +76,7 @@ final class ServiceNowHandler extends AbstractHandler
                     'Content-Type' => $attachment['mimeType'],
                     'Authorization' => $request->getBasicAuth(),
                 ],
-                'body' => $binary,
+                'body' => $file->getContents(),
             ]);
         } catch (\Exception $exception) {
             throw new \Exception(\sprintf('Attachment submission failed: %s', $exception->getMessage()));
