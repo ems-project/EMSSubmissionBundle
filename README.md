@@ -3,13 +3,13 @@
 Handles submissions made from [EMS FormBundle](https://github.com/ems-project/EMSFormBundle). 
 
 Supported handlers:
-* [Email](../master/Resources/doc/handlers/email.md)
-* [Pdf](../master/Resources/doc/handlers/pdf.md)
-* [ServiceNow](../master/Resources/doc/handlers/serviceNow.md)
+* [Email](../master/src/Resources/doc/handlers/email.md)
+* [Pdf](../master/src/Resources/doc/handlers/pdf.md)
+* [ServiceNow](../master/src/Resources/doc/handlers/serviceNow.md)
 
 ## Documentation
 
-* [Read more](../master/Resources/doc/index.md) about configuration and the handlers.
+* [Read more](../master/src/Resources/doc/index.md) about configuration and the handlers.
 * [EMSFormBundle](https://github.com/ems-project/EMSFormBundle/blob/master/Resources/doc/handlers.md) handlers support. 
 
 ## Contributing
