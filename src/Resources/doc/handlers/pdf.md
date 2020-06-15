@@ -1,6 +1,6 @@
 # Pdf handler
 
-Create a pdf that can be used in following handlers.
+Create a pdf that can be used in chained handlers.
 
 ## Endpoint
 
