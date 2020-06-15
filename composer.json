@@ -10,32 +10,33 @@
 		{
 			"name" : "David Meert",
 			"email" : "david.meert@smals.be"
+		},
+		{
+			"name" : "David Mattei",
+			"email" : "david.mattei@smals.be"
 		}
 	],
 	"require" : {
 		"php" : "^7.2",
 		"ext-json": "*",
-		"elasticms/client-helper-bundle" : "~3.2.0",
-		"elasticms/form-bundle" : "~1.2.2",
-		"symfony/form": "^4.4",
+		"elasticms/form-bundle" : "^1.2",
+		"elasticms/common-bundle" : "^1.8",
+		"symfony/framework-bundle": "^4.4",
 		"symfony/http-client": "^4.4",
 		"symfony/swiftmailer-bundle": "^3.4",
+		"symfony/twig-bundle": "^4.4",
 		"twig/twig" : "~2.10.0"
     },
 	"require-dev" : {
-		"mockery/mockery" : "^0.9",
-		"phpstan/phpstan": "^0.11",
-		"phpunit/phpunit" : "^5.7",
-		"symfony/phpunit-bridge": "^4.4",
-		"squizlabs/php_codesniffer": "^3.4"
+		"phpstan/phpstan": "^0.12",
+		"symfony/phpunit-bridge": "^5.1",
+		"friendsofphp/php-cs-fixer": "^2.8",
+		"symfony/yaml": "^4.4"
 	},
 	"autoload" : {
 		"psr-4" : {
-			"EMS\\SubmissionBundle\\" : ""
-		},
-		"exclude-from-classmap" : [
-			"tests/"
-		]
+			"EMS\\SubmissionBundle\\" : "src/"
+		}
 	},
 	"autoload-dev" : {
 		"psr-4" : {
@@ -43,8 +44,7 @@
 		}
 	},
 	"scripts": {
-		"phpcs": "phpcs --standard=phpcs.xml.dist --extensions=php,lib,inc",
-		"phpcbf": "phpcbf --standard=phpcs.xml.dist --extensions=php,lib,inc",
+		"phpcs": "php-cs-fixer fix",
 		"phpstan": "phpstan analyse ."
 	}
 }
