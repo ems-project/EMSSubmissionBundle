@@ -8,6 +8,16 @@ sudo: false
 # @link http://about.travis-ci.org/docs/user/languages/php/
 language: php
 
+cache:
+  directories:
+    - $HOME/.composer/cache/files
+    - $HOME/symfony-bridge/.phpunit
+
+env:
+  global:
+    - PHPUNIT_FLAGS="-v"
+    - SYMFONY_PHPUNIT_DIR="$HOME/symfony-bridge/.phpunit"
+
 # Declare versions of PHP to use. Use one decimal max.
 # @link http://docs.travis-ci.com/user/build-configuration/
 matrix:
@@ -23,15 +33,22 @@ matrix:
     - php: nightly
 
 before_install:
+  - if [[ "$SNIFF" == "1" ]]; then find ~/.phpenv -name xdebug.ini -delete; fi
   # Install PHP CodeSniffer.
-  - if [[ "$SNIFF" == "1" ]]; then composer self-update; fi
-  - if [[ "$SNIFF" == "1" ]]; then composer install; fi
+  - if [[ "$SNIFF" == "1" ]]; then travis_retry composer self-update; fi
+  - if [[ "$SNIFF" == "1" ]]; then composer global require symfony/flex; fi
   - phpenv rehash
+
+install:
+  - if [[ "$SNIFF" == "1" ]]; then composer update --prefer-dist --no-progress --no-suggest --ansi; fi
+  - if [[ "$SNIFF" == "1" ]]; then ./vendor/bin/simple-phpunit install; fi
 
 script:
   # Search for PHP syntax errors.
   - find -L . -path ./vendor -prune -o -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l
   # Run PHPCS
-  - if [[ "$SNIFF" == "1" ]]; then vendor/bin/phpcs . --standard=./phpcs.xml.dist --extensions=php,lib,inc; fi
+  - if [[ "$SNIFF" == "1" ]]; then ./vendor/bin/php-cs-fixer fix --dry-run --diff; fi
   # Run PHPStan
-  - if [[ "$SNIFF" == "1" ]]; then vendor/bin/phpstan analyse .; fi
+  - if [[ "$SNIFF" == "1" ]]; then ./vendor/bin/phpstan analyse .; fi
+  # Run Tests
+  - if [[ "$SNIFF" == "1" ]]; then ./vendor/bin/simple-phpunit $PHPUNIT_FLAGS; fi
