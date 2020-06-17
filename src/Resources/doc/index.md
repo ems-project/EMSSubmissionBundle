@@ -1,18 +1,37 @@
 # The EMS SubmissionBundle
 
 ## Handlers
-In the backend a content type is defined to configure your submit procedure. The handler has access to the complete form data, and to the response of the previously defined submit handler. When multiple submit handlers are attached to a form instance, they are called in order of definition, and the result of the previous submission handler is passed to the next one.
-More info about this concept can be found in the EMSFormBundle's "[Handle Submitted data](https://github.com/ems-project/EMSFormBundle/blob/master/Resources/doc/handlers.md)" section.
+In the backend a content type is defined to configure your submit procedure. 
+The handler has access to the complete form data, and to the response of the previously defined submit handler. 
+When multiple submit handlers are attached to a form instance, they are called in order of definition, and the result 
+of the previous submission handler is passed to the next one.
 
-A handler has 3 parts in the backend:
-1. Definition of it's Type
-1. An endpoint field
-1. A message field
+Each handler need to have a **endpoint** field and **message** field. 
+The endpoint typically contains connection information, while the message contains information 
+that is derived from the submitted data.
 
-The endpoint and message fields are to be configured as defined by the Type of the handler using twig. The endpoint typically contains connection information, while the message contains information that is derived from the data submitted through the form.
-Both fields have full access to the data send through the form using the `data` variable. When handlers are chained, the response of the previous handler is available through the `previous` variable.
+Both fields are rendered by twig and the following information is available in twig
 
-Depending on the handler type, the endpoint and message fields contain a simple text entry, or a twig object with specific keys.
+- **config** (EMS\FormBundle\FormConfig\FormConfig)    
+- **data** (array of the submitted data)
+- **formData** (EMS\FormBundle\Submission\FormData)
+- **request** (EMS\FormBundle\Submission\HandleRequest)
+
+```twig
+{# examples #}
+
+{% set formName = config.name %}
+{% set formLocale = config.locale %}
+{% set formTranslationDomain = config.translationDomain %}
+{% set fullName = data.firstName ~ ' ' ~ data.lastName  %}
+{% set previousResponse = request.responses.0.response %}
+
+{# all files defined on the form #}
+{% set files = formData.allFiles|map(file => file.toArray) %}
+
+{# all files defined on the form and there base64 encoded content #}
+{% set files = formData.allFiles|map(v => v.toArray|merge({ 'base64': v.base64() }) ) %}
+```
 
 ### Supported handlers
 

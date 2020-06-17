@@ -4,8 +4,13 @@
         'subject': 'Test email with pdf',
         'attachments': [
             {
-                'pdf': request.responses.0.content|raw,
-                'filename': request.responses.0.filename|raw
+                'base64': request.responses.0.content|raw,
+                'filename': request.responses.0.filename|raw,
+                'mimeType': 'application/pdf'
+            },
+            {
+                'invalid': 'will be skiped missing filename',
+                'mimeType': 'application/pdf'
             }
         ]
     } %}

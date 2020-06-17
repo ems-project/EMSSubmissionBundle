@@ -21,7 +21,8 @@ final class ConfigFactory
     {
         $context = [
             'config' => $handleRequest->getFormConfig(),
-            'data' => $handleRequest->getFormData(),
+            'data' => $handleRequest->getFormData()->raw(),
+            'formData' => $handleRequest->getFormData(),
             'request' => $handleRequest,
         ];
 
