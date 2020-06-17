@@ -32,3 +32,25 @@ Ut ut semper urna. In interdum eros vel eros interdum rutrum.</p>
 </body>
 </html>
 ```
+
+## Chaining to email
+
+This example only works if the first submission (index 0) handler is a pdf handler.
+Then we can access the response in the a second email handler.
+
+```twig
+{% autoescape %}
+    {% set message = {
+        'from': 'noreply@example.test',
+        'subject': 'Test email with pdf',
+        'attachments': [
+            {
+                'data': request.responses.0.content|raw,
+                'filename': request.responses.0.filename|raw,
+                'mimeType': 'application/pdf'
+            }
+        ]
+    } %}
+{% endautoescape %}
+{{ message|json_encode|raw }}
+```
