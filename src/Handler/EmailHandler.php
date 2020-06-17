@@ -58,16 +58,23 @@ final class EmailHandler extends AbstractHandler
     private function createAttachments(EmailRequest $emailRequest): \Traversable
     {
         foreach ($emailRequest->getAttachments() as $attachment) {
-            if (isset($attachment['pdf']) && isset($attachment['filename'])) {
-                $data = base64_decode($attachment['pdf']);
+            $filename = $attachment['originalName'] ?? $attachment['filename'] ?? null;
+            $mimeType = $attachment['mimeType'] ?? null;
 
-                yield new \Swift_Attachment($data, $attachment['filename'], 'application/pdf');
+            if (null === $filename || null === $mimeType) {
                 continue;
             }
 
-            if (isset($attachment['pathname']) && isset($attachment['mimeType']) && isset($attachment['originalName'])) {
-                $swiftAttachment = \Swift_Attachment::fromPath($attachment['pathname'], $attachment['mimeType']);
-                $swiftAttachment->setFilename($attachment['originalName']);
+            if (isset($attachment['base64'])) {
+                $data = base64_decode($attachment['base64']);
+
+                yield new \Swift_Attachment($data, $filename, $mimeType);
+                continue;
+            }
+
+            if (isset($attachment['pathname'])) {
+                $swiftAttachment = \Swift_Attachment::fromPath($attachment['pathname'], $mimeType);
+                $swiftAttachment->setFilename($filename);
                 yield $swiftAttachment;
             }
         }
