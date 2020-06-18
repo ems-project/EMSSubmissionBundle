@@ -45,7 +45,7 @@ Then we can access the response in the a second email handler.
         'subject': 'Test email with pdf',
         'attachments': [
             {
-                'data': request.responses.0.content|raw,
+                'base64': request.responses.0.content|raw,
                 'filename': request.responses.0.filename|raw,
                 'mimeType': 'application/pdf'
             }
