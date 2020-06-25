@@ -22,8 +22,18 @@ final class Config
         return $this->endpoint;
     }
 
+    public function getEndpointJson(): array
+    {
+        return json_decode($this->endpoint, true) ?? [];
+    }
+
     public function getMessage(): string
     {
         return $this->message;
+    }
+
+    public function getMessageJson(): array
+    {
+        return json_decode($this->message, true) ?? [];
     }
 }
