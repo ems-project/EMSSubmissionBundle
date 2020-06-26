@@ -14,7 +14,7 @@ final class ResponseFactory
 
     public function __invoke(string $method, string $url, array $options = []): ResponseInterface
     {
-        if (is_callable($this->callback)) {
+        if (\is_callable($this->callback)) {
             return ($this->callback)($method, $url, $options);
         }
 

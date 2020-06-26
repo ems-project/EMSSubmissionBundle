@@ -40,7 +40,7 @@ final class ServiceNowHandlerTest extends AbstractHandlerTest
 
     public function testSubmitFormData(): void
     {
-        $message = json_encode([
+        $message = \json_encode([
            'body' => [
                'title' => 'Test serviceNow',
                'name' => '{{ data.first_name }}',
@@ -61,18 +61,18 @@ final class ServiceNowHandlerTest extends AbstractHandlerTest
                 return new MockResponse('{"message": "example"}');
             }
 
-            throw new \Exception(sprintf('response not mocked for %s', $url));
+            throw new \Exception(\sprintf('response not mocked for %s', $url));
         });
 
         $this->assertEquals(
             '{"status":"success","data":"{\"message\": \"example\"}"}',
-            $this->handle($this->createForm(), json_encode($this->endpoint), $message)->getResponse()
+            $this->handle($this->createForm(), \json_encode($this->endpoint), $message)->getResponse()
         );
     }
 
     public function testSubmitMultipleFiles(): void
     {
-        $message = file_get_contents(__DIR__.'/../fixtures/twig/message_service_now.twig');
+        $message = \file_get_contents(__DIR__.'/../fixtures/twig/message_service_now.twig');
 
         $attachmentUrl = 'https://example.service-now.com/api/now/v1/attachment/file';
         $sysId = 98765;
@@ -93,7 +93,7 @@ final class ServiceNowHandlerTest extends AbstractHandlerTest
                     $this->assertEquals('Text example attachment', $options['body']);
                 }
 
-                if (in_array($url, $attachmentUrls)) {
+                if (\in_array($url, $attachmentUrls)) {
                     $this->assertSame([
                         'Content-Type: text/plain',
                         \sprintf('Authorization: Basic %s', $this->credentials),
@@ -103,19 +103,19 @@ final class ServiceNowHandlerTest extends AbstractHandlerTest
                     return new MockResponse('{}');
                 }
 
-                throw new \Exception(sprintf('response not mocked for %s', $url));
+                throw new \Exception(\sprintf('response not mocked for %s', $url));
             }
         );
 
         $this->assertEquals(
             '{"status":"success","data":"{\"result\":{\"sys_id\":98765}}"}',
-            $this->handle($this->createFormUploadFiles(), json_encode($this->endpoint), $message)->getResponse()
+            $this->handle($this->createFormUploadFiles(), \json_encode($this->endpoint), $message)->getResponse()
         );
     }
 
     public function testPostAttachmentFails()
     {
-        $message = file_get_contents(__DIR__.'/../fixtures/twig/message_service_now.twig');
+        $message = \file_get_contents(__DIR__.'/../fixtures/twig/message_service_now.twig');
 
         $this->responseFactory->setCallback(function (string $method, string $url, array $options = []) {
             if ('https://example.service-now.com/api/now/v1/table/table_name' === $url) {
@@ -127,13 +127,13 @@ final class ServiceNowHandlerTest extends AbstractHandlerTest
 
         $this->assertEquals(
             '{"status":"error","data":"Submission failed, contact your admin. (Attachment submission failed: HTTP 404 returned for \"https:\/\/example.service-now.com\/api\/now\/v1\/attachment\/file?file_name=attachment.txt&table_name=table_name&table_sys_id=\".)"}',
-            $this->handle($this->createFormUploadFiles(), json_encode($this->endpoint), $message)->getResponse()
+            $this->handle($this->createFormUploadFiles(), \json_encode($this->endpoint), $message)->getResponse()
         );
     }
 
     public function testResponseFailure()
     {
-        $message = file_get_contents(__DIR__.'/../fixtures/twig/message_service_now.twig');
+        $message = \file_get_contents(__DIR__.'/../fixtures/twig/message_service_now.twig');
         $fileUrl = 'https://example.service-now.com/api/now/v1/attachment/file?file_name=attachment.txt&table_name=table_name&table_sys_id=';
 
         $this->responseFactory->setCallback(function (string $method, string $url, array $options = []) use ($fileUrl) {
@@ -150,13 +150,13 @@ final class ServiceNowHandlerTest extends AbstractHandlerTest
 
         $this->assertEquals(
             '{"status":"error","data":"{\"status\": \"failure\", \"message\": \"example\"}"}',
-            $this->handle($this->createFormUploadFiles(), json_encode($this->endpoint), $message)->getResponse()
+            $this->handle($this->createFormUploadFiles(), \json_encode($this->endpoint), $message)->getResponse()
         );
     }
 
     public function testResponseInvalidJson()
     {
-        $message = file_get_contents(__DIR__.'/../fixtures/twig/message_service_now.twig');
+        $message = \file_get_contents(__DIR__.'/../fixtures/twig/message_service_now.twig');
         $fileUrl = 'https://example.service-now.com/api/now/v1/attachment/file?file_name=attachment.txt&table_name=table_name&table_sys_id=';
 
         $this->responseFactory->setCallback(function (string $method, string $url, array $options = []) use ($fileUrl) {
@@ -173,7 +173,7 @@ final class ServiceNowHandlerTest extends AbstractHandlerTest
 
         $this->assertEquals(
             '{"status":"error","data":"invalid json test"}',
-            $this->handle($this->createFormUploadFiles(), json_encode($this->endpoint), $message)->getResponse()
+            $this->handle($this->createFormUploadFiles(), \json_encode($this->endpoint), $message)->getResponse()
         );
     }
 }

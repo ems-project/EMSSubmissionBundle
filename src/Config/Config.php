@@ -27,7 +27,7 @@ final class Config
      */
     public function getEndpointFromJson(): array
     {
-        return json_decode($this->endpoint, true) ?? [];
+        return \json_decode($this->endpoint, true) ?? [];
     }
 
     public function getMessage(): string
@@ -40,6 +40,6 @@ final class Config
      */
     public function getMessageFromJson(): array
     {
-        return json_decode($this->message, true) ?? [];
+        return \json_decode($this->message, true) ?? [];
     }
 }

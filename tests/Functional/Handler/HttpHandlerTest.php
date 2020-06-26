@@ -29,13 +29,13 @@ final class HttpHandlerTest extends AbstractHandlerTest
 
     public function testSubmitFormData(): void
     {
-        $endpoint = json_encode([
+        $endpoint = \json_encode([
             'url' => 'http://example.test/api/form',
             'headers' => ['Content-Type' => 'application/json'],
             'timeout' => 10,
             'query' => ['q' => 'test'],
         ]);
-        $message = json_encode(['test' => 'test']);
+        $message = \json_encode(['test' => 'test']);
 
         $this->responseFactory->setCallback(function (string $method, string $url, array $options = []) {
             $this->assertEquals('POST', $method);
@@ -58,19 +58,19 @@ final class HttpHandlerTest extends AbstractHandlerTest
 
     public function testAuthBasic()
     {
-        $endpoint = json_encode([
+        $endpoint = \json_encode([
             'url' => 'http://example.test/api/form',
             'headers' => ['Content-Type' => 'application/json'],
             'auth_basic' => "{{'http-conn%.%user'|emss_connection}}:{{'http-conn%.%password'|emss_connection}}",
         ]);
-        $message = json_encode(['test' => 'test']);
+        $message = \json_encode(['test' => 'test']);
 
         $this->responseFactory->setCallback(function (string $method, string $url, array $options = []) {
-            $userPass = base64_encode('userTest:testPass'); //see config.yml
+            $userPass = \base64_encode('userTest:testPass'); //see config.yml
             $this->assertEquals([
                 'Content-Type: application/json',
                 'Accept: */*',
-                sprintf('Authorization: Basic %s', $userPass),
+                \sprintf('Authorization: Basic %s', $userPass),
             ], $options['headers']);
 
             return new MockResponse('{"status": "submit", "uid": "PI-20200625-0000432"}');
@@ -84,11 +84,11 @@ final class HttpHandlerTest extends AbstractHandlerTest
 
     public function testInvalidEndpoint(): void
     {
-        $endpoint = json_encode([
+        $endpoint = \json_encode([
             'url' => 'http://example.test/api/form',
             'test' => 'test',
         ]);
-        $message = json_encode(['test' => 'test']);
+        $message = \json_encode(['test' => 'test']);
 
         $this->assertEquals(
             '{"status":"error","data":"Submission failed, contact your admin. (Invalid endpoint configuration: The option \"test\" does not exist. Defined options are: \"auth_basic\", \"auth_bearer\", \"headers\", \"method\", \"query\", \"timeout\", \"url\".)"}',
@@ -110,7 +110,7 @@ final class HttpHandlerTest extends AbstractHandlerTest
      */
     public function testErrorResponse(ResponseInterface $response): void
     {
-        $endpoint = json_encode(['url' => 'http://example.test/api/form']);
+        $endpoint = \json_encode(['url' => 'http://example.test/api/form']);
 
         $this->responseFactory->setCallback(function (string $method, string $url, array $options = []) use ($response) {
             return $response;
@@ -119,7 +119,7 @@ final class HttpHandlerTest extends AbstractHandlerTest
         $expected = '{"status":"error","data":"Submission failed, contact your admin. (HTTP %d returned for \"http:\/\/example.test\/api\/form\".)"}';
 
         $this->assertEquals(
-            sprintf($expected, $response->getStatusCode()),
+            \sprintf($expected, $response->getStatusCode()),
             $this->handle($this->createForm(), $endpoint, '')->getResponse()
         );
     }

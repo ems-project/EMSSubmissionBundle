@@ -19,6 +19,6 @@ final class ConnectionRuntime implements RuntimeExtensionInterface
 
     public function transform(string $content): string
     {
-        return $this->transformer->transform(explode('%.%', $content));
+        return $this->transformer->transform(\explode('%.%', $content));
     }
 }

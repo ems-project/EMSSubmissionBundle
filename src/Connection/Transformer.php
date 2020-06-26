@@ -28,7 +28,7 @@ final class Transformer
             return '';
         }
 
-        if (1 === count($path)) {
+        if (1 === \count($path)) {
             return $path[0];
         }
 

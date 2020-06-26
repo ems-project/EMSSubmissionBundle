@@ -34,14 +34,14 @@ final class HttpRequest
     {
         $method = $this->endPoint['method'] ?? '';
 
-        return is_string($method) ? $method : '';
+        return \is_string($method) ? $method : '';
     }
 
     public function getUrl(): string
     {
         $url = $this->endPoint['url'] ?? '';
 
-        return is_string($url) ? $url : '';
+        return \is_string($url) ? $url : '';
     }
 
     /**
@@ -70,13 +70,13 @@ final class HttpRequest
         $optionsResolver = new OptionsResolver();
         $optionsResolver
             ->setRequired(['url', 'method'])
-            ->setDefaults(array_merge(self::OPTIONS, ['method' => Request::METHOD_POST]))
+            ->setDefaults(\array_merge(self::OPTIONS, ['method' => Request::METHOD_POST]))
         ;
 
         try {
             return $optionsResolver->resolve($endpoint);
         } catch (ExceptionInterface $e) {
-            throw new \RuntimeException(sprintf('Invalid endpoint configuration: %s', $e->getMessage()));
+            throw new \RuntimeException(\sprintf('Invalid endpoint configuration: %s', $e->getMessage()));
         }
     }
 }

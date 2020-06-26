@@ -20,7 +20,7 @@ final class PdfRequest
         $endPoint = $config->getEndpoint();
 
         if ('' === $endPoint) {
-            throw new \Exception(sprintf('Endpoint not defined.'));
+            throw new \Exception(\sprintf('Endpoint not defined.'));
         }
 
         $this->filename = $config->getEndpoint();

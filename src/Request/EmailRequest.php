@@ -25,7 +25,7 @@ final class EmailRequest
         $message = $config->getMessageFromJson();
 
         if (!isset($message['from'])) {
-            throw new \Exception(sprintf('From email address not defined.'));
+            throw new \Exception(\sprintf('From email address not defined.'));
         }
 
         $this->from = $message['from'];
