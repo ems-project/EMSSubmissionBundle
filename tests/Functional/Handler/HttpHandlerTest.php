@@ -8,6 +8,7 @@ use EMS\FormBundle\Submission\AbstractHandler;
 use EMS\SubmissionBundle\Response\HttpHandleResponse;
 use EMS\SubmissionBundle\Tests\Functional\App\ResponseFactory;
 use Symfony\Component\HttpClient\Response\MockResponse;
+use Symfony\Contracts\HttpClient\ResponseInterface;
 
 final class HttpHandlerTest extends AbstractHandlerTest
 {
@@ -95,16 +96,30 @@ final class HttpHandlerTest extends AbstractHandlerTest
         );
     }
 
-    public function testEmptyMessage(): void
+    public function errorResponses(): array
+    {
+        return [
+            '300_Response' => [new MockResponse('', ['http_code' => 400])],
+            '400_Response' => [new MockResponse('', ['http_code' => 400])],
+            '500_Response' => [new MockResponse('', ['http_code' => 500])],
+        ];
+    }
+
+    /**
+     * @dataProvider errorResponses
+     */
+    public function testErrorResponse(ResponseInterface $response): void
     {
         $endpoint = json_encode(['url' => 'http://example.test/api/form']);
 
-        $this->responseFactory->setCallback(function (string $method, string $url, array $options = []) {
-            return new MockResponse(json_encode(['error' => 'Bad Request', 'status' => 400]), ['http_code' => 400]);
+        $this->responseFactory->setCallback(function (string $method, string $url, array $options = []) use ($response) {
+            return $response;
         });
 
+        $expected = '{"status":"error","data":"Submission failed, contact your admin. (HTTP %d returned for \"http:\/\/example.test\/api\/form\".)"}';
+
         $this->assertEquals(
-            '{"status":"error","data":"Submission failed, contact your admin. (HTTP 400 returned for \"http:\/\/example.test\/api\/form\".)"}',
+            sprintf($expected, $response->getStatusCode()),
             $this->handle($this->createForm(), $endpoint, '')->getResponse()
         );
     }
