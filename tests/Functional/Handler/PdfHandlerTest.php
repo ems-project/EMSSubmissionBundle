@@ -21,7 +21,7 @@ final class PdfHandlerTest extends AbstractHandlerTest
 
     public function testSubmitFormData(): void
     {
-        $message = file_get_contents(__DIR__.'/../fixtures/pdf/pdf.html');
+        $message = \file_get_contents(__DIR__.'/../fixtures/pdf/pdf.html');
 
         /** @var PdfHandleResponse $response */
         $response = $this->handle($this->createForm(['info' => 'test.pdf']), '{{ data.info }}', $message);
@@ -36,7 +36,7 @@ final class PdfHandlerTest extends AbstractHandlerTest
 
     public function testEmptyEndpoint(): void
     {
-        $message = file_get_contents(__DIR__.'/../fixtures/pdf/pdf.html');
+        $message = \file_get_contents(__DIR__.'/../fixtures/pdf/pdf.html');
         $response = $this->handle($this->createForm(['info' => 'test.pdf']), '', $message);
 
         $this->assertEquals(
@@ -47,7 +47,7 @@ final class PdfHandlerTest extends AbstractHandlerTest
 
     public function testPdfEmail(): void
     {
-        $message = file_get_contents(__DIR__.'/../fixtures/pdf/pdf.html');
+        $message = \file_get_contents(__DIR__.'/../fixtures/pdf/pdf.html');
         $form = $this->createForm();
 
         /** @var PdfHandleResponse $response */
@@ -55,8 +55,8 @@ final class PdfHandlerTest extends AbstractHandlerTest
 
         /** @var EmailHandler $emailHandler */
         $emailHandler = $this->container->get('functional_test.emss.handler.email');
-        $emailMessage = file_get_contents(__DIR__.'/../fixtures/twig/message_pdf_email.twig');
-        $emailSubmission = new SubmissionConfig(get_class($emailHandler), 'user@example.test', $emailMessage);
+        $emailMessage = \file_get_contents(__DIR__.'/../fixtures/twig/message_pdf_email.twig');
+        $emailSubmission = new SubmissionConfig(\get_class($emailHandler), 'user@example.test', $emailMessage);
 
         $responseCollector = new HandleResponseCollector();
         $responseCollector->addResponse($pdfResponse);

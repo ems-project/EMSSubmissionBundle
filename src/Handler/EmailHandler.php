@@ -39,7 +39,7 @@ final class EmailHandler extends AbstractHandler
                 $message->attach($attachment);
             }
         } catch (\Exception $exception) {
-            return new FailedHandleResponse(sprintf('Submission failed, contact your admin. %s', $exception->getMessage()));
+            return new FailedHandleResponse(\sprintf('Submission failed, contact your admin. %s', $exception->getMessage()));
         }
 
         $failedRecipients = [];
@@ -66,7 +66,7 @@ final class EmailHandler extends AbstractHandler
             }
 
             if (isset($attachment['base64'])) {
-                $data = base64_decode($attachment['base64']);
+                $data = \base64_decode($attachment['base64']);
 
                 yield new \Swift_Attachment($data, $filename, $mimeType);
                 continue;

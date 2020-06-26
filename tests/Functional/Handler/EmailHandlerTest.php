@@ -26,15 +26,15 @@ final class EmailHandlerTest extends AbstractHandlerTest
     public function testSubmitFormData(): void
     {
         $endpoint = '{{ data.email }}';
-        $message = json_encode([
+        $message = \json_encode([
             'from' => 'noreply@test.test',
             'subject' => 'Test submission',
             'body' => 'Hi my name is {{ data.first_name }} {{ data.last_name }}',
         ]);
 
         $this->mailListener(function (Swift_Events_SendEvent $evt) {
-            $this->assertEquals(['user1@test.test'], array_keys($evt->getMessage()->getTo()));
-            $this->assertEquals(['noreply@test.test'], array_keys($evt->getMessage()->getFrom()));
+            $this->assertEquals(['user1@test.test'], \array_keys($evt->getMessage()->getTo()));
+            $this->assertEquals(['noreply@test.test'], \array_keys($evt->getMessage()->getFrom()));
             $this->assertEquals('Test submission', $evt->getMessage()->getSubject());
             $this->assertEquals('Hi my name is testFirstName testLastName', $evt->getMessage()->getBody());
         });
@@ -48,7 +48,7 @@ final class EmailHandlerTest extends AbstractHandlerTest
     public function testSubmitMultipleFiles(): void
     {
         $endpoint = 'test@example.com';
-        $message = file_get_contents(__DIR__.'/../fixtures/twig/message_email.twig');
+        $message = \file_get_contents(__DIR__.'/../fixtures/twig/message_email.twig');
 
         $this->mailListener(function (Swift_Events_SendEvent $evt) {
             $this->assertEquals('attachment.txt | attachment2.txt', $evt->getMessage()->getBody());
@@ -71,7 +71,7 @@ final class EmailHandlerTest extends AbstractHandlerTest
 
     public function testEmptyEndpoint(): void
     {
-        $message = json_encode([
+        $message = \json_encode([
             'from' => 'noreply@test.test',
             'subject' => 'Test submission',
             'body' => 'example',
@@ -93,7 +93,7 @@ final class EmailHandlerTest extends AbstractHandlerTest
 
     public function testFailedRecipients(): void
     {
-        $message = json_encode(['from' => 'noreply@elasticms.eu']);
+        $message = \json_encode(['from' => 'noreply@elasticms.eu']);
 
         $this->mailer->registerPlugin(new class() implements \Swift_Events_SendListener {
             public function beforeSendPerformed(Swift_Events_SendEvent $evt)

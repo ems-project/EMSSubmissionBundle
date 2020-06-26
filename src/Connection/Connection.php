@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace EMS\SubmissionBundle\Connection;
 
-final class ServiceNowConnection
+final class Connection
 {
     /** @var string */
     private $user;
@@ -22,9 +22,9 @@ final class ServiceNowConnection
 
     public function callByKey(string $key): string
     {
-        $method = sprintf('get%s', ucfirst($key));
+        $method = \sprintf('get%s', \ucfirst($key));
 
-        if (!method_exists($this, $method)) {
+        if (!\method_exists($this, $method)) {
             return $key;
         }
 

@@ -22,8 +22,24 @@ final class Config
         return $this->endpoint;
     }
 
+    /**
+     * @return array<mixed>
+     */
+    public function getEndpointFromJson(): array
+    {
+        return \json_decode($this->endpoint, true) ?? [];
+    }
+
     public function getMessage(): string
     {
         return $this->message;
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    public function getMessageFromJson(): array
+    {
+        return \json_decode($this->message, true) ?? [];
     }
 }
