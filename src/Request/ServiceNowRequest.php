@@ -28,8 +28,8 @@ final class ServiceNowRequest
 
     public function __construct(Config $config)
     {
-        $endpoint = $config->getEndpointJson();
-        $message = $config->getMessageJson();
+        $endpoint = $config->getEndpointFromJson();
+        $message = $config->getMessageFromJson();
 
         $this->host = $endpoint['host'];
         $this->table = $endpoint['table'];

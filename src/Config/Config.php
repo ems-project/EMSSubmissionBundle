@@ -22,7 +22,10 @@ final class Config
         return $this->endpoint;
     }
 
-    public function getEndpointJson(): array
+    /**
+     * @return array<mixed>
+     */
+    public function getEndpointFromJson(): array
     {
         return json_decode($this->endpoint, true) ?? [];
     }
@@ -32,7 +35,10 @@ final class Config
         return $this->message;
     }
 
-    public function getMessageJson(): array
+    /**
+     * @return array<mixed>
+     */
+    public function getMessageFromJson(): array
     {
         return json_decode($this->message, true) ?? [];
     }

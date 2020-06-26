@@ -2,6 +2,7 @@ ems_submission:
   default_timeout: '19'
   connections:
     - { connection: "service-now-instance-a", user: "userA", password: "passB"}
+    - { connection: "http-conn", user: "userTest", password: "testPass"}
 
 swiftmailer:
   disable_delivery: true

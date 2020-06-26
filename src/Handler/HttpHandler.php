@@ -32,8 +32,10 @@ final class HttpHandler extends AbstractHandler
             $config = $this->configFactory->create($handleRequest);
             $httpRequest = new HttpRequest($config);
 
+            $response = $this->client->request($httpRequest->getMethod(), $httpRequest->getUrl(), $httpRequest->getOptions());
+            $responseContent = $response->getContent(true);
 
-            return new HttpHandleResponse();
+            return new HttpHandleResponse($response, $responseContent);
         } catch (\Exception $exception) {
             return new FailedHandleResponse(\sprintf('Submission failed, contact your admin. (%s)', $exception->getMessage()));
         }

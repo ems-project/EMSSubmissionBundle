@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace EMS\SubmissionBundle\Connection;
 
-final class ServiceNowConnection
+final class Connection
 {
     /** @var string */
     private $user;

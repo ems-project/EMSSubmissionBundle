@@ -22,7 +22,7 @@ final class EmailRequest
     public function __construct(Config $config)
     {
         $this->endpoint = $config->getEndpoint();
-        $message = $config->getMessageJson();
+        $message = $config->getMessageFromJson();
 
         if (!isset($message['from'])) {
             throw new \Exception(sprintf('From email address not defined.'));
