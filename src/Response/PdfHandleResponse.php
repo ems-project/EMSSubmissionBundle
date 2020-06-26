@@ -30,7 +30,7 @@ final class PdfHandleResponse extends AbstractHandleResponse
 
     public function getContent(): string
     {
-        return base64_encode($this->getContentRaw());
+        return \base64_encode($this->getContentRaw());
     }
 
     public function getContentRaw(): string

@@ -36,6 +36,7 @@ Both fields are rendered by twig and the following information is available in t
 ### Supported handlers
 
 * [Email](handlers/email.md)
+* [Http](handlers/http.md)
 * [Pdf](handlers/pdf.md)
 * [ServiceNow](handlers/serviceNow.md)
 

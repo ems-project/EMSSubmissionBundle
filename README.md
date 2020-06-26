@@ -4,6 +4,7 @@ Handles submissions made from [EMS FormBundle](https://github.com/ems-project/EM
 
 Supported handlers:
 * [Email](../master/src/Resources/doc/handlers/email.md)
+* [Http](../master/src/Resources/doc/handlers/http.md)
 * [Pdf](../master/src/Resources/doc/handlers/pdf.md)
 * [ServiceNow](../master/src/Resources/doc/handlers/serviceNow.md)
 

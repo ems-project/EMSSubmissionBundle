@@ -20,7 +20,7 @@ final class Transformer
     }
 
     /**
-     * @param array<string> $path ['service-now-instance-a', 'password']
+     * @param array<string> $path ['connectionName', 'password']
      */
     public function transform(array $path): string
     {
@@ -28,7 +28,7 @@ final class Transformer
             return '';
         }
 
-        if (1 === count($path)) {
+        if (1 === \count($path)) {
             return $path[0];
         }
 
@@ -37,14 +37,14 @@ final class Transformer
         return null === $conn ? $path[0] : $conn->callByKey($path[1]);
     }
 
-    private function getConnection(string $name): ?ServiceNowConnection
+    private function getConnection(string $name): ?Connection
     {
         foreach ($this->connections as $connection) {
             if (!isset($connection['connection']) || $connection['connection'] != $name) {
                 continue;
             }
 
-            return new ServiceNowConnection($connection);
+            return new Connection($connection);
         }
 
         return null;

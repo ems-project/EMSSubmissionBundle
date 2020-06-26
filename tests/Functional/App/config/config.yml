@@ -2,6 +2,7 @@ ems_submission:
   default_timeout: '19'
   connections:
     - { connection: "service-now-instance-a", user: "userA", password: "passB"}
+    - { connection: "http-conn", user: "userTest", password: "testPass"}
 
 swiftmailer:
   disable_delivery: true
@@ -28,6 +29,9 @@ services:
   functional_test.emss.handler.email:
     public: true
     alias: emss.handler.email
+  functional_test.emss.handler.http:
+    public: true
+    alias: emss.handler.http
   functional_test.emss.handler.pdf:
     public: true
     alias: emss.handler.pdf
