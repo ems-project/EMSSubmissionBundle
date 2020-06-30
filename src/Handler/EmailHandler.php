@@ -8,28 +8,30 @@ use EMS\FormBundle\Submission\AbstractHandler;
 use EMS\FormBundle\Submission\FailedHandleResponse;
 use EMS\FormBundle\Submission\HandleRequestInterface;
 use EMS\FormBundle\Submission\HandleResponseInterface;
-use EMS\SubmissionBundle\Config\ConfigFactory;
 use EMS\SubmissionBundle\Request\EmailRequest;
 use EMS\SubmissionBundle\Response\EmailHandleResponse;
+use EMS\SubmissionBundle\Twig\TwigRenderer;
 
 final class EmailHandler extends AbstractHandler
 {
-    /** @var ConfigFactory */
-    private $configFactory;
     /** @var \Swift_Mailer */
     private $mailer;
+    /** @var TwigRenderer */
+    private $twigRenderer;
 
-    public function __construct(ConfigFactory $configFactory, \Swift_Mailer $mailer)
+    public function __construct(\Swift_Mailer $mailer, TwigRenderer $twigRenderer)
     {
-        $this->configFactory = $configFactory;
         $this->mailer = $mailer;
+        $this->twigRenderer = $twigRenderer;
     }
 
     public function handle(HandleRequestInterface $handleRequest): HandleResponseInterface
     {
         try {
-            $config = $this->configFactory->create($handleRequest);
-            $emailRequest = new EmailRequest($config);
+            $endpoint = $this->twigRenderer->renderEndpoint($handleRequest);
+            $message = $this->twigRenderer->renderMessageJSON($handleRequest);
+
+            $emailRequest = new EmailRequest($endpoint, $message);
             $message = (new \Swift_Message($emailRequest->getSubject()))
                 ->setFrom($emailRequest->getFrom())
                 ->setTo($emailRequest->getEndpoint())
@@ -45,7 +47,7 @@ final class EmailHandler extends AbstractHandler
         $failedRecipients = [];
         $this->mailer->send($message, $failedRecipients);
 
-        if ($failedRecipients !== []) {
+        if ([] !== $failedRecipients) {
             return new FailedHandleResponse('Submission failed. Conctact your admin.');
         }
 

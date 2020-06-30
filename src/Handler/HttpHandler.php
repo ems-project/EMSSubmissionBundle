@@ -8,29 +8,31 @@ use EMS\FormBundle\Submission\AbstractHandler;
 use EMS\FormBundle\Submission\FailedHandleResponse;
 use EMS\FormBundle\Submission\HandleRequestInterface;
 use EMS\FormBundle\Submission\HandleResponseInterface;
-use EMS\SubmissionBundle\Config\ConfigFactory;
 use EMS\SubmissionBundle\Request\HttpRequest;
 use EMS\SubmissionBundle\Response\HttpHandleResponse;
+use EMS\SubmissionBundle\Twig\TwigRenderer;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class HttpHandler extends AbstractHandler
 {
-    /** @var ConfigFactory */
-    private $configFactory;
     /** @var HttpClientInterface */
     private $client;
+    /** @var TwigRenderer */
+    private $twigRenderer;
 
-    public function __construct(ConfigFactory $configFactory, HttpClientInterface $httpClient)
+    public function __construct(HttpClientInterface $client, TwigRenderer $twigRenderer)
     {
-        $this->configFactory = $configFactory;
-        $this->client = $httpClient;
+        $this->client = $client;
+        $this->twigRenderer = $twigRenderer;
     }
 
     public function handle(HandleRequestInterface $handleRequest): HandleResponseInterface
     {
         try {
-            $config = $this->configFactory->create($handleRequest);
-            $httpRequest = new HttpRequest($config);
+            $endpoint = $this->twigRenderer->renderEndpointJSON($handleRequest);
+            $message = $this->twigRenderer->renderMessage($handleRequest);
+
+            $httpRequest = new HttpRequest($endpoint, $message);
 
             $response = $this->client->request($httpRequest->getMethod(), $httpRequest->getUrl(), $httpRequest->getOptions());
             $responseContent = $response->getContent(true);
