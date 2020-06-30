@@ -6,11 +6,11 @@
 
     <services>
         <defaults public="false" />
-        <service id="emss.config.factory" class="EMS\SubmissionBundle\Config\ConfigFactory">
-            <argument type="service" id="twig" />
-        </service>
         <service id="emss.connection.transformer" class="EMS\SubmissionBundle\Connection\Transformer">
             <argument>%emss.connections%</argument>
+        </service>
+        <service id="ems.twig.renderer" class="EMS\SubmissionBundle\Twig\TwigRenderer">
+            <argument type="service" id="twig" />
         </service>
         <service id="emss.twig.extension.connection" class="EMS\SubmissionBundle\Twig\ConnectionExtension">
             <tag name="twig.extension" />

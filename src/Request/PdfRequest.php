@@ -6,7 +6,6 @@ namespace EMS\SubmissionBundle\Request;
 
 use EMS\CommonBundle\Service\Pdf\Pdf;
 use EMS\CommonBundle\Service\Pdf\PdfInterface;
-use EMS\SubmissionBundle\Config\Config;
 
 final class PdfRequest
 {
@@ -15,16 +14,14 @@ final class PdfRequest
     /** @var string */
     private $html;
 
-    public function __construct(Config $config)
+    public function __construct(string $endpoint, string $message)
     {
-        $endPoint = $config->getEndpoint();
-
-        if ('' === $endPoint) {
+        if ('' === $endpoint) {
             throw new \Exception(\sprintf('Endpoint not defined.'));
         }
 
-        $this->filename = $config->getEndpoint();
-        $this->html = $config->getMessage();
+        $this->filename = $endpoint;
+        $this->html = $message;
     }
 
     public function getPdf(): PdfInterface
