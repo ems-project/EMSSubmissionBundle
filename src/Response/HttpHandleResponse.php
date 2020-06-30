@@ -22,17 +22,6 @@ final class HttpHandleResponse extends AbstractHandleResponse
         parent::__construct(self::STATUS_SUCCESS, 'Submission send by http.');
     }
 
-    public function getResponse(): string
-    {
-        $json = \json_encode([
-            'status' => $this->status,
-            'message' => $this->data,
-            'status_code' => $this->response->getStatusCode(),
-        ]);
-
-        return false === $json ? '' : $json;
-    }
-
     public function getHttpResponse(): ResponseInterface
     {
         return $this->response;
@@ -41,5 +30,13 @@ final class HttpHandleResponse extends AbstractHandleResponse
     public function getHttpResponseContent(): string
     {
         return $this->responseContent;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getHttpResponseContentJSON(): array
+    {
+        return \json_decode($this->responseContent, true) ?? [];
     }
 }

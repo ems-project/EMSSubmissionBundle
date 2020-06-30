@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace EMS\SubmissionBundle\Request;
 
-use EMS\SubmissionBundle\Config\Config;
-
 final class ServiceNowRequest
 {
     /** @var string */
@@ -26,11 +24,12 @@ final class ServiceNowRequest
     /** @var array<array> */
     private $attachments = [];
 
-    public function __construct(Config $config)
+    /**
+     * @param array<string, string> $endpoint
+     * @param array<string, mixed>  $message
+     */
+    public function __construct(array $endpoint, array $message)
     {
-        $endpoint = $config->getEndpointFromJson();
-        $message = $config->getMessageFromJson();
-
         $this->host = $endpoint['host'];
         $this->table = $endpoint['table'];
         $this->username = $endpoint['username'];

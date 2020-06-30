@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace EMS\SubmissionBundle\Request;
 
-use EMS\SubmissionBundle\Config\Config;
-
 final class EmailRequest
 {
     /** @var string */
@@ -19,10 +17,12 @@ final class EmailRequest
     /** @var array<array> */
     private $attachments;
 
-    public function __construct(Config $config)
+    /**
+     * @param array<string, mixed> $message
+     */
+    public function __construct(string $endpoint, array $message)
     {
-        $this->endpoint = $config->getEndpoint();
-        $message = $config->getMessageFromJson();
+        $this->endpoint = $endpoint;
 
         if (!isset($message['from'])) {
             throw new \Exception(\sprintf('From email address not defined.'));

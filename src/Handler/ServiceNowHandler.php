@@ -8,33 +8,35 @@ use EMS\FormBundle\Submission\AbstractHandler;
 use EMS\FormBundle\Submission\FailedHandleResponse;
 use EMS\FormBundle\Submission\HandleRequestInterface;
 use EMS\FormBundle\Submission\HandleResponseInterface;
-use EMS\SubmissionBundle\Config\ConfigFactory;
 use EMS\SubmissionBundle\Request\ServiceNowRequest;
 use EMS\SubmissionBundle\Response\ServiceNowHandleResponse;
+use EMS\SubmissionBundle\Twig\TwigRenderer;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class ServiceNowHandler extends AbstractHandler
 {
-    /** @var ConfigFactory */
-    private $configFactory;
-    /** @var int */
-    private $timeout;
     /** @var HttpClientInterface */
     private $client;
+    /** @var int */
+    private $timeout;
+    /** @var TwigRenderer */
+    private $twigRenderer;
 
-    public function __construct(ConfigFactory $configFactory, HttpClientInterface $httpClient, int $timeout)
+    public function __construct(HttpClientInterface $client, int $timeout, TwigRenderer $twigRenderer)
     {
-        $this->configFactory = $configFactory;
+        $this->client = $client;
         $this->timeout = $timeout;
-        $this->client = $httpClient;
+        $this->twigRenderer = $twigRenderer;
     }
 
     public function handle(HandleRequestInterface $handleRequest): HandleResponseInterface
     {
         try {
-            $config = $this->configFactory->create($handleRequest);
-            $serviceNowRequest = new ServiceNowRequest($config);
+            $endpoint = $this->twigRenderer->renderEndpointJSON($handleRequest);
+            $message = $this->twigRenderer->renderMessageJSON($handleRequest);
+
+            $serviceNowRequest = new ServiceNowRequest($endpoint, $message);
 
             $response = $this->client->request('POST', $serviceNowRequest->getBodyEndpoint(), [
                 'headers' => [

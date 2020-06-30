@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace EMS\SubmissionBundle\Request;
 
-use EMS\SubmissionBundle\Config\Config;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\OptionsResolver\Exception\ExceptionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -12,9 +11,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 final class HttpRequest
 {
     /** @var array<string, string|array> */
-    private $endPoint;
+    private $endpoint;
     /** @var string */
-    private $message;
+    private $body;
 
     private const OPTIONS = [
         'auth_basic' => null,
@@ -24,22 +23,25 @@ final class HttpRequest
         'query' => [],
     ];
 
-    public function __construct(Config $config)
+    /**
+     * @param array<string, mixed> $endpoint
+     */
+    public function __construct(array $endpoint, string $body)
     {
-        $this->endPoint = $this->resolveEndpoint($config->getEndpointFromJson());
-        $this->message = $config->getMessage();
+        $this->endpoint = $this->resolveEndpoint($endpoint);
+        $this->body = $body;
     }
 
     public function getMethod(): string
     {
-        $method = $this->endPoint['method'] ?? '';
+        $method = $this->endpoint['method'] ?? '';
 
         return \is_string($method) ? $method : '';
     }
 
     public function getUrl(): string
     {
-        $url = $this->endPoint['url'] ?? '';
+        $url = $this->endpoint['url'] ?? '';
 
         return \is_string($url) ? $url : '';
     }
@@ -50,11 +52,11 @@ final class HttpRequest
     public function getOptions(): array
     {
         $options = [
-            'body' => $this->message,
+            'body' => $this->body,
         ];
 
         foreach (self::OPTIONS as $optionName => $default) {
-            $options[$optionName] = $this->endPoint[$optionName] ?? $default;
+            $options[$optionName] = $this->endpoint[$optionName] ?? $default;
         }
 
         return $options;
