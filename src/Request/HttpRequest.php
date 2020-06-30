@@ -13,7 +13,7 @@ final class HttpRequest
     /** @var array<string, string|array> */
     private $endpoint;
     /** @var string */
-    private $message;
+    private $body;
 
     private const OPTIONS = [
         'auth_basic' => null,
@@ -26,10 +26,10 @@ final class HttpRequest
     /**
      * @param array<string, mixed> $endpoint
      */
-    public function __construct(array $endpoint, string $message)
+    public function __construct(array $endpoint, string $body)
     {
         $this->endpoint = $this->resolveEndpoint($endpoint);
-        $this->message = $message;
+        $this->body = $body;
     }
 
     public function getMethod(): string
@@ -52,7 +52,7 @@ final class HttpRequest
     public function getOptions(): array
     {
         $options = [
-            'body' => $this->message,
+            'body' => $this->body,
         ];
 
         foreach (self::OPTIONS as $optionName => $default) {

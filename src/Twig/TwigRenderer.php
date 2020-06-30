@@ -36,6 +36,34 @@ final class TwigRenderer
     }
 
     /**
+     * @param array<string, mixed> $context
+     */
+    public function renderMessageBlock(HandleRequestInterface $handleRequest, string $blockName, array $context = []): ?string
+    {
+        $template = $this->templating->createTemplate($handleRequest->getMessage());
+
+        if (!$template->hasBlock($blockName)) {
+            return null;
+        }
+
+        $context = \array_merge($context, $this->getContext($handleRequest));
+
+        return $template->renderBlock($blockName, $context);
+    }
+
+    /**
+     * @param array<string, mixed> $context
+     *
+     * @return array<string, mixed>
+     */
+    public function renderMessageBlockJSON(HandleRequestInterface $handleRequest, string $blockName, array $context = []): array
+    {
+        $json = $this->renderMessageBlock($handleRequest, $blockName, $context);
+
+        return $json ? (\json_decode($json, true) ?? []) : [];
+    }
+
+    /**
      * @return array<string, mixed>
      */
     public function renderMessageJSON(HandleRequestInterface $handleRequest): array
