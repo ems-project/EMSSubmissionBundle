@@ -30,14 +30,19 @@ final class HttpHandler extends AbstractHandler
     {
         try {
             $endpoint = $this->twigRenderer->renderEndpointJSON($handleRequest);
-            $message = $this->twigRenderer->renderMessage($handleRequest);
+            $body = $this->twigRenderer->renderMessageBlock($handleRequest, 'requestBody') ?? '';
 
-            $httpRequest = new HttpRequest($endpoint, $message);
+            $httpRequest = new HttpRequest($endpoint, $body);
+            $httpResponse = $this->client->request($httpRequest->getMethod(), $httpRequest->getUrl(), $httpRequest->getOptions());
+            $httpResponseContent = $httpResponse->getContent(true);
 
-            $response = $this->client->request($httpRequest->getMethod(), $httpRequest->getUrl(), $httpRequest->getOptions());
-            $responseContent = $response->getContent(true);
+            $handleResponse = new HttpHandleResponse($httpResponse, $httpResponseContent);
+            $extraData = $this->twigRenderer->renderMessageBlockJSON($handleRequest, 'handleResponseExtra', [
+                'response' => $handleResponse,
+            ]);
+            $handleResponse->setExtraData($extraData);
 
-            return new HttpHandleResponse($response, $responseContent);
+            return $handleResponse;
         } catch (\Exception $exception) {
             return new FailedHandleResponse(\sprintf('Submission failed, contact your admin. (%s)', $exception->getMessage()));
         }

@@ -1,7 +1,6 @@
 # Http handler
 
 Send a http request from submission data.
-The **message** will contain the request body.
 
 ## Endpoint
 
@@ -41,3 +40,27 @@ The authentication parameters can also be fetched using the [connection configur
   "auth_bearer": "{{'apiTest%.%token'|emss_connection}}"
 }
 ```
+
+## Message
+
+- Add a block named **requestBody** for defining the HTTP request body. 
+- Add a block named **handleResponseExtra** for changing the handler response.
+
+Example:
+```twig 
+{%- block requestBody -%}
+    {%- set message = {'test': 'test'} -%}
+    {{- message|json_encode|raw -}}
+{%- endblock -%}
+
+{%- block handleResponseExtra -%}
+    {%- set extra = {
+        'uid': (response.getHttpResponseContentJSON.uid)
+    } -%}
+    {{- extra|json_encode|raw -}}
+{%- endblock -%}
+```
+
+**IMPORTANT**: only for the block handleResponseExtra will you have access to the response
+
+- **response** [HttpHandleResponse](../master/src/Response/HttpHandleResponse.php)   
