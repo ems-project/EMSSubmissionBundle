@@ -6,26 +6,56 @@ namespace EMS\SubmissionBundle\Request;
 
 use EMS\CommonBundle\Service\Pdf\Pdf;
 use EMS\CommonBundle\Service\Pdf\PdfInterface;
+use EMS\CommonBundle\Service\Pdf\PdfPrintOptions;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
-final class PdfRequest
+final class PdfRequest extends AbstractRequest
 {
-    /** @var string */
-    private $filename;
+    /** @var array{filename: string, orientation: string, size: string} */
+    protected $endpoint;
+
     /** @var string */
     private $html;
 
-    public function __construct(string $endpoint, string $message)
+    /**
+     * @param array<string, mixed> $endpoint
+     */
+    public function __construct(array $endpoint, string $html)
     {
-        if ('' === $endpoint) {
-            throw new \Exception(\sprintf('Endpoint not defined.'));
-        }
+        /** @var array{filename: string, orientation: string, size: string} $endpoint */
+        $endpoint = $this->resolveEndpoint($endpoint);
 
-        $this->filename = $endpoint;
-        $this->html = $message;
+        $this->endpoint = $endpoint;
+        $this->html = $html;
+    }
+
+    public function getFilename(): string
+    {
+        return $this->endpoint['filename'];
     }
 
     public function getPdf(): PdfInterface
     {
-        return new Pdf($this->filename, $this->html);
+        return new Pdf($this->getFilename(), $this->html);
+    }
+
+    public function getPdfOptions(): PdfPrintOptions
+    {
+        return new PdfPrintOptions([
+            PdfPrintOptions::ORIENTATION => $this->endpoint[PdfPrintOptions::ORIENTATION],
+            PdfPrintOptions::SIZE => $this->endpoint[PdfPrintOptions::SIZE],
+        ]);
+    }
+
+    protected function getEndpointOptionResolver(): OptionsResolver
+    {
+        $optionsResolver = new OptionsResolver();
+        $optionsResolver->setDefaults([
+            'filename' => 'handle.pdf',
+            PdfPrintOptions::ORIENTATION => 'portrait',
+            PdfPrintOptions::SIZE => 'a4',
+        ]);
+
+        return $optionsResolver;
     }
 }

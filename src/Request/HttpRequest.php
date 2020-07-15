@@ -5,17 +5,16 @@ declare(strict_types=1);
 namespace EMS\SubmissionBundle\Request;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\OptionsResolver\Exception\ExceptionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-final class HttpRequest
+final class HttpRequest extends AbstractRequest
 {
-    /** @var array<string, string|array> */
+    /** @var array{method: string, url: string} */
     private $endpoint;
     /** @var string */
     private $body;
 
-    private const OPTIONS = [
+    private const HTTP_OPTIONS = [
         'auth_basic' => null,
         'auth_bearer' => null,
         'headers' => [],
@@ -28,57 +27,47 @@ final class HttpRequest
      */
     public function __construct(array $endpoint, string $body)
     {
-        $this->endpoint = $this->resolveEndpoint($endpoint);
+        /** @var array{method: string, url: string} $endpoint */
+        $endpoint = $this->resolveEndpoint($endpoint);
+
+        $this->endpoint = $endpoint;
         $this->body = $body;
     }
 
     public function getMethod(): string
     {
-        $method = $this->endpoint['method'] ?? '';
-
-        return \is_string($method) ? $method : '';
+        return $this->endpoint['method'];
     }
 
     public function getUrl(): string
     {
-        $url = $this->endpoint['url'] ?? '';
-
-        return \is_string($url) ? $url : '';
+        return $this->endpoint['url'];
     }
 
     /**
      * @return array<string, mixed>
      */
-    public function getOptions(): array
+    public function getHttpOptions(): array
     {
         $options = [
             'body' => $this->body,
         ];
 
-        foreach (self::OPTIONS as $optionName => $default) {
+        foreach (self::HTTP_OPTIONS as $optionName => $default) {
             $options[$optionName] = $this->endpoint[$optionName] ?? $default;
         }
 
         return $options;
     }
 
-    /**
-     * @param array<string, mixed> $endpoint
-     *
-     * @return array<string, mixed>
-     */
-    private function resolveEndpoint(array $endpoint): array
+    protected function getEndpointOptionResolver(): OptionsResolver
     {
         $optionsResolver = new OptionsResolver();
         $optionsResolver
             ->setRequired(['url', 'method'])
-            ->setDefaults(\array_merge(self::OPTIONS, ['method' => Request::METHOD_POST]))
+            ->setDefaults(\array_merge(self::HTTP_OPTIONS, ['method' => Request::METHOD_POST]))
         ;
 
-        try {
-            return $optionsResolver->resolve($endpoint);
-        } catch (ExceptionInterface $e) {
-            throw new \RuntimeException(\sprintf('Invalid endpoint configuration: %s', $e->getMessage()));
-        }
+        return $optionsResolver;
     }
 }

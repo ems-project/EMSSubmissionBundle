@@ -17,7 +17,7 @@ final class PdfHandleResponse extends AbstractHandleResponse
 
     public function __construct(PdfRequest $pdfRequest, PdfOutput $pdfOutput)
     {
-        parent::__construct(self::STATUS_SUCCESS, 'Pdf ready for next handler');
+        parent::__construct(self::STATUS_SUCCESS, 'Submission pdf ready');
 
         $this->pdfRequest = $pdfRequest;
         $this->pdfOutput = $pdfOutput;

@@ -60,7 +60,3 @@ Example:
     {{- extra|json_encode|raw -}}
 {%- endblock -%}
 ```
-
-**IMPORTANT**: only for the block handleResponseExtra will you have access to the response
-
-- **response** [HttpHandleResponse](../master/src/Response/HttpHandleResponse.php)   
