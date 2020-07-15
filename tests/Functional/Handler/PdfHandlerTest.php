@@ -24,10 +24,10 @@ final class PdfHandlerTest extends AbstractHandlerTest
         $message = \file_get_contents(__DIR__.'/../fixtures/pdf/pdf.html');
 
         /** @var PdfHandleResponse $response */
-        $response = $this->handle($this->createForm(['info' => 'test.pdf']), '{{ data.info }}', $message);
+        $response = $this->handle($this->createForm(['info' => 'test.pdf']), '{ "filename": "{{ data.info }}" }', $message);
 
         $this->assertEquals(
-            '{"status":"success","data":"Pdf ready for next handler"}',
+            '{"status":"success","data":"Submission pdf ready"}',
             $response->getResponse()
         );
         $this->assertEquals('test.pdf', $response->getFilename());
@@ -40,9 +40,29 @@ final class PdfHandlerTest extends AbstractHandlerTest
         $response = $this->handle($this->createForm(['info' => 'test.pdf']), '', $message);
 
         $this->assertEquals(
-            '{"status":"error","data":"Submission failed, contact your admin. (Endpoint not defined.)"}',
+            '{"status":"success","data":"Submission pdf ready"}',
             $response->getResponse()
         );
+    }
+
+    public function testInvalidJsonEndpoint(): void
+    {
+        $message = \file_get_contents(__DIR__.'/../fixtures/pdf/pdf.html');
+        $response = $this->handle($this->createForm(['info' => 'test.pdf']), 'test', $message);
+
+        $this->assertEquals(
+            '{"status":"error","data":"Submission failed, contact your admin. (invalid json!)"}',
+            $response->getResponse()
+        );
+    }
+
+    public function testTwigErrorEndpoint(): void
+    {
+        $message = \file_get_contents(__DIR__.'/../fixtures/pdf/pdf.html');
+        $response = $this->handle($this->createForm(['info' => 'test.pdf']), '{ "filename": "{{ test }}" }', $message);
+
+        $decodedResponse = \json_decode($response->getResponse(), true);
+        $this->assertEquals('error', $decodedResponse['status']);
     }
 
     public function testPdfEmail(): void
@@ -51,7 +71,7 @@ final class PdfHandlerTest extends AbstractHandlerTest
         $form = $this->createForm();
 
         /** @var PdfHandleResponse $response */
-        $pdfResponse = $this->handle($form, 'test.pdf', $message);
+        $pdfResponse = $this->handle($form, '{ "filename": "test.pdf" }', $message);
 
         /** @var EmailHandler $emailHandler */
         $emailHandler = $this->container->get('functional_test.emss.handler.email');

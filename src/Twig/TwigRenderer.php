@@ -27,7 +27,7 @@ final class TwigRenderer
      */
     public function renderEndpointJSON(HandleRequestInterface $handleRequest): array
     {
-        return \json_decode($this->renderEndpoint($handleRequest), true) ?? [];
+        return $this->jsonDecode($this->renderEndpoint($handleRequest));
     }
 
     public function renderMessage(HandleRequestInterface $handleRequest): string
@@ -58,9 +58,7 @@ final class TwigRenderer
      */
     public function renderMessageBlockJSON(HandleRequestInterface $handleRequest, string $blockName, array $context = []): array
     {
-        $json = $this->renderMessageBlock($handleRequest, $blockName, $context);
-
-        return $json ? (\json_decode($json, true) ?? []) : [];
+        return $this->jsonDecode($this->renderMessageBlock($handleRequest, $blockName, $context));
     }
 
     /**
@@ -68,7 +66,7 @@ final class TwigRenderer
      */
     public function renderMessageJSON(HandleRequestInterface $handleRequest): array
     {
-        return \json_decode($this->renderMessage($handleRequest), true) ?? [];
+        return $this->jsonDecode($this->renderMessage($handleRequest));
     }
 
     /**
@@ -89,6 +87,25 @@ final class TwigRenderer
             'data' => $handleRequest->getFormData()->raw(),
             'formData' => $handleRequest->getFormData(),
             'request' => $handleRequest,
+            'responses' => $handleRequest->getResponses(),
         ];
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    private function jsonDecode(?string $json): array
+    {
+        if (null === $json || '' === $json) {
+            return [];
+        }
+
+        $decodedJson = \json_decode($json, true);
+
+        if (JSON_ERROR_NONE !== \json_last_error()) {
+            throw new \InvalidArgumentException('invalid json!');
+        }
+
+        return $decodedJson;
     }
 }
