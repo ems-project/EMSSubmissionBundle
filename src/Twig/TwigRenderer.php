@@ -91,6 +91,9 @@ final class TwigRenderer
         ];
     }
 
+    /**
+     * @return array<mixed>
+     */
     private function jsonDecode(?string $json): array
     {
         if (null === $json || '' === $json) {
