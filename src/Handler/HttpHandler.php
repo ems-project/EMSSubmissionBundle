@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace EMS\SubmissionBundle\Handler;
 
-use EMS\CommonBundle\Service\Pdf\Pdf;
 use EMS\FormBundle\Submission\AbstractHandler;
 use EMS\FormBundle\Submission\FailedHandleResponse;
 use EMS\FormBundle\Submission\HandleRequestInterface;
