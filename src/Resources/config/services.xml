@@ -9,6 +9,9 @@
         <service id="emss.connection.transformer" class="EMS\SubmissionBundle\Connection\Transformer">
             <argument>%emss.connections%</argument>
         </service>
+        <service id="emss.response.transformer" class="EMS\SubmissionBundle\Response\ResponseTransformer">
+            <argument type="service" id="ems.twig.renderer"/>
+        </service>
         <service id="ems.twig.renderer" class="EMS\SubmissionBundle\Twig\TwigRenderer">
             <argument type="service" id="twig" />
         </service>

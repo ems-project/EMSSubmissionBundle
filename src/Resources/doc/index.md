@@ -15,7 +15,8 @@ Both fields are rendered by twig and the following information is available in t
 - **config** (EMS\FormBundle\FormConfig\FormConfig)    
 - **data** (array of the submitted data)
 - **formData** (EMS\FormBundle\Submission\FormData)
-- **request** (EMS\FormBundle\Submission\HandleRequest)
+- **request** (EMS\FormBundle\Submission\HandleRequestInterface)
+- **responses** (EMS\FormBundle\Submission\HandleResponseInterface[])
 
 ```twig
 {# examples #}

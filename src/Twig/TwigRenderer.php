@@ -89,6 +89,7 @@ final class TwigRenderer
             'data' => $handleRequest->getFormData()->raw(),
             'formData' => $handleRequest->getFormData(),
             'request' => $handleRequest,
+            'responses' => $handleRequest->getResponses(),
         ];
     }
 }
