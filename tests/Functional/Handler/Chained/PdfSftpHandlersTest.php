@@ -43,7 +43,7 @@ final class PdfSftpHandlersTest extends AbstractChainedTest
         $sftpHandleRequest = $this->createRequest(SftpHandler::class, $sftpEndpointJson, $sftpMessage);
         /** @var SftpHandleResponse $sftpHandleResponse */
         $sftpHandleResponse = $this->sftpHandler->handle($sftpHandleRequest);
-        
+
         $this->assertCount(3, $sftpHandleResponse->getTransportedFiles());
         $this->assertEquals('test/attachment.txt', $sftpHandleResponse->getTransportedFiles()[0]['path']);
 
