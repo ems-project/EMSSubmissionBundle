@@ -5,8 +5,8 @@ The files can be from previous handlers (Pdf, ..) or form files.
 
 ## Endpoint
 
-The endpoint needs to be a valid JSON. 
-Only the property **host** is required
+The endpoint needs to be a valid JSON, only the property **host** is required
+The privateKey must be a base64 decode ppk key file.
 
 Default property values:
 ```twig 
@@ -15,7 +15,7 @@ Default property values:
     "port": 22,
     "username": "",
     "password": "",
-    "privateKey": "...",
+    "privateKey": "",
     "root": "/",
     "timeout": 10
 }

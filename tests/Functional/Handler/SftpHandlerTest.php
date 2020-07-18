@@ -32,6 +32,7 @@ final class SftpHandlerTest extends AbstractHandlerTest
             'root' => '/',
             'username' => 'tester',
             'password' => 'password',
+            'privateKey' => 'dGVzdCA2NCBlbmNvZGluZw==', //base64 'test 64 encoding'
         ]);
         $message = \file_get_contents(__DIR__.'/../fixtures/twig/message_sftp.twig');
         /** @var SftpHandleResponse $handleResponse */
@@ -42,6 +43,7 @@ final class SftpHandlerTest extends AbstractHandlerTest
             $handleResponse->getResponse()
         );
         $this->assertEquals($host, $handleResponse->getSftpRequest()->getAdapter()->getHost());
+        $this->assertEquals('test 64 encoding', $handleResponse->getSftpRequest()->getEndpoint()['privateKey']);
         $this->assertCount(2, $handleResponse->getTransportedFiles());
     }
 
@@ -67,6 +69,19 @@ final class SftpHandlerTest extends AbstractHandlerTest
             '{"status":"error","data":"Submission failed, contact your admin. (invalid json!)"}',
             $handleResponse->getResponse()
         );
+    }
+
+    public function testEndpointPrivateKeyBase64Decoding()
+    {
+        $endpoint = \json_encode(['host' => '127.0.0.1', 'privateKey' => '']);
+        /** @var SftpHandleResponse $handleResponse */
+        $handleResponse = $this->handle($this->createFormUploadFiles(), $endpoint, '');
+        $this->assertEquals('', $handleResponse->getSftpRequest()->getEndpoint()['privateKey']);
+
+        $endpoint = \json_encode(['host' => '127.0.0.1', 'privateKey' => '___']);
+        /** @var SftpHandleResponse $handleResponse */
+        $handleResponse = $this->handle($this->createFormUploadFiles(), $endpoint, '');
+        $this->assertEquals('invalid base64 encoding', $handleResponse->getSftpRequest()->getEndpoint()['privateKey']);
     }
 
     public function testInvalidMessage(): void

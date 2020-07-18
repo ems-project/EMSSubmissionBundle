@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EMS\SubmissionBundle\Request;
 
 use League\Flysystem\Sftp\SftpAdapter;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class SftpRequest extends AbstractRequest
@@ -41,6 +42,14 @@ final class SftpRequest extends AbstractRequest
     }
 
     /**
+     * @return array{host: string, port: int, username: string, password: string, privateKey: string, root: string, timeout: int}
+     */
+    public function getEndpoint(): array
+    {
+        return $this->endpoint;
+    }
+
+    /**
      * @return \Generator<array{path: string, contents: string}>
      */
     public function getFiles(): \Generator
@@ -70,6 +79,15 @@ final class SftpRequest extends AbstractRequest
         $optionsResolver
             ->setRequired(['host', 'port',  'timeout'])
             ->setDefined(['username', 'password', 'privateKey'])
+            ->setNormalizer('privateKey', function (Options $options, $value) {
+                if ('' !== $value) {
+                    $decode = \base64_decode($value);
+
+                    return $decode ? $decode : 'invalid base64 encoding';
+                }
+
+                return $value;
+            })
             ->setDefaults(['root' => '/', 'port' => 22, 'timeout' => 10]);
 
         return $optionsResolver;
