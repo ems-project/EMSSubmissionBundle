@@ -10,11 +10,12 @@
             <argument>%emss.connections%</argument>
         </service>
         <service id="emss.response.transformer" class="EMS\SubmissionBundle\Response\ResponseTransformer">
-            <argument type="service" id="ems.twig.renderer"/>
+            <argument type="service" id="emss.twig.renderer"/>
         </service>
-        <service id="ems.twig.renderer" class="EMS\SubmissionBundle\Twig\TwigRenderer">
+        <service id="emss.twig.renderer" class="EMS\SubmissionBundle\Twig\TwigRenderer">
             <argument type="service" id="twig" />
         </service>
+        <service id="emss.filesystem.factory" class="EMS\SubmissionBundle\FilesystemFactory"/>
         <service id="emss.twig.extension.connection" class="EMS\SubmissionBundle\Twig\ConnectionExtension">
             <tag name="twig.extension" />
         </service>

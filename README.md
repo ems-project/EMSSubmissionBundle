@@ -7,6 +7,8 @@ Supported handlers:
 * [Http](../master/src/Resources/doc/handlers/http.md)
 * [Pdf](../master/src/Resources/doc/handlers/pdf.md)
 * [ServiceNow](../master/src/Resources/doc/handlers/serviceNow.md)
+* [Sftp](../master/src/Resources/doc/handlers/sftp.md)
+* [Zip](../master/src/Resources/doc/handlers/zip.md)
 
 ## Documentation
 

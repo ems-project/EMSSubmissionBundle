@@ -19,13 +19,16 @@
 	"require" : {
 		"php" : "^7.2",
 		"ext-json": "*",
+      	"ext-zip": "*",
 		"elasticms/form-bundle" : "^1.2",
 		"elasticms/common-bundle" : "^1.8",
 		"symfony/framework-bundle": "^4.4",
 		"symfony/http-client": "^4.4",
 		"symfony/swiftmailer-bundle": "^3.4",
 		"symfony/twig-bundle": "^4.4",
-		"twig/twig" : "~2.10.0"
+		"twig/twig" : "~2.10.0",
+		"league/flysystem-sftp": "^1.0",
+		"league/flysystem-memory": "^1.0"
     },
 	"require-dev" : {
 		"phpstan/phpstan": "^0.12",
