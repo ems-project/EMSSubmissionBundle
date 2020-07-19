@@ -54,23 +54,7 @@ final class SftpRequest extends AbstractRequest
      */
     public function getFiles(): \Generator
     {
-        foreach ($this->files as $file) {
-            if (!isset($file['path'])) {
-                continue;
-            }
-
-            if (isset($file['content_path'])) {
-                $content = \file_get_contents($file['content_path']);
-            }
-
-            if (isset($file['content_base64'])) {
-                $content = \base64_decode($file['content_base64']);
-            }
-
-            if (isset($content) && false !== $content) {
-                yield ['path' => $file['path'], 'contents' => $content];
-            }
-        }
+        return $this->parseFiles($this->files);
     }
 
     protected function getEndpointOptionResolver(): OptionsResolver

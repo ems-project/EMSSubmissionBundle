@@ -17,6 +17,8 @@ final class SftpHandlerTest extends AbstractHandlerTest
     {
         parent::setUp();
         $this->filesystemFactory = $this->container->get('emss.filesystem.factory');
+
+        //$this->filesystemFactory->setFlagNullAdapter(false); uncomment for enabling sftp
     }
 
     protected function getHandler(): AbstractHandler

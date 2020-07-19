@@ -46,3 +46,6 @@ services:
   functional_test.emss.handler.sftp:
     public: true
     alias: emss.handler.sftp
+  functional_test.emss.handler.zip:
+    public: true
+    alias: emss.handler.zip

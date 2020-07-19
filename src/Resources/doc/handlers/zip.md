@@ -1,23 +1,16 @@
-# Sftp handler
+# Zip handler
 
-Transport files over sftp. 
+Create a zip that can be used in chained handlers.
 The files can be from previous handlers (Pdf, ..) or form files.
 
 ## Endpoint
 
-The endpoint needs to be a valid JSON, only the property **host** is required
-The privateKey must be a base64 decode ppk key file.
+The endpoint needs to be a valid JSON
 
 Default property values:
 ```twig 
 {
-    "host": "127.0.0.1",
-    "port": 22,
-    "username": "",
-    "password": "",
-    "privateKey": "",
-    "root": "/",
-    "timeout": 10
+    "filename": "handle.zip"
 }
 ```
 

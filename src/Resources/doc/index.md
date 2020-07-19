@@ -41,6 +41,7 @@ Both fields are rendered by twig and the following information is available in t
 * [Pdf](handlers/pdf.md)
 * [ServiceNow](handlers/serviceNow.md)
 * [Sftp](handlers/sftp.md)
+* [Zip](handlers/zip.md)
 
 ## Configuration
 ```yaml
