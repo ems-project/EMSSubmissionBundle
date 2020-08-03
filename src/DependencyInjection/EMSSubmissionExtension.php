@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace EMS\SubmissionBundle\DependencyInjection;
 
+use Ramsey\Uuid\Doctrine\UuidType;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
+use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 
-final class EMSSubmissionExtension extends Extension
+final class EMSSubmissionExtension extends Extension implements PrependExtensionInterface
 {
     /**
      * @param array<array> $configs
@@ -25,5 +27,16 @@ final class EMSSubmissionExtension extends Extension
 
         $container->setParameter('emss.default_timeout', $config['default_timeout']);
         $container->setParameter('emss.connections', $config['connections']);
+    }
+
+    public function prepend(ContainerBuilder $container): void
+    {
+        $bundles = $container->getParameter('kernel.bundles');
+
+        if (isset($bundles['DoctrineBundle'])) {
+            $container->prependExtensionConfig('doctrine', [
+                'dbal' => ['types' => ['uuid' => UuidType::class]],
+            ]);
+        }
     }
 }
