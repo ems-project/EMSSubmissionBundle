@@ -125,7 +125,7 @@ final class SftpHandlerTest extends AbstractHandlerTest
         $handleResponse = $this->handle($this->createFormUploadFiles(), $endpoint, $message);
 
         $this->assertEquals(
-            '{"status":"error","data":"Submission failed, contact your admin. (Cannot connect to 127.0.0.1:22. Error 10061. No connection could be made because the target machine actively refused it.)"}',
+            '{"status":"error","data":"Submission failed, contact your admin. (Could not login with username: , host: 127.0.0.1)"}',
             $handleResponse->getResponse()
         );
     }
