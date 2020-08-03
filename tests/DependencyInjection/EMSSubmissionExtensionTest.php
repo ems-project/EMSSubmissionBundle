@@ -14,6 +14,7 @@ final class EMSSubmissionExtensionTest extends TestCase
     public function testExtension(): void
     {
         $container = $this->getRawContainer();
+        $container->setParameter('kernel.bundles', []);
         $container->loadFromExtension('ems_submission', [
             'default_timeout' => 20,
             'connections' => [
