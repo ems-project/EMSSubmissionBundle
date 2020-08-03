@@ -6,6 +6,12 @@
 
     <services>
         <defaults public="false" />
+        <service id="emss.handler.database" class="EMS\SubmissionBundle\Handler\DatabaseHandler">
+            <argument type="service" id="doctrine"/>
+            <argument type="service" id="emss.twig.renderer"/>
+            <argument type="service" id="emss.response.transformer"/>
+            <tag name="emsf.handler" />
+        </service>
         <service id="emss.handler.email" class="EMS\SubmissionBundle\Handler\EmailHandler">
             <argument type="service" id="mailer"/>
             <argument type="service" id="emss.twig.renderer"/>

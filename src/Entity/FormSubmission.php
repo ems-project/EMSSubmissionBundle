@@ -7,6 +7,7 @@ namespace EMS\SubmissionBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use EMS\SubmissionBundle\Request\DatabaseRequest;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
@@ -91,7 +92,7 @@ class FormSubmission
      */
     private $processId;
 
-    public function __construct(string $name, string $instance, string $locale, array $data)
+    public function __construct(DatabaseRequest $databaseRequest)
     {
         $now = new \DateTime();
 
@@ -100,12 +101,16 @@ class FormSubmission
         $this->modified = $now;
         $this->processTryCounter = 0;
 
-        $this->name = $name;
-        $this->instance = $instance;
-        $this->locale = $locale;
-        $this->data = $data;
+        $this->name = $databaseRequest->getFormName();
+        $this->instance = $databaseRequest->getInstance();
+        $this->locale = $databaseRequest->getLocale();
+        $this->data = $databaseRequest->getData();
 
         $this->files = new ArrayCollection();
+
+        foreach ($databaseRequest->getFiles() as $file) {
+            $this->files->add(new FormSubmissionFile($this, $file));
+        }
     }
 
     public function getId(): string
