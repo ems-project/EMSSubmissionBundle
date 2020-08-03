@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace EMS\SubmissionBundle\Tests\Functional\App;
 
+use DAMA\DoctrineTestBundle\DAMADoctrineTestBundle;
+use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use EMS\CommonBundle\EMSCommonBundle;
 use EMS\SubmissionBundle\EMSSubmissionBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
@@ -19,6 +21,11 @@ final class Kernel extends BaseKernel
         return __DIR__.'/../../tmp/functional';
     }
 
+    public function getProjectDir()
+    {
+        return __DIR__.'/../../';
+    }
+
     public function getCacheDir()
     {
         return self::getPath().'/cache/'.$this->environment;
@@ -32,11 +39,13 @@ final class Kernel extends BaseKernel
     public function registerBundles(): array
     {
         return [
-            new EMSSubmissionBundle(),
-            new SwiftmailerBundle(),
             new FrameworkBundle(),
+            new SwiftmailerBundle(),
             new TwigBundle(),
+            new DoctrineBundle(),
+            new DAMADoctrineTestBundle(),
             new EMSCommonBundle(),
+            new EMSSubmissionBundle(),
         ];
     }
 
