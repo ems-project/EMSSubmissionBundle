@@ -36,8 +36,7 @@
 		"phpstan/phpstan": "^0.12",
 		"symfony/phpunit-bridge": "^5.1",
 		"friendsofphp/php-cs-fixer": "^2.8",
-		"symfony/yaml": "^4.4",
-		"dama/doctrine-test-bundle": "^6.3"
+		"symfony/yaml": "^4.4"
 	},
 	"autoload" : {
 		"psr-4" : {

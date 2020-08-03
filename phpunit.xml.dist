@@ -11,7 +11,6 @@
         <ini name="error_reporting" value="-1" />
         <env name="SYMFONY_PHPUNIT_VERSION" value="8.3"/>
         <env name="SYMFONY_DEPRECATIONS_HELPER" value="max[self]=0"/>
-        <env name="DATABASE_URL" value="sqlite:///%kernel.project_dir%/tmp/data.db" />
     </php>
     <testsuites>
         <testsuite name="Submission bundle suite">
@@ -25,7 +24,6 @@
     </filter>
 
     <extensions>
-        <extension class="EMS\SubmissionBundle\Tests\Functional\App\ClearLogCacheListener"/>
-        <extension class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension" />
+        <extension class="EMS\SubmissionBundle\Tests\Functional\App\ClearLogCacheListener"></extension>
     </extensions>
 </phpunit>

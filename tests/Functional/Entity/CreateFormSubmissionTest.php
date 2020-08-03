@@ -32,7 +32,7 @@ final class CreateFormSubmissionTest extends AbstractFunctionalTest
         $this->entityManager->flush();
 
         $dbSubmission = $this->entityManager->getRepository(FormSubmission::class)->findOneBy([
-            'name' => 'submissionTest'
+            'name' => 'submissionTest',
         ]);
 
         $this->assertEquals(true, true);

@@ -35,7 +35,7 @@ final class EMSSubmissionExtension extends Extension implements PrependExtension
 
         if (isset($bundles['DoctrineBundle'])) {
             $container->prependExtensionConfig('doctrine', [
-                'dbal' => ['types' => ['uuid' => UuidType::class]]
+                'dbal' => ['types' => ['uuid' => UuidType::class]],
             ]);
         }
     }

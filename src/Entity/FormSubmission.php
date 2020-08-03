@@ -135,6 +135,7 @@ class FormSubmission
     public function setProcessTryCounter(int $processTryCounter): FormSubmission
     {
         $this->processTryCounter = $processTryCounter;
+
         return $this;
     }
 
@@ -146,6 +147,7 @@ class FormSubmission
     public function setProcessId(string $processId): FormSubmission
     {
         $this->processId = $processId;
+
         return $this;
     }
 }

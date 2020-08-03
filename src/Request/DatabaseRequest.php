@@ -93,7 +93,7 @@ final class DatabaseRequest extends AbstractRequest
             $fileResolver = new OptionsResolver();
             $fileResolver->setRequired(['filename', 'mimeType', 'base64', 'size', 'form_field']);
 
-            $resolvedDatabaseRecord['files'] = array_map(function (array $file) use ($fileResolver) {
+            $resolvedDatabaseRecord['files'] = \array_map(function (array $file) use ($fileResolver) {
                 return $fileResolver->resolve($file);
             }, $resolvedDatabaseRecord['files']);
 
