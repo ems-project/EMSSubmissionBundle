@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace EMS\SubmissionBundle\Handler;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\Persistence\ObjectManager;
 use EMS\FormBundle\Submission\AbstractHandler;
 use EMS\FormBundle\Submission\FailedHandleResponse;
 use EMS\FormBundle\Submission\HandleRequestInterface;
@@ -18,7 +17,7 @@ use EMS\SubmissionBundle\Twig\TwigRenderer;
 
 final class DatabaseHandler extends AbstractHandler
 {
-    /** @var ObjectManager */
+    /** @var Registry */
     private $registry;
     /** @var TwigRenderer */
     private $twigRenderer;

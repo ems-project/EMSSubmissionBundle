@@ -29,7 +29,7 @@ final class EMSSubmissionExtension extends Extension implements PrependExtension
         $container->setParameter('emss.connections', $config['connections']);
     }
 
-    public function prepend(ContainerBuilder $container)
+    public function prepend(ContainerBuilder $container): void
     {
         $bundles = $container->getParameter('kernel.bundles');
 

@@ -7,7 +7,7 @@ namespace EMS\SubmissionBundle\Request;
 use Symfony\Component\OptionsResolver\Exception\ExceptionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-final class DatabaseRequest extends AbstractRequest
+final class DatabaseRequest
 {
     /** @var string */
     private $formName;
@@ -21,7 +21,7 @@ final class DatabaseRequest extends AbstractRequest
     private $files;
 
     /**
-     * @param array<string, mixed> $body
+     * @param array<string, mixed> $databaseRecord
      */
     public function __construct(array $databaseRecord)
     {
@@ -65,12 +65,8 @@ final class DatabaseRequest extends AbstractRequest
         return $this->files;
     }
 
-    protected function getEndpointOptionResolver(): OptionsResolver
-    {
-    }
-
     /**
-     * @param array<mixed> $json
+     * @param array<mixed> $databaseRecord
      *
      * @return array{form_name: string, instance: string, locale: string, data: array, files: array}
      */
@@ -87,7 +83,7 @@ final class DatabaseRequest extends AbstractRequest
         ;
 
         try {
-            /** @var array{form_name: string, instance: string, locale: string, data: array, files: array} $json */
+            /** @var array{form_name: string, instance: string, locale: string, data: array, files: array} $resolvedDatabaseRecord */
             $resolvedDatabaseRecord = $resolver->resolve($databaseRecord);
 
             $fileResolver = new OptionsResolver();
