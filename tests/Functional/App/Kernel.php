@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EMS\SubmissionBundle\Tests\Functional\App;
 
+use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use EMS\CommonBundle\EMSCommonBundle;
 use EMS\SubmissionBundle\EMSSubmissionBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
@@ -37,6 +38,7 @@ final class Kernel extends BaseKernel
             new FrameworkBundle(),
             new TwigBundle(),
             new EMSCommonBundle(),
+            new DoctrineBundle(),
         ];
     }
 
