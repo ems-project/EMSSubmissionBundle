@@ -1,13 +1,23 @@
 <?xml version="1.0" ?>
 <container xmlns="http://symfony.com/schema/dic/services"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://symfony.com/schema/dic/services
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services
         http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
         <defaults public="false" />
         <service id="emss.connection.transformer" class="EMS\SubmissionBundle\Connection\Transformer">
             <argument>%emss.connections%</argument>
+        </service>
+        <service id="emss.command.database_stats" class="EMS\SubmissionBundle\Command\DatabaseStatsCommand">
+            <argument type="service" id="mailer"/>
+            <argument type="service" id="emss.repository.form_submission"/>
+            <argument type="service" id="twig"/>
+            <tag name="console.command" />
+        </service>
+        <service id="emss.repository.form_submission" class="EMS\SubmissionBundle\Repository\FormSubmissionRepository">
+            <argument type="service" id="doctrine" />
+            <argument type="string">EMS\SubmissionBundle\Entity\FormSubmission</argument>
         </service>
         <service id="emss.response.transformer" class="EMS\SubmissionBundle\Response\ResponseTransformer">
             <argument type="service" id="emss.twig.renderer"/>
