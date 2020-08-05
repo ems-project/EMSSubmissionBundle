@@ -57,7 +57,7 @@ final class DatabaseStatsCommand extends Command
         $instance = $input->getOption('instance');
         /** @var string $period */
         $period = $input->getOption('period');
-        /** @var null|string $emailTo */
+        /** @var string|null $emailTo */
         $emailTo = $input->getOption('email-to');
 
         $counts = $this->repository->getCounts($formName, $period, $instance);

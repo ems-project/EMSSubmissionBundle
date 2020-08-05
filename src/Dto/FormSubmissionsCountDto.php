@@ -32,7 +32,7 @@ final class FormSubmissionsCountDto
     }
 
     /**
-     * @return  array<int, array<int, int|string>>
+     * @return array<int, array<int, int|string>>
      */
     public function toArray(): array
     {
@@ -45,7 +45,7 @@ final class FormSubmissionsCountDto
     }
 
     /**
-     * @return  array<int, array<int, int|string>>
+     * @return array<int, array<int, int|string>>
      */
     public function toArrayPeriod(): array
     {
