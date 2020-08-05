@@ -53,7 +53,7 @@ final class FormSubmissionsCountDto
             [\sprintf('total failed processing (last %s)', $this->period), $this->periodFailed],
             [\sprintf('total waiting for processing (last %s)', $this->period), $this->periodWaiting],
             [\sprintf('total processed (last %s)', $this->period), $this->periodProcessed],
-            [\sprintf('total (last %s)', $this->period), $this->periodTotal],
+            [\sprintf('total submissions (last %s)', $this->period), $this->periodTotal],
         ];
     }
 
