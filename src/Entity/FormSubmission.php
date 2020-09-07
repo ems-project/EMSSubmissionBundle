@@ -74,7 +74,7 @@ class FormSubmission
     /**
      * @var Collection<int, FormSubmissionFile>
      *
-     * @ORM\OneToMany(targetEntity="FormSubmissionFile", mappedBy="formSubbmission", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="FormSubmissionFile", mappedBy="formSubmission", cascade={"persist", "remove"})
      */
     protected $files;
 

@@ -7,9 +7,24 @@ namespace EMS\SubmissionBundle\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use EMS\SubmissionBundle\Dto\FormSubmissionsCountDto;
+use EMS\SubmissionBundle\Entity\FormSubmission;
 
 final class FormSubmissionRepository extends ServiceEntityRepository
 {
+    public function findById(string $id): ?FormSubmission
+    {
+        try {
+            $qb = $this->createQueryBuilder('fs');
+            $qb
+                ->andWhere($qb->expr()->eq('fs.id', ':id'))
+                ->setParameter('id', $id);
+
+            return $qb->getQuery()->getOneOrNullResult();
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
     public function getCounts(string $name, string $period, ?string $instance): FormSubmissionsCountDto
     {
         $qb = $this->createCountQueryBuilder($name, $instance);
