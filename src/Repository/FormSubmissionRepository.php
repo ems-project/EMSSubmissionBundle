@@ -41,8 +41,12 @@ final class FormSubmissionRepository extends ServiceEntityRepository
 
     private function countFailed(QueryBuilder $qb): int
     {
+        $date = new \DateTime('now');
+        $date->modify('-4 hour');
+
         $qb->andWhere($qb->expr()->isNull('fs.processId'));
-        $qb->andWhere($qb->expr()->gt('fs.processTryCounter', 0));
+        $qb->andWhere('(fs.processTryCounter > 0 OR fs.created < :date)');
+        $qb->setParameter(':date', $date);
 
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
