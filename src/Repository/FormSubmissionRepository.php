@@ -7,9 +7,24 @@ namespace EMS\SubmissionBundle\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use EMS\SubmissionBundle\Dto\FormSubmissionsCountDto;
+use EMS\SubmissionBundle\Entity\FormSubmission;
 
 final class FormSubmissionRepository extends ServiceEntityRepository
 {
+    public function findById(string $id): ?FormSubmission
+    {
+        try {
+            $qb = $this->createQueryBuilder('fs');
+            $qb
+                ->andWhere($qb->expr()->eq('fs.id', ':id'))
+                ->setParameter('id', $id);
+
+            return $qb->getQuery()->getOneOrNullResult();
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
     public function getCounts(string $name, string $period, ?string $instance): FormSubmissionsCountDto
     {
         $qb = $this->createCountQueryBuilder($name, $instance);
@@ -41,8 +56,12 @@ final class FormSubmissionRepository extends ServiceEntityRepository
 
     private function countFailed(QueryBuilder $qb): int
     {
+        $date = new \DateTime('now');
+        $date->modify('-4 hour');
+
         $qb->andWhere($qb->expr()->isNull('fs.processId'));
-        $qb->andWhere($qb->expr()->gt('fs.processTryCounter', 0));
+        $qb->andWhere('(fs.processTryCounter > 0 OR fs.created < :date)');
+        $qb->setParameter(':date', $date);
 
         return (int) $qb->getQuery()->getSingleScalarResult();
     }

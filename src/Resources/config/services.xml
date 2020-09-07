@@ -15,6 +15,10 @@
             <argument type="service" id="twig"/>
             <tag name="console.command" />
         </service>
+        <service id="emss.event_subscriber.form_submission_request" class="EMS\SubmissionBundle\EventSubscriber\FormSubmissionRequestSubscriber">
+            <argument type="service" id="emss.repository.form_submission"/>
+            <tag name="kernel.event_subscriber" />
+        </service>
         <service id="emss.repository.form_submission" class="EMS\SubmissionBundle\Repository\FormSubmissionRepository">
             <argument type="service" id="doctrine" />
             <argument type="string">EMS\SubmissionBundle\Entity\FormSubmission</argument>
