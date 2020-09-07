@@ -6,38 +6,23 @@ namespace EMS\SubmissionBundle\Connection;
 
 final class Connection
 {
-    /** @var string */
-    private $user;
-    /** @var string */
-    private $password;
+    /** @var array<string, string> */
+    private $connection;
 
     /**
-     * @param array{'connection': string, 'user': string, 'password': string} $connection
+     * @param array<string, string> $connection
      */
     public function __construct(array $connection)
     {
-        $this->user = $connection['user'] ?? '';
-        $this->password = $connection['password'] ?? '';
+        $this->connection = $connection;
     }
 
-    public function callByKey(string $key): string
+    public function getKey(string $key): string
     {
-        $method = \sprintf('get%s', \ucfirst($key));
-
-        if (!\method_exists($this, $method)) {
+        if (!isset($this->connection[$key])) {
             return $key;
         }
 
-        return $this->$method();
-    }
-
-    public function getUser(): string
-    {
-        return $this->user;
-    }
-
-    public function getPassword(): string
-    {
-        return $this->password;
+        return $this->connection[$key];
     }
 }
