@@ -7,12 +7,12 @@ namespace EMS\SubmissionBundle\Connection;
 final class Transformer
 {
     /**
-     * @var array<array{'connection': string, 'user': string, 'password': string}>
+     * @var array<array<string, string>>
      */
     private $connections;
 
     /**
-     * @param array<array{'connection': string, 'user': string, 'password': string}> $connections
+     * @param array<array<string, string>> $connections
      */
     public function __construct(array $connections)
     {
@@ -34,7 +34,7 @@ final class Transformer
 
         $conn = $this->getConnection($path[0]);
 
-        return null === $conn ? $path[0] : $conn->callByKey($path[1]);
+        return null === $conn ? $path[0] : $conn->getKey($path[1]);
     }
 
     private function getConnection(string $name): ?Connection
