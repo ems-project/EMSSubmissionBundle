@@ -41,6 +41,11 @@
             <argument type="service" id="emss.twig.renderer"/>
             <tag name="emsf.handler" />
         </service>
+        <service id="emss.handler.soap" class="EMS\SubmissionBundle\Handler\SoapHandler">
+            <argument type="service" id="emss.twig.renderer"/>
+            <argument type="service" id="emss.response.transformer"/>
+            <tag name="emsf.handler" />
+        </service>
         <service id="emss.handler.zip" class="EMS\SubmissionBundle\Handler\ZipHandler">
             <argument type="service" id="emss.twig.renderer"/>
             <argument type="service" id="emss.response.transformer"/>
