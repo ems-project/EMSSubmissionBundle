@@ -45,7 +45,7 @@ final class EmailHandler extends AbstractHandler
             $this->mailer->send($message, $failedRecipients);
 
             if ([] !== $failedRecipients) {
-                throw new \RuntimeException(sprintf('Submission configured per mail and not send to %d receipients', \count($failedRecipients)));
+                throw new \RuntimeException(\sprintf('Submission configured per mail and not send to %d receipients', \count($failedRecipients)));
             }
         } catch (\Exception $exception) {
             return new FailedHandleResponse(\sprintf('Submission failed, contact your admin. %s', $exception->getMessage()));

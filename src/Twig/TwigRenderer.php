@@ -10,7 +10,7 @@ use Twig\Environment;
 final class TwigRenderer
 {
     /** @var Environment */
-    protected $templating;
+    private $templating;
 
     public function __construct(Environment $templating)
     {

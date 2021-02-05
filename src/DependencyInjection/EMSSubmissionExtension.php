@@ -33,7 +33,7 @@ final class EMSSubmissionExtension extends Extension implements PrependExtension
     {
         $bundles = $container->getParameter('kernel.bundles');
 
-        if (!\is_array($bundles)){
+        if (!\is_array($bundles)) {
             return;
         }
 
