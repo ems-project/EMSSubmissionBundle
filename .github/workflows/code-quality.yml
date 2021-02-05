@@ -9,7 +9,7 @@ jobs:
       - name: PHP-CS-Fixer
         uses: docker://oskarstark/php-cs-fixer-ga
         with:
-          args: --diff --dry-run
+          args: --diff --dry-run --config=.php_cs.dist
 
   phpstan:
     name: PHPStan
@@ -20,4 +20,4 @@ jobs:
       - name: PHPStan
         uses: docker://oskarstark/phpstan-ga
         with:
-          args: analyse src/
+          args: analyse --configuration=phpstan.neon.dist
