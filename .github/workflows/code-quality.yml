@@ -8,8 +8,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: PHP-CS-Fixer
         uses: docker://oskarstark/php-cs-fixer-ga
-         with:
-          args: --diff --dry-run
+        with:
+          args: --diff --dry-run --config=.php_cs.dist
 
   phpstan:
     name: PHPStan
@@ -19,5 +19,7 @@ jobs:
         uses: actions/checkout@v2
       - name: PHPStan
         uses: docker://oskarstark/phpstan-ga
+        env:
+          CHECK_PLATFORM_REQUIREMENTS: false
         with:
-          args: analyse src/
+          args: analyse --configuration=phpstan.neon.dist
