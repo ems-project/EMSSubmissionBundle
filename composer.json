@@ -48,6 +48,10 @@
 			"EMS\\SubmissionBundle\\Tests\\" : "tests/"
 		}
 	},
+	"config": {
+		"lock": false,
+		"sort-packages": true
+	},
 	"scripts": {
 		"phpcs": "php-cs-fixer fix",
 		"phpstan": "phpstan analyse ."
