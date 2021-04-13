@@ -28,8 +28,8 @@ final class ServiceNowRequest
         $this->attachmentTable = $endpoint['attachmentTable'] ?? $endpoint['table'];
         $this->username = $endpoint['username'];
         $this->password = $endpoint['password'];
-        $this->bodyEndpoint = ($endpoint['bodyEndpoint']) ?? '/api/now/table';
-        $this->attachmentEndpoint = ($endpoint['attachmentEndpoint']) ?? '/api/now/attachment/file';
+        $this->bodyEndpoint = $endpoint['bodyEndpoint'] ?? '/api/now/table';
+        $this->attachmentEndpoint = $endpoint['attachmentEndpoint'] ?? '/api/now/attachment/file';
 
         if (!empty($message['body'])) {
             $body = \json_encode($message['body']);
