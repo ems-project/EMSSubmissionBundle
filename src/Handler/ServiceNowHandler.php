@@ -16,12 +16,9 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class ServiceNowHandler extends AbstractHandler
 {
-    /** @var HttpClientInterface */
-    private $client;
-    /** @var int */
-    private $timeout;
-    /** @var TwigRenderer */
-    private $twigRenderer;
+    private HttpClientInterface $client;
+    private int $timeout;
+    private TwigRenderer $twigRenderer;
 
     public function __construct(HttpClientInterface $client, int $timeout, TwigRenderer $twigRenderer)
     {

@@ -6,23 +6,15 @@ namespace EMS\SubmissionBundle\Request;
 
 final class ServiceNowRequest
 {
-    /** @var string */
-    private $host;
-    /** @var string */
-    private $table;
-    /** @var string */
-    private $bodyEndpoint;
-    /** @var string */
-    private $attachmentEndpoint;
-    /** @var string */
-    private $username;
-    /** @var string */
-    private $password;
-
-    /** @var string */
-    private $body = '';
+    private string $host;
+    private string $table;
+    private string $bodyEndpoint;
+    private string $attachmentEndpoint;
+    private string $username;
+    private string $password;
+    private string $body = '';
     /** @var array<array> */
-    private $attachments = [];
+    private array $attachments = [];
 
     /**
      * @param array<string, string> $endpoint
