@@ -68,7 +68,7 @@ final class ServiceNowHandler extends AbstractHandler
             $this->client->request('POST', $request->getAttachmentEndpoint(), [
                 'query' => [
                     'file_name' => $attachment['originalName'],
-                    'table_name' => $request->getTable(),
+                    'table_name' => $request->getAttachmentTable(),
                     'table_sys_id' => $response->getResultProperty('sys_id'),
                 ],
                 'headers' => [

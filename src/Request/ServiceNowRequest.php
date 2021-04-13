@@ -8,6 +8,7 @@ final class ServiceNowRequest
 {
     private string $host;
     private string $table;
+    private string $attachmentTable;
     private string $bodyEndpoint;
     private string $attachmentEndpoint;
     private string $username;
@@ -24,6 +25,7 @@ final class ServiceNowRequest
     {
         $this->host = $endpoint['host'];
         $this->table = $endpoint['table'];
+        $this->attachmentTable = $endpoint['attachmentTable'] ?? $endpoint['table'];
         $this->username = $endpoint['username'];
         $this->password = $endpoint['password'];
         $this->bodyEndpoint = ($endpoint['bodyEndpoint']) ?? '/api/now/table';
@@ -52,6 +54,11 @@ final class ServiceNowRequest
     public function getTable(): string
     {
         return $this->table;
+    }
+
+    public function getAttachmentTable(): string
+    {
+        return $this->attachmentTable;
     }
 
     public function getUsername(): string
