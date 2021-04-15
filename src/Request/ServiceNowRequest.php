@@ -6,23 +6,16 @@ namespace EMS\SubmissionBundle\Request;
 
 final class ServiceNowRequest
 {
-    /** @var string */
-    private $host;
-    /** @var string */
-    private $table;
-    /** @var string */
-    private $bodyEndpoint;
-    /** @var string */
-    private $attachmentEndpoint;
-    /** @var string */
-    private $username;
-    /** @var string */
-    private $password;
-
-    /** @var string */
-    private $body = '';
+    private string $host;
+    private string $table;
+    private string $attachmentTable;
+    private string $bodyEndpoint;
+    private string $attachmentEndpoint;
+    private string $username;
+    private string $password;
+    private string $body = '';
     /** @var array<array> */
-    private $attachments = [];
+    private array $attachments = [];
 
     /**
      * @param array<string, string> $endpoint
@@ -32,10 +25,11 @@ final class ServiceNowRequest
     {
         $this->host = $endpoint['host'];
         $this->table = $endpoint['table'];
+        $this->attachmentTable = $endpoint['attachmentTable'] ?? $endpoint['table'];
         $this->username = $endpoint['username'];
         $this->password = $endpoint['password'];
-        $this->bodyEndpoint = ($endpoint['bodyEndpoint']) ?? '/api/now/table';
-        $this->attachmentEndpoint = ($endpoint['attachmentEndpoint']) ?? '/api/now/attachment/file';
+        $this->bodyEndpoint = $endpoint['bodyEndpoint'] ?? '/api/now/table';
+        $this->attachmentEndpoint = $endpoint['attachmentEndpoint'] ?? '/api/now/attachment/file';
 
         if (!empty($message['body'])) {
             $body = \json_encode($message['body']);
@@ -60,6 +54,11 @@ final class ServiceNowRequest
     public function getTable(): string
     {
         return $this->table;
+    }
+
+    public function getAttachmentTable(): string
+    {
+        return $this->attachmentTable;
     }
 
     public function getUsername(): string
