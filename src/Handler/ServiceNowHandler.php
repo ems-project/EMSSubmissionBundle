@@ -16,12 +16,9 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class ServiceNowHandler extends AbstractHandler
 {
-    /** @var HttpClientInterface */
-    private $client;
-    /** @var int */
-    private $timeout;
-    /** @var TwigRenderer */
-    private $twigRenderer;
+    private HttpClientInterface $client;
+    private int $timeout;
+    private TwigRenderer $twigRenderer;
 
     public function __construct(HttpClientInterface $client, int $timeout, TwigRenderer $twigRenderer)
     {
@@ -71,7 +68,7 @@ final class ServiceNowHandler extends AbstractHandler
             $this->client->request('POST', $request->getAttachmentEndpoint(), [
                 'query' => [
                     'file_name' => $attachment['originalName'],
-                    'table_name' => $request->getTable(),
+                    'table_name' => $request->getAttachmentTable(),
                     'table_sys_id' => $response->getResultProperty('sys_id'),
                 ],
                 'headers' => [
