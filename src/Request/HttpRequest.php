@@ -20,7 +20,6 @@ final class HttpRequest extends AbstractRequest
         'headers' => [],
         'timeout' => 30,
         'query' => [],
-        'ignore_body_value' => null,
     ];
 
     /**
@@ -71,7 +70,10 @@ final class HttpRequest extends AbstractRequest
         $optionsResolver = new OptionsResolver();
         $optionsResolver
             ->setRequired(['url', 'method'])
-            ->setDefaults(\array_merge(self::HTTP_OPTIONS, ['method' => Request::METHOD_POST]))
+            ->setDefaults(\array_merge(self::HTTP_OPTIONS, [
+                'method' => Request::METHOD_POST,
+                'ignore_body_value' => null,
+            ]))
         ;
 
         return $optionsResolver;
