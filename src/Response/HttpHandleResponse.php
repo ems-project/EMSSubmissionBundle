@@ -14,12 +14,12 @@ final class HttpHandleResponse extends AbstractHandleResponse
     /** @var string */
     private $responseContent;
 
-    public function __construct(ResponseInterface $response, string $responseContent)
+    public function __construct(ResponseInterface $response, string $responseContent, string $data = 'Submission send by http.')
     {
         $this->response = $response;
         $this->responseContent = $responseContent;
 
-        parent::__construct(self::STATUS_SUCCESS, 'Submission send by http.');
+        parent::__construct(self::STATUS_SUCCESS, $data);
     }
 
     public function getHttpResponse(): ResponseInterface
