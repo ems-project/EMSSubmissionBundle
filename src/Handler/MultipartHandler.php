@@ -90,8 +90,8 @@ final class MultipartHandler extends AbstractHandler
 
     public function getDataPart(UploadedFile $file): DataPart
     {
-        if (false === $handle = @\fopen($file->getPath(), 'r', false)) {
-            throw new \RuntimeException(\sprintf('Unable to open path "%s".', $file->getPath()));
+        if (false === $handle = @\fopen($file->getPathname(), 'r', false)) {
+            throw new \RuntimeException(\sprintf('Unable to open path "%s".', $file->getPathname()));
         }
 
         return new DataPart($handle, $file->getClientOriginalName(), $file->getClientMimeType());
