@@ -45,7 +45,9 @@ final class MultipartHandler extends AbstractHandler
             $json = $this->twigRenderer->renderMessageJSON($handleRequest);
             $formFields = [];
             foreach ($json as $key => $data) {
-                if ($formData->isFileUuid($data)) {
+                if (null === $data) {
+                    continue;
+                } elseif (\is_string($data) && $formData->isFileUuid($data)) {
                     $data = $this->getDataPart($formData->getFileFromUuid($data));
                 }
                 $formFields[$key] = $data;
@@ -88,8 +90,8 @@ final class MultipartHandler extends AbstractHandler
 
     public function getDataPart(UploadedFile $file): DataPart
     {
-        if (false === $handle = @\fopen($file->getPath(), 'r', false)) {
-            throw new \RuntimeException(\sprintf('Unable to open path "%s".', $file->getPath()));
+        if (false === $handle = @\fopen($file->getPathname(), 'r', false)) {
+            throw new \RuntimeException(\sprintf('Unable to open path "%s".', $file->getPathname()));
         }
 
         return new DataPart($handle, $file->getClientOriginalName(), $file->getClientMimeType());
