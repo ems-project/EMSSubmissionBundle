@@ -19,6 +19,10 @@ final class DatabaseRequest
     private $data;
     /** @var array<int, array{filename: string, mimeType: string, base64: string, size: string, form_field: string}> */
     private $files;
+    /** @var string */
+    private $label;
+    /** @var \DateTime|null */
+    private $expireDate;
 
     /**
      * @param array<string, mixed> $databaseRecord
@@ -32,6 +36,9 @@ final class DatabaseRequest
         $this->locale = $record['locale'];
         $this->data = $record['data'];
         $this->files = $record['files'];
+        $this->label = $record['label'] ?? '';
+        $formattedDate = \DateTime::createFromFormat(\DateTime::ATOM, $record['expire_date']);
+        $this->expireDate = false != $formattedDate ? $formattedDate : null;
     }
 
     public function getFormName(): string
@@ -65,10 +72,20 @@ final class DatabaseRequest
         return $this->files;
     }
 
+    public function getLabel(): string
+    {
+        return $this->label;
+    }
+
+    public function getExpireDate(): ?\DateTime
+    {
+        return $this->expireDate;
+    }
+
     /**
      * @param array<mixed> $databaseRecord
      *
-     * @return array{form_name: string, instance: string, locale: string, data: array, files: array}
+     * @return array{form_name: string, instance: string, locale: string, data: array, files: array, label: string, expire_date: string}
      */
     private function resolveDatabaseRecord(array $databaseRecord): array
     {
@@ -76,14 +93,18 @@ final class DatabaseRequest
         $resolver
             ->setRequired(['form_name', 'locale', 'data', 'instance'])
             ->setDefault('files', [])
+            ->setDefault('label', '')
+            ->setDefault('expire_date', '')
             ->setAllowedTypes('form_name', 'string')
             ->setAllowedTypes('locale', 'string')
             ->setAllowedTypes('data', 'array')
             ->setAllowedTypes('files', 'array')
+            ->setAllowedTypes('label', 'string')
+            ->setAllowedTypes('expire_date', 'string')
         ;
 
         try {
-            /** @var array{form_name: string, instance: string, locale: string, data: array, files: array} $resolvedDatabaseRecord */
+            /** @var array{form_name: string, instance: string, locale: string, data: array, files: array, label: string, expire_date: string} $resolvedDatabaseRecord */
             $resolvedDatabaseRecord = $resolver->resolve($databaseRecord);
 
             $fileResolver = new OptionsResolver();
