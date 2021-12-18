@@ -55,7 +55,7 @@ ems_submission:
 ### Default Timeout
 Whenever a form is submitted using our handlers, we should limit the amount of time that is allowed for the request to succeed. The `default_timeout` requires a number that represents the allowed number of seconds before we timeout waiting for external feedback.
 
-### Connections <a name="connection" />
+### Connections
 To integrate with external services like ServiceNow we need credentials. Those are passed using the configuration of the bundle to prevent disclosure of the password in the ElasticMS backend and Elasticsearch cluster.
 The 'connections' parameter allows to add one or more connection configurations as follows:
 ```yaml 
@@ -70,7 +70,7 @@ Each configuration has a "connection", "user", and "password" entry.
 An infinite amount of keys can be added to this configuration, only the "connection" key is obligatory.
 
 ### Fetch credentials for your service.
-An example endpoint configuration to integrate with ServiceNow has access to the user/pass of the "service-now-instance-a" using the [emss_connection](/src/Resources/doc/twig.md) filter:
+An example endpoint configuration to integrate with ServiceNow has access to the user/pass of the "service-now-instance-a" using the [emss_connection](/doc/twig.md) filter:
 ```twig
 {
     "host": "https://example.service-now.com/api/now/table/my_table_name",
