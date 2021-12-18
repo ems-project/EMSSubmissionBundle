@@ -32,7 +32,7 @@ The endpoint JSON allow two authentication properties **auth_basic** and **auth_
 }
 ```
 
-The authentication parameters can also be fetched using the [connection configuration](/src/Resources/doc/index.md#connection)
+The authentication parameters can also be fetched using the [connection configuration](/src/Resources/doc/index.md#connections)
 
 ```json 
 {

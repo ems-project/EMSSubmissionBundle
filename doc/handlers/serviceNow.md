@@ -5,7 +5,7 @@ Sends data to a Service Now REST endpoint.
 ## Endpoint
 
 The endpoint field contains the host, table, user, and password to connect to the REST endpoint. 
-Connection parameters are fetched using the [connection configuration](/src/Resources/doc/index.md#connection)
+Connection parameters are fetched using the [connection configuration](/src/Resources/doc/index.md#connections)
 ```twig 
 //endpoint field
 {
