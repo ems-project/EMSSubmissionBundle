@@ -121,4 +121,42 @@ class FormSubmissionFile
     {
         return $this->filename;
     }
+
+    public function getId(): UuidInterface
+    {
+        return $this->id;
+    }
+
+    public function getCreated(): \DateTime
+    {
+        return $this->created;
+    }
+
+    public function getModified(): \DateTime
+    {
+        return $this->modified;
+    }
+
+    public function getFormSubmission(): FormSubmission
+    {
+        return $this->formSubmission;
+    }
+
+    public function getFormField(): string
+    {
+        return $this->formField;
+    }
+
+    public function getMimeType(): string
+    {
+        return $this->mimeType;
+    }
+
+    /**
+     * @return mixed|string
+     */
+    public function getSize()
+    {
+        return $this->size;
+    }
 }

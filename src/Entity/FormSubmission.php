@@ -17,7 +17,7 @@ use Ramsey\Uuid\UuidInterface;
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks()
  */
-class FormSubmission implements EntityInterface
+class FormSubmission
 {
     /**
      * @var UuidInterface
@@ -199,7 +199,7 @@ class FormSubmission implements EntityInterface
     public function process(string $username): void
     {
         $this->data = null;
-        $this->processTryCounter = 1;
+        ++$this->processTryCounter;
         $this->processBy = $username;
         $this->files->clear();
     }
@@ -226,5 +226,15 @@ class FormSubmission implements EntityInterface
         $this->processId = $processId;
 
         return $this;
+    }
+
+    public function getModified(): \DateTime
+    {
+        return $this->modified;
+    }
+
+    public function getProcessBy(): string
+    {
+        return $this->processBy;
     }
 }
