@@ -45,8 +45,27 @@ The message can access the filled in data of the form, for example submitted fie
 
 {% set email = {
     "from": data.email,
-    "subject": "Email Form subject", 
+    "subject": "Email Form subject",
     "body": body
+} %}
+{% endautoescape %}
+{{ email|json_encode|raw }}
+```
+
+If your body contains HTML structured text, you have to pass the content-type option text/html in the email object. By default text/plain is used.
+```twig
+{% autoescape %}
+{% set body %}
+    Email {{ data.email }}
+    Name {{ data.name }}
+    Firstname {{ data.firstname }}
+{% endset %}
+
+{% set email = {
+    "from": data.email,
+    "subject": "Email Form subject",
+    "body": body,
+    "content-type": "text/html"
 } %}
 {% endautoescape %}
 {{ email|json_encode|raw }}

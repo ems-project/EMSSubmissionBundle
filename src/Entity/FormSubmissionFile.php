@@ -14,7 +14,7 @@ use Ramsey\Uuid\UuidInterface;
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks()
  */
-class FormSubmissionFile
+class FormSubmissionFile implements EntityInterface
 {
     /**
      * @var UuidInterface
@@ -122,9 +122,9 @@ class FormSubmissionFile
         return $this->filename;
     }
 
-    public function getId(): UuidInterface
+    public function getId(): string
     {
-        return $this->id;
+        return $this->id->toString();
     }
 
     public function getCreated(): \DateTime

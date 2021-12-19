@@ -17,7 +17,7 @@ use Ramsey\Uuid\UuidInterface;
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks()
  */
-class FormSubmission
+class FormSubmission implements EntityInterface
 {
     /**
      * @var UuidInterface
