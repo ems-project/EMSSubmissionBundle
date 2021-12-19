@@ -35,7 +35,7 @@ final class EmailHandler extends AbstractHandler
             $message = (new \Swift_Message($emailRequest->getSubject()))
                 ->setFrom($emailRequest->getFrom())
                 ->setTo($emailRequest->getEndpoint())
-                ->setBody($emailRequest->getBody());
+                ->setBody($emailRequest->getBody(), $emailRequest->getContentType());
 
             foreach ($this->createAttachments($emailRequest) as $attachment) {
                 $message->attach($attachment);

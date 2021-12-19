@@ -14,6 +14,7 @@ final class EmailRequest
     private $subject;
     /** @var string */
     private $body = '';
+    private string $contentType = '';
     /** @var array<array> */
     private $attachments;
 
@@ -32,6 +33,7 @@ final class EmailRequest
         $this->subject = $message['subject'] ?? 'Email submission';
         $this->body = $message['body'] ?? '';
         $this->attachments = $message['attachments'] ?? [];
+        $this->contentType = $message['content-type'] ?? 'text/plain';
     }
 
     public function getEndpoint(): string
@@ -52,6 +54,11 @@ final class EmailRequest
     public function getBody(): string
     {
         return $this->body;
+    }
+
+    public function getContentType(): string
+    {
+        return $this->contentType;
     }
 
     /**
