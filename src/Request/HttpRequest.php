@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class HttpRequest extends AbstractRequest
 {
-    /** @var array{method: string, url: string} */
+    /** @var array{method: string, url: string, ignore_body_value: string|null} */
     private $endpoint;
     /** @var string */
     private $body;
@@ -27,7 +27,7 @@ final class HttpRequest extends AbstractRequest
      */
     public function __construct(array $endpoint, string $body)
     {
-        /** @var array{method: string, url: string} $endpoint */
+        /** @var array{method: string, url: string, ignore_body_value: string|null} $endpoint */
         $endpoint = $this->resolveEndpoint($endpoint);
 
         $this->endpoint = $endpoint;
@@ -60,12 +60,20 @@ final class HttpRequest extends AbstractRequest
         return $options;
     }
 
+    public function getIgnoreBodyValue(): ?string
+    {
+        return $this->endpoint['ignore_body_value'];
+    }
+
     protected function getEndpointOptionResolver(): OptionsResolver
     {
         $optionsResolver = new OptionsResolver();
         $optionsResolver
             ->setRequired(['url', 'method'])
-            ->setDefaults(\array_merge(self::HTTP_OPTIONS, ['method' => Request::METHOD_POST]))
+            ->setDefaults(\array_merge(self::HTTP_OPTIONS, [
+                'method' => Request::METHOD_POST,
+                'ignore_body_value' => null,
+            ]))
         ;
 
         return $optionsResolver;

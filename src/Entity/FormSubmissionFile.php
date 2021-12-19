@@ -14,7 +14,7 @@ use Ramsey\Uuid\UuidInterface;
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks()
  */
-class FormSubmissionFile
+class FormSubmissionFile implements EntityInterface
 {
     /**
      * @var UuidInterface
@@ -49,7 +49,7 @@ class FormSubmissionFile
     private $formSubmission;
 
     /**
-     * @var string
+     * @var string|resource
      *
      * @ORM\Column(name="file", type="blob")
      */
@@ -107,5 +107,56 @@ class FormSubmissionFile
     public function updateModified(): void
     {
         $this->modified = new \DateTime();
+    }
+
+    /**
+     * @return resource|null
+     */
+    public function getFile()
+    {
+        return \is_resource($this->file) ? $this->file : null;
+    }
+
+    public function getFilename(): string
+    {
+        return $this->filename;
+    }
+
+    public function getId(): string
+    {
+        return $this->id->toString();
+    }
+
+    public function getCreated(): \DateTime
+    {
+        return $this->created;
+    }
+
+    public function getModified(): \DateTime
+    {
+        return $this->modified;
+    }
+
+    public function getFormSubmission(): FormSubmission
+    {
+        return $this->formSubmission;
+    }
+
+    public function getFormField(): string
+    {
+        return $this->formField;
+    }
+
+    public function getMimeType(): string
+    {
+        return $this->mimeType;
+    }
+
+    /**
+     * @return mixed|string
+     */
+    public function getSize()
+    {
+        return $this->size;
     }
 }

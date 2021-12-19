@@ -17,7 +17,7 @@ use Ramsey\Uuid\UuidInterface;
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks()
  */
-class FormSubmission
+class FormSubmission implements EntityInterface
 {
     /**
      * @var UuidInterface
@@ -65,18 +65,31 @@ class FormSubmission
     private $locale;
 
     /**
-     * @var array<string, mixed>
+     * @var array<string, mixed>|null
      *
-     * @ORM\Column(name="data", type="json_array")
+     * @ORM\Column(name="data", type="json_array", nullable=true)
      */
     private $data;
 
     /**
      * @var Collection<int, FormSubmissionFile>
      *
-     * @ORM\OneToMany(targetEntity="FormSubmissionFile", mappedBy="formSubmission", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="FormSubmissionFile", mappedBy="formSubmission", cascade={"persist", "remove"}, orphanRemoval=true)
      */
     protected $files;
+
+    /**
+     * @var \DateTime|null
+     * @ORM\Column(name="expire_date", type="date", nullable=true)
+     */
+    private $expireDate;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="label", type="string", length=255)
+     */
+    private $label;
 
     /**
      * @var int
@@ -91,6 +104,13 @@ class FormSubmission
      * @ORM\Column(name="process_id", type="string", length=255, nullable=true)
      */
     private $processId;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="process_by", type="string", length=255, nullable=true)
+     */
+    private $processBy;
 
     public function __construct(DatabaseRequest $databaseRequest)
     {
@@ -107,6 +127,9 @@ class FormSubmission
         $this->data = $databaseRequest->getData();
 
         $this->files = new ArrayCollection();
+
+        $this->label = $databaseRequest->getLabel();
+        $this->expireDate = $databaseRequest->getExpireDate();
 
         foreach ($databaseRequest->getFiles() as $file) {
             $this->files->add(new FormSubmissionFile($this, $file));
@@ -125,6 +148,60 @@ class FormSubmission
     public function updateModified(): void
     {
         $this->modified = new \DateTime();
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    public function getData(): ?array
+    {
+        return $this->data;
+    }
+
+    /**
+     * @return Collection<int, FormSubmissionFile>|FormSubmissionFile[]
+     */
+    public function getFiles(): Collection
+    {
+        return $this->files;
+    }
+
+    public function getInstance(): string
+    {
+        return $this->instance;
+    }
+
+    public function getLocale(): string
+    {
+        return $this->locale;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function getLabel(): ?string
+    {
+        return $this->label;
+    }
+
+    public function getExpireDate(): ?\DateTime
+    {
+        return $this->expireDate;
+    }
+
+    public function getCreated(): \Datetime
+    {
+        return $this->created;
+    }
+
+    public function process(string $username): void
+    {
+        $this->data = null;
+        ++$this->processTryCounter;
+        $this->processBy = $username;
+        $this->files->clear();
     }
 
     public function getProcessTryCounter(): int
@@ -149,5 +226,15 @@ class FormSubmission
         $this->processId = $processId;
 
         return $this;
+    }
+
+    public function getModified(): \DateTime
+    {
+        return $this->modified;
+    }
+
+    public function getProcessBy(): string
+    {
+        return $this->processBy;
     }
 }
