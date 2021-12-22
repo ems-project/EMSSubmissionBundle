@@ -109,8 +109,17 @@ final class MultipartHandler extends AbstractHandler
         if (!\is_array($data)) {
             return $data;
         }
-        foreach ($data as $key => $sudData) {
-            $data[$key] = $this->searchAndReplaceFiles($sudData, $formData);
+        $arrayValues = false;
+        foreach ($data as $key => $subData) {
+            if (null === $subData) {
+                unset($data[$key]);
+                $arrayValues = \is_int($key);
+                continue;
+            }
+            $data[$key] = $this->searchAndReplaceFiles($subData, $formData);
+        }
+        if ($arrayValues) {
+            $data = \array_values($data);
         }
 
         return $data;
