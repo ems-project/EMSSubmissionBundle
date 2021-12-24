@@ -6,6 +6,7 @@ namespace EMS\SubmissionBundle\Handler;
 
 use EMS\FormBundle\Submission\AbstractHandler;
 use EMS\FormBundle\Submission\FailedHandleResponse;
+use EMS\FormBundle\Submission\FormData;
 use EMS\FormBundle\Submission\HandleRequestInterface;
 use EMS\FormBundle\Submission\HandleResponseInterface;
 use EMS\SubmissionBundle\Response\HttpHandleResponse;
@@ -47,10 +48,8 @@ final class MultipartHandler extends AbstractHandler
             foreach ($json as $key => $data) {
                 if (null === $data) {
                     continue;
-                } elseif (\is_string($data) && $formData->isFileUuid($data)) {
-                    $data = $this->getDataPart($formData->getFileFromUuid($data));
                 }
-                $formFields[$key] = $data;
+                $formFields[$key] = $this->searchAndReplaceFiles($data, $formData);
             }
 
             $formData = new FormDataPart($formFields);
@@ -95,5 +94,34 @@ final class MultipartHandler extends AbstractHandler
         }
 
         return new DataPart($handle, $file->getClientOriginalName(), $file->getClientMimeType());
+    }
+
+    /**
+     * @param mixed $data
+     *
+     * @return mixed
+     */
+    private function searchAndReplaceFiles($data, FormData $formData)
+    {
+        if (\is_string($data) && $formData->isFileUuid($data)) {
+            return $this->getDataPart($formData->getFileFromUuid($data));
+        }
+        if (!\is_array($data)) {
+            return $data;
+        }
+        $arrayValues = false;
+        foreach ($data as $key => $subData) {
+            if (null === $subData) {
+                unset($data[$key]);
+                $arrayValues = \is_int($key);
+                continue;
+            }
+            $data[$key] = $this->searchAndReplaceFiles($subData, $formData);
+        }
+        if ($arrayValues) {
+            $data = \array_values($data);
+        }
+
+        return $data;
     }
 }
