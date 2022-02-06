@@ -123,6 +123,11 @@ class FormSubmissionFile implements EntityInterface
         return $this->filename;
     }
 
+    public function getName(): string
+    {
+        return \sprintf('%s:%s', $this->getFormSubmission()->getName(), $this->filename);
+    }
+
     public function getId(): string
     {
         return $this->id->toString();
