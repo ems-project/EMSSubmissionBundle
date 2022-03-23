@@ -37,5 +37,9 @@
             <argument type="service" id="emss.connection.transformer" />
             <tag name="twig.runtime" />
         </service>
+        <service id="emss.metric.collector" class="EMS\SubmissionBundle\Metric\MetricCollector">
+            <argument type="service" id="emss.repository.form_submission"/>
+            <tag name="ems.collector"/>
+        </service>
     </services>
 </container>
