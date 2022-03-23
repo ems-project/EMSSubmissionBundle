@@ -110,7 +110,7 @@ final class FormSubmissionRepository extends ServiceEntityRepository
         $qb
             ->select('count(fs.id)')
             ->andWhere($qb->expr()->eq('fs.instance', ':instance'))
-            ->setParameter('instance' , $instance);
+            ->setParameter('instance', $instance);
 
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
