@@ -23,12 +23,35 @@ class MetricCollector implements EMSMetricsCollectorInterface
      */
     public function collect(CollectorRegistry $registry): void
     {
-        $gauge = $registry->getOrRegisterGauge(
-            'EMSS',
-            'Form_counter',
-            'The number of form',
-            ['numberOfForm']
+        $totalSubmissionsLive = $this->formSubmissionRepository->countSubmissionsByInstance('live');
+        $totalSubmissionsPreview = $this->formSubmissionRepository->countSubmissionsByInstance('preview');
+        $countSubmission = $registry->getOrRegisterGauge(
+            'emss',
+            'submissions_counter',
+            'The number of submissions',
+            ['env']
         );
-        $gauge->set(($this->formSubmissionRepository->count([])), ['formCounter']);
+        $countSubmission->set(floatval($totalSubmissionsLive), ['live']);
+        $countSubmission->set(floatval($totalSubmissionsPreview), ['preview']);
+
+        $allSubmissions = $this->formSubmissionRepository->findAll();
+        $allFormsName = [];
+        foreach($allSubmissions as $submission){
+            $name = $submission->getName();
+            if(!array_key_exists($name, $allFormsName)){
+                $allFormsName[$name] = 1;
+            } else {
+                $allFormsName[$name] += 1;
+            }
+        }
+        $countByForm = $registry->getOrRegisterGauge(
+            'emss',
+            'submissions_counter_form',
+            'The number of submissions by form. Do not count the forms without submission.',
+            ['form']
+        );
+        foreach($allFormsName as $key=>$value){
+            $countByForm->set(floatval($value), [$key]);
+        }
     }
 }
