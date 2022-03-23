@@ -103,4 +103,15 @@ final class FormSubmissionRepository extends ServiceEntityRepository
 
         return $qb;
     }
+
+    public function countSubmissionsByInstance(string $instance): int
+    {
+        $qb = $this->createQueryBuilder('fs');
+        $qb
+            ->select('count(fs.id)')
+            ->andWhere($qb->expr()->eq('fs.instance', ':instance'))
+            ->setParameter('instance' , $instance);
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
 }
