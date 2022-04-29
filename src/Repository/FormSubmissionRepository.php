@@ -4,13 +4,45 @@ declare(strict_types=1);
 
 namespace EMS\SubmissionBundle\Repository;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
+use EMS\CommonBundle\Common\Standard\DateTime;
 use EMS\SubmissionBundle\Dto\FormSubmissionsCountDto;
 use EMS\SubmissionBundle\Entity\FormSubmission;
 
+/**
+ * @extends ServiceEntityRepository<FormSubmission>
+ */
 final class FormSubmissionRepository extends ServiceEntityRepository
 {
+    public function __construct(Registry $registry)
+    {
+        parent::__construct($registry, FormSubmission::class);
+    }
+
+    /**
+     * @return array<int, array{name: string, instance: string, total: int, unprocessed_total: int, errors_total: int}>
+     */
+    public function getMetrics(): array
+    {
+        $dateFormat = $this->getEntityManager()->getConnection()->getDatabasePlatform()->getDateTimeFormatString();
+        $interval4hours = DateTime::create('now - 4 hours');
+
+        $qb = $this->createQueryBuilder('fs');
+        $qb
+            ->select('fs.name')
+            ->addSelect('fs.instance')
+            ->addSelect('count(fs.id) as total')
+            ->addSelect('sum(case when fs.processId is null then 1 else 0 end) as unprocessed_total')
+            ->addSelect('sum(case when (fs.processTryCounter > 2  or fs.created < :created)'.
+                ' and fs.processId is null then 1 else 0 end) as errors_total')
+            ->groupBy('fs.name, fs.instance')
+            ->setParameter('created', $interval4hours->format($dateFormat));
+
+        return $qb->getQuery()->getResult();
+    }
+
     public function findById(string $id): ?FormSubmission
     {
         try {
