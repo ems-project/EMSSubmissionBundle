@@ -21,7 +21,6 @@
         </service>
         <service id="emss.repository.form_submission" class="EMS\SubmissionBundle\Repository\FormSubmissionRepository">
             <argument type="service" id="doctrine" />
-            <argument type="string">EMS\SubmissionBundle\Entity\FormSubmission</argument>
         </service>
         <service id="emss.response.transformer" class="EMS\SubmissionBundle\Response\ResponseTransformer">
             <argument type="service" id="emss.twig.renderer"/>
@@ -36,6 +35,11 @@
         <service id="emss.twig.runtime.connection" class="EMS\SubmissionBundle\Twig\ConnectionRuntime">
             <argument type="service" id="emss.connection.transformer" />
             <tag name="twig.runtime" />
+        </service>
+
+        <service id="emss.metric.submission_metric_collector" class="EMS\SubmissionBundle\Metric\SubmissionMetricCollector">
+            <argument type="service" id="emss.repository.form_submission"/>
+            <tag name="ems.metric_collector"/>
         </service>
     </services>
 </container>
