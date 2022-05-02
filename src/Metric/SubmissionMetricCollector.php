@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EMS\SubmissionBundle\Metric;
 
+use Doctrine\DBAL\Connection;
 use EMS\CommonBundle\Common\Metric\MetricCollectorInterface;
 use EMS\CommonBundle\Common\Standard\DateTime;
 use EMS\SubmissionBundle\Repository\FormSubmissionRepository;
@@ -12,6 +13,7 @@ use Prometheus\CollectorRegistry;
 final class SubmissionMetricCollector implements MetricCollectorInterface
 {
     private FormSubmissionRepository $formSubmissionRepository;
+    private Connection $connection;
 
     private const VALID_UNTIL = '+5 minutes';
     private const GAUGES = [
@@ -20,9 +22,10 @@ final class SubmissionMetricCollector implements MetricCollectorInterface
         'errors_total' => 'Total count error submissions',
     ];
 
-    public function __construct(FormSubmissionRepository $formSubmissionRepository)
+    public function __construct(FormSubmissionRepository $formSubmissionRepository, Connection $connection)
     {
         $this->formSubmissionRepository = $formSubmissionRepository;
+        $this->connection = $connection;
     }
 
     public function getName(): string
@@ -37,6 +40,10 @@ final class SubmissionMetricCollector implements MetricCollectorInterface
 
     public function collect(CollectorRegistry $collectorRegistry): void
     {
+        if (!$this->hasDatabaseConnection()) {
+            return;
+        }
+
         $metrics = $this->formSubmissionRepository->getMetrics();
         $namespace = $this->getName();
 
@@ -51,6 +58,17 @@ final class SubmissionMetricCollector implements MetricCollectorInterface
             foreach ($metrics as $data) {
                 $gauge->set($data[$gaugeName], [$data['instance'], $data['name']]);
             }
+        }
+    }
+
+    private function hasDatabaseConnection(): bool
+    {
+        try {
+            $this->connection->connect();
+
+            return $this->connection->isConnected();
+        } catch (\Throwable $e) {
+            return false;
         }
     }
 }
