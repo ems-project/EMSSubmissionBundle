@@ -20,7 +20,7 @@
 		"php" : "^7.4",
 		"ext-json": "*",
       	"ext-zip": "*",
-		"elasticms/form-bundle" : "^1.2",
+		"elasticms/form-bundle" : "5.0.x-dev",
 		"symfony/framework-bundle": "^4.4",
 		"symfony/http-client": "^4.4",
 		"symfony/swiftmailer-bundle": "^3.4",
@@ -37,6 +37,7 @@
 		"symfony/phpunit-bridge": "^5.1",
 		"symfony/yaml": "^4.4"
 	},
+	"minimum-stability": "dev",
 	"autoload" : {
 		"psr-4" : {
 			"EMS\\SubmissionBundle\\" : "src/"
