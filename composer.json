@@ -8,14 +8,11 @@
 	"license" : "MIT",
 	"authors" : [
 		{
-			"name" : "David Meert",
-			"email" : "david.meert@smals.be"
-		},
-		{
-			"name" : "David Mattei",
-			"email" : "david.mattei@smals.be"
+			"name" : "EMS Community",
+			"homepage" : "https://github.com/ems-project/EMSSubmissionBundle/contributors"
 		}
 	],
+	"minimum-stability": "dev",
 	"require" : {
 		"php" : "^7.4",
 		"ext-json": "*",
@@ -37,7 +34,6 @@
 		"symfony/phpunit-bridge": "^5.1",
 		"symfony/yaml": "^4.4"
 	},
-	"minimum-stability": "dev",
 	"autoload" : {
 		"psr-4" : {
 			"EMS\\SubmissionBundle\\" : "src/"
