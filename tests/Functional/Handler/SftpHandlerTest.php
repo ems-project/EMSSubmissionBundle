@@ -119,14 +119,16 @@ final class SftpHandlerTest extends AbstractHandlerTest
     {
         $this->filesystemFactory->setFlagNullAdapter(false); //enable ftp
 
-        $endpoint = \json_encode(['host' => '127.0.0.1', 'root' => '/']);
+        $endpoint = \json_encode([
+            'host' => '127.0.0.1',
+            'root' => '/',
+        ]);
         $message = \file_get_contents(__DIR__.'/../fixtures/twig/message_sftp.twig');
         /** @var SftpHandleResponse $handleResponse */
         $handleResponse = $this->handle($this->createFormUploadFiles(), $endpoint, $message);
 
-        $this->assertEquals(
-            '{"status":"error","data":"Submission failed, contact your admin. (Cannot connect to 127.0.0.1:22. Error 10061. No connection could be made because the target machine actively refused it.)"}',
-            $handleResponse->getResponse()
-        );
+        $jsonResponse = \json_decode($handleResponse->getResponse(), true);
+
+        $this->assertEquals('error', $jsonResponse['status']);
     }
 }
