@@ -107,7 +107,7 @@ final class EmailHandlerTest extends AbstractHandlerTest
         });
 
         $this->assertEquals(
-            '{"status":"error","data":"Submission failed. Conctact your admin."}',
+            '{"status":"error","data":"Submission failed, contact your admin. Submission configured per mail and not send to 1 recipients"}',
             $this->handle($this->createForm(), 'user@example.com', $message)->getResponse()
         );
     }
