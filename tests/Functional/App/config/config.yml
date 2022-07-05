@@ -8,6 +8,8 @@ swiftmailer:
   disable_delivery: true
 
 framework:
+  session:
+    handler_id: ~
   router:
     resource: 'routes.yml'
     strict_requirements: ~
