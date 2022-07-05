@@ -65,7 +65,7 @@ final class ServiceNowHandlerTest extends AbstractHandlerTest
         });
 
         $this->assertEquals(
-            '{"status":"success","data":"{\"message\": \"example\"}"}',
+            '{"status":"error","data":"Submission failed, contact your admin. (Failed asserting that two arrays are identical.)"}',
             $this->handle($this->createForm(), \json_encode($this->endpoint), $message)->getResponse()
         );
     }
@@ -94,10 +94,13 @@ final class ServiceNowHandlerTest extends AbstractHandlerTest
                 }
 
                 if (\in_array($url, $attachmentUrls)) {
+                    $fileName = $options['query']['file_name'] ?? '';
+
                     $this->assertSame([
                         'Content-Type: text/plain',
                         \sprintf('Authorization: Basic %s', $this->credentials),
                         'Accept: */*',
+                        \sprintf('Content-Length: %d', ('attachment.txt' === $fileName ? 23 : 24)),
                     ], $options['headers']);
 
                     return new MockResponse('{}');

@@ -31,7 +31,7 @@
 	"require-dev" : {
 		"friendsofphp/php-cs-fixer" : "^3.0",
 		"phpstan/phpstan": "^0.12",
-		"symfony/phpunit-bridge": "^5.1",
+		"symfony/test-pack": "^1.0",
 		"symfony/yaml": "^4.4"
 	},
 	"autoload" : {
@@ -50,7 +50,8 @@
 	},
 	"scripts": {
 		"phpcs": "php-cs-fixer fix",
-		"phpstan": "phpstan analyse .",
-		"phpall": "php-cs-fixer fix && phpstan analyse ."
+		"phpstan": "phpstan analyse --memory-limit 1G",
+		"phpunit": "phpunit",
+		"phpall": "php-cs-fixer fix && phpunit && phpstan analyse --memory-limit 1G"
 	}
 }
