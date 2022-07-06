@@ -37,7 +37,7 @@ final class DatabaseRequest
         $this->data = $record['data'];
         $this->files = $record['files'];
         $this->label = $record['label'] ?? '';
-        $formattedDate = \DateTime::createFromFormat(\DateTime::ATOM, $record['expire_date']);
+        $formattedDate = \DateTime::createFromFormat(\DateTimeInterface::ATOM, $record['expire_date']);
         $this->expireDate = false != $formattedDate ? $formattedDate : null;
     }
 

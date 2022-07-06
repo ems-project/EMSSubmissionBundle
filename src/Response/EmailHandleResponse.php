@@ -5,20 +5,20 @@ declare(strict_types=1);
 namespace EMS\SubmissionBundle\Response;
 
 use EMS\FormBundle\Submission\AbstractHandleResponse;
+use Symfony\Component\Mime\Email;
 
 final class EmailHandleResponse extends AbstractHandleResponse
 {
-    /** @var \Swift_Message */
-    private $message;
+    private Email $message;
 
-    public function __construct(\Swift_Message $message)
+    public function __construct(Email $message)
     {
         $this->message = $message;
 
         parent::__construct(self::STATUS_SUCCESS, 'Submission send by mail.');
     }
 
-    public function getMessage(): \Swift_Message
+    public function getMessage(): Email
     {
         return $this->message;
     }

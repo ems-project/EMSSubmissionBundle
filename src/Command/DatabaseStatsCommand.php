@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EMS\SubmissionBundle\Command;
 
 use EMS\SubmissionBundle\Repository\FormSubmissionRepository;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Input\InputArgument;
@@ -12,25 +13,21 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Twig\Environment;
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mime\Address;
 
 final class DatabaseStatsCommand extends Command
 {
     protected static $defaultName = 'emss:database:stats';
 
-    /** @var \Swift_Mailer */
-    private $mailer;
-    /** @var FormSubmissionRepository */
-    private $repository;
-    /** @var Environment */
-    private $twig;
+    private Mailer $mailer;
+    private FormSubmissionRepository $repository;
 
-    public function __construct(\Swift_Mailer $mailer, FormSubmissionRepository $repository, Environment $twig)
+    public function __construct(Mailer $mailer, FormSubmissionRepository $repository)
     {
         parent::__construct();
         $this->mailer = $mailer;
         $this->repository = $repository;
-        $this->twig = $twig;
     }
 
     protected function configure(): void
@@ -67,14 +64,14 @@ final class DatabaseStatsCommand extends Command
         );
 
         if (null !== $emailTo) {
-            $body = $this->twig->loadTemplate('@EMSSubmission/mail/stats.html.twig')->renderBlock('body', [
-                'formName' => $formName,
-                'count' => $counts,
-                'from' => $input->getOption('email-from-name'),
-            ]);
-
             $message = $this->createMessage($input);
-            $message->setBody($body, 'text/html');
+            $message
+                ->htmlTemplate('@EMSSubmission/mail/stats.html.twig')
+                ->context([
+                    'formName' => $formName,
+                    'count' => $counts,
+                    'from' => $input->getOption('email-from-name'),
+                ]);
 
             $this->mailer->send($message);
 
@@ -84,7 +81,7 @@ final class DatabaseStatsCommand extends Command
         return 1;
     }
 
-    private function createMessage(InputInterface $input): \Swift_Message
+    private function createMessage(InputInterface $input): TemplatedEmail
     {
         /** @var string $emailTo */
         $emailTo = $input->getOption('email-to');
@@ -97,9 +94,9 @@ final class DatabaseStatsCommand extends Command
         /** @var string $fromName */
         $fromName = $input->getOption('email-from-name');
 
-        $message = new \Swift_Message($subject);
-        $message->setFrom($fromEmail, $fromName)->setTo($toEmail);
-
-        return $message;
+        return (new TemplatedEmail())
+            ->subject($subject)
+            ->from(new Address($fromEmail, $fromName))
+            ->to(...$toEmail);
     }
 }
