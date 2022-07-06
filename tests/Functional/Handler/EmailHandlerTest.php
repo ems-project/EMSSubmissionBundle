@@ -5,17 +5,18 @@ declare(strict_types=1);
 namespace EMS\SubmissionBundle\Tests\Functional\Handler;
 
 use EMS\FormBundle\Submission\AbstractHandler;
-use Swift_Events_SendEvent;
+use Symfony\Component\Mailer\EventListener\MessageLoggerListener;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Email;
 
 final class EmailHandlerTest extends AbstractHandlerTest
 {
-    /** @var \Swift_Mailer */
-    private $mailer;
+    private MessageLoggerListener $messageLogger;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->mailer = $this->container->get('mailer');
+        $this->messageLogger = $this->container->get('functional_test.message_listener');
     }
 
     protected function getHandler(): AbstractHandler
@@ -32,17 +33,17 @@ final class EmailHandlerTest extends AbstractHandlerTest
             'body' => 'Hi my name is {{ data.first_name }} {{ data.last_name }}',
         ]);
 
-        $this->mailListener(function (Swift_Events_SendEvent $evt) {
-            $this->assertEquals(['user1@test.test'], \array_keys($evt->getMessage()->getTo()));
-            $this->assertEquals(['noreply@test.test'], \array_keys($evt->getMessage()->getFrom()));
-            $this->assertEquals('Test submission', $evt->getMessage()->getSubject());
-            $this->assertEquals('Hi my name is testFirstName testLastName', $evt->getMessage()->getBody());
-        });
+        $response = $this->handle($this->createForm(), $endpoint, $message)->getResponse();
 
-        $this->assertEquals(
-            '{"status":"success","data":"Submission send by mail."}',
-            $this->handle($this->createForm(), $endpoint, $message)->getResponse()
-        );
+        /** @var Email $email */
+        $email = $this->messageLogger->getEvents()->getMessages()[0];
+
+        $this->assertEquals(['user1@test.test'], \array_map(fn (Address $a) => $a->toString(), $email->getTo()));
+        $this->assertEquals(['noreply@test.test'], \array_map(fn (Address $a) => $a->toString(), $email->getFrom()));
+        $this->assertEquals('Test submission', $email->getSubject());
+        $this->assertEquals('Hi my name is testFirstName testLastName', $email->getHtmlBody());
+
+        $this->assertEquals('{"status":"success","data":"Submission send by mail."}', $response);
     }
 
     public function testSubmitMultipleFiles(): void
@@ -50,23 +51,19 @@ final class EmailHandlerTest extends AbstractHandlerTest
         $endpoint = 'test@example.com';
         $message = \file_get_contents(__DIR__.'/../fixtures/twig/message_email.twig');
 
-        $this->mailListener(function (Swift_Events_SendEvent $evt) {
-            $this->assertEquals('attachment.txt | attachment2.txt', $evt->getMessage()->getBody());
+        $response = $this->handle($this->createFormUploadFiles(), $endpoint, $message)->getResponse();
 
-            /** @var \Swift_Attachment[] $attachments */
-            $attachments = $evt->getMessage()->getChildren();
+        /** @var Email $email */
+        $email = $this->messageLogger->getEvents()->getMessages()[0];
 
-            $this->assertEquals('attachment.txt', $attachments[0]->getFilename());
-            $this->assertEquals('Text example attachment', $attachments[0]->getBody());
+        $attachments = $email->getAttachments();
 
-            $this->assertEquals('attachment2.txt', $attachments[1]->getFilename());
-            $this->assertEquals('Text example attachment2', $attachments[1]->getBody());
-        });
+        $this->assertEquals('text/plain disposition: attachment filename: attachment.txt', $attachments[0]->asDebugString());
+        $this->assertEquals('Text example attachment', $attachments[0]->getBody());
+        $this->assertEquals('text/plain disposition: attachment filename: attachment2.txt', $attachments[1]->asDebugString());
+        $this->assertEquals('Text example attachment2', $attachments[1]->getBody());
 
-        $this->assertEquals(
-            '{"status":"success","data":"Submission send by mail."}',
-            $this->handle($this->createFormUploadFiles(), $endpoint, $message)->getResponse()
-        );
+        $this->assertEquals('{"status":"success","data":"Submission send by mail."}', $response);
     }
 
     public function testEmptyEndpoint(): void
@@ -78,7 +75,7 @@ final class EmailHandlerTest extends AbstractHandlerTest
         ]);
 
         $this->assertEquals(
-            '{"status":"error","data":"Submission failed, contact your admin. Address in mailbox given [] does not comply with RFC 2822, 3.6.2."}',
+            '{"status":"error","data":"Submission failed, contact your admin. Email \"\" does not comply with addr-spec of RFC 2822."}',
             $this->handle($this->createForm(), '', $message)->getResponse()
         );
     }
@@ -89,48 +86,5 @@ final class EmailHandlerTest extends AbstractHandlerTest
             '{"status":"error","data":"Submission failed, contact your admin. From email address not defined."}',
             $this->handle($this->createForm(), 'user@example.com', '')->getResponse()
         );
-    }
-
-    public function testFailedRecipients(): void
-    {
-        $message = \json_encode(['from' => 'noreply@elasticms.eu']);
-
-        $this->mailer->registerPlugin(new class() implements \Swift_Events_SendListener {
-            public function beforeSendPerformed(Swift_Events_SendEvent $evt)
-            {
-                throw new \Swift_RfcComplianceException('test');
-            }
-
-            public function sendPerformed(Swift_Events_SendEvent $evt)
-            {
-            }
-        });
-
-        $this->assertEquals(
-            '{"status":"error","data":"Submission failed, contact your admin. Submission configured per mail and not send to 1 recipients"}',
-            $this->handle($this->createForm(), 'user@example.com', $message)->getResponse()
-        );
-    }
-
-    private function mailListener(callable $callback): void
-    {
-        $this->mailer->registerPlugin(new class($callback) implements \Swift_Events_SendListener {
-            /** @var callable */
-            private $callback;
-
-            public function __construct(callable $callback)
-            {
-                $this->callback = $callback;
-            }
-
-            public function beforeSendPerformed(Swift_Events_SendEvent $evt)
-            {
-            }
-
-            public function sendPerformed(Swift_Events_SendEvent $evt)
-            {
-                ($this->callback)($evt);
-            }
-        });
     }
 }

@@ -84,11 +84,10 @@ final class PdfHandlerTest extends AbstractHandlerTest
         $emailHandleRequest = new HandleRequest($form, $this->formConfig, $responseCollector, $emailSubmission);
         /** @var EmailHandleResponse $emailResponse */
         $emailResponse = $emailHandler->handle($emailHandleRequest);
-        /** @var \Swift_Attachment[] $attachments */
-        $attachments = $emailResponse->getMessage()->getChildren();
+        $attachments = $emailResponse->getMessage()->getAttachments();
 
         $this->assertEquals('{"status":"success","data":"Submission send by mail."}', $emailResponse->getResponse());
-        $this->assertEquals('test.pdf', $attachments[0]->getFilename());
+        $this->assertEquals('application/pdf disposition: attachment filename: test.pdf', $attachments[0]->asDebugString());
         $this->assertEquals($pdfResponse->getContentRaw(), $attachments[0]->getBody());
     }
 }

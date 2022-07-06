@@ -16,7 +16,6 @@ return $config
     ->setRules([
         '@Symfony' => true,
         'declare_strict_types' => true,
-        'final_class' => true,
         'native_function_invocation' => ['include' => ['@all']],
         'no_unused_imports' => true
     ])

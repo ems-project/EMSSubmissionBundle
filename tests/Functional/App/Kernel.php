@@ -8,7 +8,6 @@ use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use EMS\CommonBundle\EMSCommonBundle;
 use EMS\SubmissionBundle\EMSSubmissionBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
-use Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle;
 use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
@@ -34,7 +33,6 @@ final class Kernel extends BaseKernel
     {
         return [
             new EMSSubmissionBundle(),
-            new SwiftmailerBundle(),
             new FrameworkBundle(),
             new TwigBundle(),
             new EMSCommonBundle(),
