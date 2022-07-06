@@ -25,10 +25,12 @@ services:
     public: true
 
   EMS\SubmissionBundle\Tests\Functional\App\ResponseFactory:
-  EMS\SubmissionBundle\Tests\Functional\App\HttpClient:
+
+  mock.http_client:
+    class: Symfony\Component\HttpClient\MockHttpClient
     arguments: ['@EMS\SubmissionBundle\Tests\Functional\App\ResponseFactory']
   Symfony\Contracts\HttpClient\HttpClientInterface:
-    alias: 'EMS\SubmissionBundle\Tests\Functional\App\HttpClient'
+    alias: 'mock.http_client'
 
   #override filesystem (nullAdapter)
   emss.filesystem.factory:
