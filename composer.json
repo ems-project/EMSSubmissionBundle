@@ -21,7 +21,7 @@
 		"elasticms/form-bundle" : "5.0.x-dev",
 		"league/flysystem-memory": "^1.0",
 		"league/flysystem-sftp": "^1.0",
-		"ramsey/uuid-doctrine": "^1.6";
+		"ramsey/uuid-doctrine": "^1.6",
 		"symfony/framework-bundle": "^4.4|^5.0",
 		"symfony/http-client": "^4.4|^5.0",
 		"symfony/mailer": "^4.4|^5.0",
