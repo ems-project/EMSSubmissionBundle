@@ -1,6 +1,5 @@
-/phpunit.xml
-/vendor/
-/tests/tmp/
-/.phpunit.result.cache
+/vendor
+/node_modules
 /composer.lock
+/.phpunit.result.cache
 /.php-cs-fixer.cache
