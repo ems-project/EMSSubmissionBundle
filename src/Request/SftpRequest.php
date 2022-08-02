@@ -10,7 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class SftpRequest extends AbstractRequest
 {
-    /** @var array{host: string, port: int, username: string, password: string, privateKey: string, root: string, timeout: int} */
+    /** @var array{host: string, port: int, username?: string, password?: string, privateKey?: string, root: string, timeout: int} */
     private $endpoint;
     /** @var array<mixed> */
     private $files;
@@ -21,7 +21,7 @@ final class SftpRequest extends AbstractRequest
      */
     public function __construct(array $endpoint, array $files)
     {
-        /** @var array{host: string, port: int, username: string, password: string, privateKey: string, root: string, timeout: int} $endpoint */
+        /** @var array{host: string, port: int, username?: string, password?: string, privateKey?: string, root: string, timeout: int} $endpoint */
         $endpoint = $this->resolveEndpoint($endpoint);
 
         $this->endpoint = $endpoint;
@@ -42,7 +42,7 @@ final class SftpRequest extends AbstractRequest
     }
 
     /**
-     * @return array{host: string, port: int, username: string, password: string, privateKey: string, root: string, timeout: int}
+     * @return array{host: string, port: int, username?: string, password?: string, privateKey?: string, root: string, timeout: int}
      */
     public function getEndpoint(): array
     {

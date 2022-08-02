@@ -15,7 +15,7 @@ final class EmailRequest
     /** @var string */
     private $body = '';
     private string $contentType = '';
-    /** @var array<array> */
+    /** @var array<array<mixed>> */
     private $attachments;
 
     /**
@@ -62,7 +62,7 @@ final class EmailRequest
     }
 
     /**
-     * @return array<array>
+     * @return array<array<mixed>>
      */
     public function getAttachments(): array
     {

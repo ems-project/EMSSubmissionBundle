@@ -56,6 +56,7 @@ final class ServiceNowHandlerTest extends AbstractHandlerTest
                     'Accept: application/json',
                     'Content-Type: application/json',
                     \sprintf('Authorization: Basic %s', $this->credentials),
+                    'Content-Length: 50',
                 ], $options['headers']);
 
                 return new MockResponse('{"message": "example"}');
@@ -65,7 +66,7 @@ final class ServiceNowHandlerTest extends AbstractHandlerTest
         });
 
         $this->assertEquals(
-            '{"status":"error","data":"Submission failed, contact your admin. (Failed asserting that two arrays are identical.)"}',
+            '{"status":"success","data":"{\"message\": \"example\"}"}',
             $this->handle($this->createForm(), \json_encode($this->endpoint), $message)->getResponse()
         );
     }
@@ -110,9 +111,11 @@ final class ServiceNowHandlerTest extends AbstractHandlerTest
             }
         );
 
+        $handle = $this->handle($this->createFormUploadFiles(), \json_encode($this->endpoint), $message);
+
         $this->assertEquals(
             '{"status":"success","data":"{\"result\":{\"sys_id\":98765}}"}',
-            $this->handle($this->createFormUploadFiles(), \json_encode($this->endpoint), $message)->getResponse()
+            $handle->getResponse()
         );
     }
 
