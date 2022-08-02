@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class HttpRequest extends AbstractRequest
 {
-    /** @var array{method: string, url: string, ignore_body_value: string|null} */
+    /** @var array{method: string, url: string, ignore_body_value: string|null}|array<mixed> */
     private $endpoint;
     /** @var string */
     private $body;
@@ -55,6 +55,10 @@ final class HttpRequest extends AbstractRequest
 
         foreach (self::HTTP_OPTIONS as $optionName => $default) {
             $options[$optionName] = $this->endpoint[$optionName] ?? $default;
+        }
+
+        if (!isset($options['headers']['Content-Length'])) {
+            $options['headers']['Content-Length'] = \strlen($this->body);
         }
 
         return $options;

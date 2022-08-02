@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 final class EMSSubmissionExtension extends Extension implements PrependExtensionInterface
 {
     /**
-     * @param array<array> $configs
+     * {@inheritDoc}
      */
     public function load(array $configs, ContainerBuilder $container): void
     {

@@ -77,6 +77,7 @@ final class HttpHandlerTest extends AbstractHandlerTest
             $userPass = \base64_encode('userTest:testPass'); //see config.yml
             $this->assertEquals([
                 'Content-Type: application/json',
+                'Content-Length: 15',
                 'Accept: */*',
                 \sprintf('Authorization: Basic %s', $userPass),
             ], $options['headers']);
@@ -85,7 +86,7 @@ final class HttpHandlerTest extends AbstractHandlerTest
         });
 
         $this->assertEquals(
-            '{"status":"error","data":"Submission failed, contact your admin. (Failed asserting that two arrays are equal.)"}',
+            '{"status":"success","data":"Submission send by http."}',
             $this->handle($this->createForm(), $endpoint, $message)->getResponse()
         );
     }
