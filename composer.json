@@ -16,8 +16,6 @@
 	"prefer-stable" : true,
 	"require" : {
 		"php" : "^7.4",
-		"ext-json": "*",
-      	"ext-zip": "*",
 		"elasticms/form-bundle" : "4.0.x-dev",
 		"league/flysystem-memory": "^1.0",
 		"league/flysystem-sftp": "^1.0",
