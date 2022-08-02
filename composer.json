@@ -16,7 +16,7 @@
 	"prefer-stable" : true,
 	"require" : {
 		"php" : "^7.4",
-		"elasticms/form-bundle" : "4.0.x-dev",
+		"elasticms/form-bundle" : "4.0.*@dev",
 		"league/flysystem-memory": "^1.0",
 		"league/flysystem-sftp": "^1.0",
 		"symfony/console": "^4.4|^5.4",
