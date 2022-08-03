@@ -68,7 +68,7 @@ class FormSubmission implements EntityInterface
     /**
      * @var array<string, mixed>|null
      *
-     * @ORM\Column(name="data", type="json_array", nullable=true)
+     * @ORM\Column(name="data", type="json", nullable=true)
      */
     private $data;
 
