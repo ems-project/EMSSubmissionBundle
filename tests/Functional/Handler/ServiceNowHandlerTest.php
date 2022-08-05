@@ -21,7 +21,7 @@ final class ServiceNowHandlerTest extends AbstractHandlerTest
     {
         parent::setUp();
 
-        $this->credentials = \base64_encode(\sprintf('%s:%s', 'userA', 'passB')); //see config.yml
+        $this->credentials = \base64_encode(\sprintf('%s:%s', 'userA', 'passB')); // see config.yml
         $this->responseFactory = $this->container->get(ResponseFactory::class);
         $this->endpoint = [
             'host' => 'https://example.service-now.com',
@@ -50,7 +50,7 @@ final class ServiceNowHandlerTest extends AbstractHandlerTest
         $this->responseFactory->setCallback(function (string $method, string $url, array $options = []) {
             if ('POST' === $method && 'https://example.service-now.com/api/now/v1/table/table_name' === $url) {
                 $this->assertEquals('{"title":"Test serviceNow","name":"testFirstName"}', $options['body']);
-                $this->assertEquals('19', $options['timeout']); //see config.yml
+                $this->assertEquals('19', $options['timeout']); // see config.yml
 
                 $this->assertSame([
                     'Accept: application/json',
@@ -101,7 +101,7 @@ final class ServiceNowHandlerTest extends AbstractHandlerTest
                         'Content-Type: text/plain',
                         \sprintf('Authorization: Basic %s', $this->credentials),
                         'Accept: */*',
-                        \sprintf('Content-Length: %d', ('attachment.txt' === $fileName ? 23 : 24)),
+                        \sprintf('Content-Length: %d', 'attachment.txt' === $fileName ? 23 : 24),
                     ], $options['headers']);
 
                     return new MockResponse('{}');

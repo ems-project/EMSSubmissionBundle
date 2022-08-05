@@ -74,7 +74,7 @@ final class HttpHandlerTest extends AbstractHandlerTest
             $this->assertEquals(30.0, $options['timeout']);
             $this->assertEquals('{"test":"test"}', $options['body']);
 
-            $userPass = \base64_encode('userTest:testPass'); //see config.yml
+            $userPass = \base64_encode('userTest:testPass'); // see config.yml
             $this->assertEquals([
                 'Content-Type: application/json',
                 'Content-Length: 15',

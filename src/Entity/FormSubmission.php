@@ -192,7 +192,7 @@ class FormSubmission implements EntityInterface
         return $this->expireDate;
     }
 
-    public function getCreated(): \Datetime
+    public function getCreated(): \DateTime
     {
         return $this->created;
     }
