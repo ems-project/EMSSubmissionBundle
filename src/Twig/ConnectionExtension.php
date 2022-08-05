@@ -9,7 +9,7 @@ use Twig\TwigFilter;
 
 final class ConnectionExtension extends abstractExtension
 {
-    public function getFilters()
+    public function getFilters(): array
     {
         return [
             new TwigFilter('emss_connection', [ConnectionRuntime::class, 'transform'], ['is_safe' => ['html']]),

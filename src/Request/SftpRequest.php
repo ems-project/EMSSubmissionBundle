@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace EMS\SubmissionBundle\Request;
 
-use League\Flysystem\Sftp\SftpAdapter;
+use League\Flysystem\PhpseclibV3\SftpAdapter;
+use League\Flysystem\PhpseclibV3\SftpConnectionProvider;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -30,15 +31,19 @@ final class SftpRequest extends AbstractRequest
 
     public function getAdapter(): SftpAdapter
     {
-        return new SftpAdapter([
-            'host' => $this->endpoint['host'],
-            'port' => (int) $this->endpoint['port'],
-            'username' => $this->endpoint['username'] ?? '',
-            'password' => $this->endpoint['password'] ?? '',
-            'privateKey' => $this->endpoint['privateKey'] ?? '',
-            'root' => $this->endpoint['root'],
-            'timeout' => $this->endpoint['timeout'],
-        ]);
+        return new SftpAdapter(
+            new SftpConnectionProvider(
+                $this->endpoint['host'],
+                $this->endpoint['username'] ?? '',
+                $this->endpoint['password'] ?? '',
+                $this->endpoint['privateKey'] ?? '',
+                null,
+                (int) $this->endpoint['port'],
+                false,
+                $this->endpoint['timeout']
+            ),
+            $this->endpoint['root']
+        );
     }
 
     /**

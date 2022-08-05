@@ -5,12 +5,14 @@ ems_submission:
     - { connection: "http-conn", user: "userTest", password: "testPass"}
 
 framework:
+  secret: 1621180219f163d89dc399e88cfc1807ab6448cf
   session:
     handler_id: ~
   mailer:
     dsn: 'null://null'
   router:
     resource: 'routes.yml'
+    utf8: true
     strict_requirements: ~
   profiler:
     enabled: true

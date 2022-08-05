@@ -44,7 +44,7 @@ final class SftpHandlerTest extends AbstractHandlerTest
             '{"status":"success","data":"Submission send by sftp."}',
             $handleResponse->getResponse()
         );
-        $this->assertEquals($host, $handleResponse->getSftpRequest()->getAdapter()->getHost());
+        $this->assertEquals($host, $handleResponse->getSftpRequest()->getEndpoint()['host']);
         $this->assertEquals('test 64 encoding', $handleResponse->getSftpRequest()->getEndpoint()['privateKey']);
         $this->assertCount(2, $handleResponse->getTransportedFiles());
     }
