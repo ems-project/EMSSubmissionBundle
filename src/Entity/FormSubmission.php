@@ -81,6 +81,7 @@ class FormSubmission implements EntityInterface
 
     /**
      * @var \DateTime|null
+     *
      * @ORM\Column(name="expire_date", type="date", nullable=true)
      */
     private $expireDate;
