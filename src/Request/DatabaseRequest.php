@@ -37,7 +37,7 @@ final class DatabaseRequest
         $this->data = $record['data'];
         $this->files = $record['files'];
         $this->label = $record['label'] ?? '';
-        $formattedDate = \DateTime::createFromFormat(\DateTime::ATOM, $record['expire_date']);
+        $formattedDate = \DateTime::createFromFormat(\DateTimeInterface::ATOM, $record['expire_date']);
         $this->expireDate = false != $formattedDate ? $formattedDate : null;
     }
 
@@ -85,7 +85,7 @@ final class DatabaseRequest
     /**
      * @param array<mixed> $databaseRecord
      *
-     * @return array{form_name: string, instance: string, locale: string, data: array, files: array, label: string, expire_date: string}
+     * @return array{form_name: string, instance: string, locale: string, data: array<mixed>, files: array<mixed>, label?: string, expire_date: string}
      */
     private function resolveDatabaseRecord(array $databaseRecord): array
     {
@@ -104,7 +104,7 @@ final class DatabaseRequest
         ;
 
         try {
-            /** @var array{form_name: string, instance: string, locale: string, data: array, files: array, label: string, expire_date: string} $resolvedDatabaseRecord */
+            /** @var array{form_name: string, instance: string, locale: string, data: array<mixed>, files: array<mixed>, label?: string, expire_date: string} $resolvedDatabaseRecord */
             $resolvedDatabaseRecord = $resolver->resolve($databaseRecord);
 
             $fileResolver = new OptionsResolver();

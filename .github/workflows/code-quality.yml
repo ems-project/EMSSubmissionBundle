@@ -44,3 +44,22 @@ jobs:
 
       -   name: "Run phpstan"
           run: vendor/bin/phpstan analyse --no-progress --error-format=checkstyle | cs2pr
+
+  phpunit:
+    name: PHPUnit
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v2
+      - name: "Install PHP with extensions"
+        uses: shivammathur/setup-php@2.7.0
+        with:
+          coverage: "none"
+          php-version: ${{ env.PHP_VERSION }}
+          tools: composer:v2
+      - name: "Composer install"
+        uses: ramsey/composer-install@v1
+      - name: "PHPUnit version"
+        run: vendor/bin/phpunit --version
+      - name: "Run tests"
+        run: vendor/bin/phpunit ${{ env.PHPUNIT_FLAGS }}

@@ -11,15 +11,15 @@ use EMS\FormBundle\Submission\HandleResponseInterface;
 use EMS\SubmissionBundle\Request\EmailRequest;
 use EMS\SubmissionBundle\Response\EmailHandleResponse;
 use EMS\SubmissionBundle\Twig\TwigRenderer;
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mime\Email;
 
 final class EmailHandler extends AbstractHandler
 {
-    /** @var \Swift_Mailer */
-    private $mailer;
-    /** @var TwigRenderer */
-    private $twigRenderer;
+    private Mailer $mailer;
+    private TwigRenderer $twigRenderer;
 
-    public function __construct(\Swift_Mailer $mailer, TwigRenderer $twigRenderer)
+    public function __construct(Mailer $mailer, TwigRenderer $twigRenderer)
     {
         $this->mailer = $mailer;
         $this->twigRenderer = $twigRenderer;
@@ -32,21 +32,16 @@ final class EmailHandler extends AbstractHandler
             $message = $this->twigRenderer->renderMessageJSON($handleRequest);
 
             $emailRequest = new EmailRequest($endpoint, $message);
-            $message = (new \Swift_Message($emailRequest->getSubject()))
-                ->setFrom($emailRequest->getFrom())
-                ->setTo($emailRequest->getEndpoint())
-                ->setBody($emailRequest->getBody(), $emailRequest->getContentType());
 
-            foreach ($this->createAttachments($emailRequest) as $attachment) {
-                $message->attach($attachment);
-            }
+            $message = (new Email())
+                ->subject($emailRequest->getSubject())
+                ->from($emailRequest->getFrom())
+                ->to($emailRequest->getEndpoint())
+                ->html($emailRequest->getBody());
 
-            $failedRecipients = [];
-            $this->mailer->send($message, $failedRecipients);
+            $this->addAttachments($emailRequest, $message);
 
-            if ([] !== $failedRecipients) {
-                throw new \RuntimeException(\sprintf('Submission configured per mail and not send to %d receipients', \count($failedRecipients)));
-            }
+            $this->mailer->send($message);
         } catch (\Exception $exception) {
             return new FailedHandleResponse(\sprintf('Submission failed, contact your admin. %s', $exception->getMessage()));
         }
@@ -54,10 +49,7 @@ final class EmailHandler extends AbstractHandler
         return new EmailHandleResponse($message);
     }
 
-    /**
-     * @return \Traversable<\Swift_Attachment>
-     */
-    private function createAttachments(EmailRequest $emailRequest): \Traversable
+    private function addAttachments(EmailRequest $emailRequest, Email $message): void
     {
         foreach ($emailRequest->getAttachments() as $attachment) {
             $filename = $attachment['originalName'] ?? $attachment['filename'] ?? null;
@@ -69,15 +61,9 @@ final class EmailHandler extends AbstractHandler
 
             if (isset($attachment['base64'])) {
                 $data = \base64_decode($attachment['base64']);
-
-                yield new \Swift_Attachment($data, $filename, $mimeType);
-                continue;
-            }
-
-            if (isset($attachment['pathname'])) {
-                $swiftAttachment = \Swift_Attachment::fromPath($attachment['pathname'], $mimeType);
-                $swiftAttachment->setFilename($filename);
-                yield $swiftAttachment;
+                $message->attach($data, $filename, $mimeType);
+            } elseif (isset($attachment['pathname'])) {
+                $message->attachFromPath($attachment['pathname'], $filename, $mimeType);
             }
         }
     }

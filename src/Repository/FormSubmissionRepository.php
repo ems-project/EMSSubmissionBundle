@@ -14,7 +14,7 @@ use EMS\SubmissionBundle\Entity\FormSubmission;
 /**
  * @extends ServiceEntityRepository<FormSubmission>
  */
-final class FormSubmissionRepository extends ServiceEntityRepository
+class FormSubmissionRepository extends ServiceEntityRepository
 {
     public function __construct(Registry $registry)
     {

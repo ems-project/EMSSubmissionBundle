@@ -22,10 +22,8 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 abstract class AbstractHandlerTest extends AbstractFunctionalTest
 {
-    /** @var FormFactoryInterface */
-    protected $formFactory;
-    /** @var FormConfig */
-    protected $formConfig;
+    protected FormFactoryInterface $formFactory;
+    protected FormConfig $formConfig;
 
     protected function setUp(): void
     {

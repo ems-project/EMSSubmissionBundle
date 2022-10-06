@@ -4,13 +4,18 @@ ems_submission:
     - { connection: "service-now-instance-a", user: "userA", password: "passB"}
     - { connection: "http-conn", user: "userTest", password: "testPass"}
 
-swiftmailer:
-  disable_delivery: true
-
 framework:
+  secret: 1621180219f163d89dc399e88cfc1807ab6448cf
+  session:
+    handler_id: ~
+  mailer:
+    dsn: 'null://null'
   router:
     resource: 'routes.yml'
+    utf8: true
     strict_requirements: ~
+  profiler:
+    enabled: true
 
 twig:
   debug: true
@@ -18,34 +23,38 @@ twig:
   exception_controller: null
 
 services:
-  EMS\SubmissionBundle\Tests\Functional\App\ResponseFactory:
+  _defaults:
     public: true
-  EMS\SubmissionBundle\Tests\Functional\App\HttpClient:
+
+  EMS\SubmissionBundle\Tests\Functional\App\ResponseFactory:
+
+  mock.http_client:
+    class: Symfony\Component\HttpClient\MockHttpClient
     arguments: ['@EMS\SubmissionBundle\Tests\Functional\App\ResponseFactory']
   Symfony\Contracts\HttpClient\HttpClientInterface:
-    alias: 'EMS\SubmissionBundle\Tests\Functional\App\HttpClient'
+    alias: 'mock.http_client'
 
   #override filesystem (nullAdapter)
   emss.filesystem.factory:
-    public: true
     class: 'EMS\SubmissionBundle\Tests\Functional\App\FilesystemFactory'
+
+  emss.repository.form_submission:
+    class: EMS\SubmissionBundle\Repository\FormSubmissionRepository
+    arguments: [ '@doctrine' ]
+
+  functional_test.message_listener:
+    alias: mailer.logger_message_listener
 
   # alias the service so we can access it in the tests
   functional_test.emss.handler.email:
-    public: true
     alias: emss.handler.email
   functional_test.emss.handler.http:
-    public: true
     alias: emss.handler.http
   functional_test.emss.handler.pdf:
-    public: true
     alias: emss.handler.pdf
   functional_test.emss.handler.service_now:
-    public: true
     alias: emss.handler.service_now
   functional_test.emss.handler.sftp:
-    public: true
     alias: emss.handler.sftp
   functional_test.emss.handler.zip:
-    public: true
     alias: emss.handler.zip

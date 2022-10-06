@@ -50,7 +50,7 @@ final class ZipHandler extends AbstractHandler
             $zip->close();
 
             $zipContent = \file_get_contents($tempFile);
-            $handleResponse = new ZipHandleResponse($zipRequest, (false === $zipContent ? '' : $zipContent));
+            $handleResponse = new ZipHandleResponse($zipRequest, false === $zipContent ? '' : $zipContent);
 
             return $this->responseTransformer->transform($handleRequest, $handleResponse);
         } catch (\Exception $exception) {

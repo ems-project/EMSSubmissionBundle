@@ -38,7 +38,7 @@ final class PdfZipSftpHandlersTest extends AbstractChainedTest
         $filesystem = new Filesystem();
         $this->tempFile = $filesystem->tempnam(\sys_get_temp_dir(), 'emss');
 
-        //$this->filesystemFactory->setFlagNullAdapter(false); uncomment for enabling sftp
+        // $this->filesystemFactory->setFlagNullAdapter(false); uncomment for enabling sftp
     }
 
     protected function tearDown(): void

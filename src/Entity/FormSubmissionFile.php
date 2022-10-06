@@ -78,6 +78,8 @@ class FormSubmissionFile implements EntityInterface
     private $mimeType;
 
     /**
+     * @var string
+     *
      * @ORM\Column(name="size", type="bigint")
      */
     private $size;

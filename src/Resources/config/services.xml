@@ -12,7 +12,6 @@
         <service id="emss.command.database_stats" class="EMS\SubmissionBundle\Command\DatabaseStatsCommand">
             <argument type="service" id="mailer"/>
             <argument type="service" id="emss.repository.form_submission"/>
-            <argument type="service" id="twig"/>
             <tag name="console.command" />
         </service>
         <service id="emss.event_subscriber.form_submission_request" class="EMS\SubmissionBundle\EventSubscriber\FormSubmissionRequestSubscriber">

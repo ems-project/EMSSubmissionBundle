@@ -18,7 +18,7 @@ final class SftpHandlerTest extends AbstractHandlerTest
         parent::setUp();
         $this->filesystemFactory = $this->container->get('emss.filesystem.factory');
 
-        //$this->filesystemFactory->setFlagNullAdapter(false); uncomment for enabling sftp
+        // $this->filesystemFactory->setFlagNullAdapter(false); uncomment for enabling sftp
     }
 
     protected function getHandler(): AbstractHandler
@@ -34,7 +34,7 @@ final class SftpHandlerTest extends AbstractHandlerTest
             'root' => '/',
             'username' => 'tester',
             'password' => 'password',
-            'privateKey' => 'dGVzdCA2NCBlbmNvZGluZw==', //base64 'test 64 encoding'
+            'privateKey' => 'dGVzdCA2NCBlbmNvZGluZw==', // base64 'test 64 encoding'
         ]);
         $message = \file_get_contents(__DIR__.'/../fixtures/twig/message_sftp.twig');
         /** @var SftpHandleResponse $handleResponse */
@@ -44,7 +44,7 @@ final class SftpHandlerTest extends AbstractHandlerTest
             '{"status":"success","data":"Submission send by sftp."}',
             $handleResponse->getResponse()
         );
-        $this->assertEquals($host, $handleResponse->getSftpRequest()->getAdapter()->getHost());
+        $this->assertEquals($host, $handleResponse->getSftpRequest()->getEndpoint()['host']);
         $this->assertEquals('test 64 encoding', $handleResponse->getSftpRequest()->getEndpoint()['privateKey']);
         $this->assertCount(2, $handleResponse->getTransportedFiles());
     }
@@ -117,16 +117,18 @@ final class SftpHandlerTest extends AbstractHandlerTest
 
     public function testFailConnection(): void
     {
-        $this->filesystemFactory->setFlagNullAdapter(false); //enable ftp
+        $this->filesystemFactory->setFlagNullAdapter(false); // enable ftp
 
-        $endpoint = \json_encode(['host' => '127.0.0.1', 'root' => '/']);
+        $endpoint = \json_encode([
+            'host' => '127.0.0.1',
+            'root' => '/',
+        ]);
         $message = \file_get_contents(__DIR__.'/../fixtures/twig/message_sftp.twig');
         /** @var SftpHandleResponse $handleResponse */
         $handleResponse = $this->handle($this->createFormUploadFiles(), $endpoint, $message);
 
-        $this->assertEquals(
-            '{"status":"error","data":"Submission failed, contact your admin. (Could not login with username: , host: 127.0.0.1)"}',
-            $handleResponse->getResponse()
-        );
+        $jsonResponse = \json_decode($handleResponse->getResponse(), true);
+
+        $this->assertEquals('error', $jsonResponse['status']);
     }
 }
