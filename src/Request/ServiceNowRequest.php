@@ -14,7 +14,7 @@ final class ServiceNowRequest
     private string $username;
     private string $password;
     private string $body = '';
-    /** @var array<array> */
+    /** @var array<array<mixed>> */
     private array $attachments = [];
 
     /**
@@ -77,7 +77,7 @@ final class ServiceNowRequest
     }
 
     /**
-     * @return array<array>
+     * @return array<array<mixed>>
      */
     public function getAttachments(): array
     {

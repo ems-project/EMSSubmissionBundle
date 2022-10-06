@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class SoapRequest extends AbstractRequest
 {
-    /** @var array{operation: string, wsdl: null|string, options: array<string, mixed>} */
+    /** @var array{operation: string, wsdl: string|null, options: array<string, mixed>} */
     private $endpoint;
 
     /**
@@ -17,7 +17,7 @@ final class SoapRequest extends AbstractRequest
      */
     public function __construct(array $endpoint)
     {
-        /** @var array{operation: string, wsdl: null|string, options: array<string, mixed>} $endpoint */
+        /** @var array{operation: string, wsdl: string|null, options: array<string, mixed>} $endpoint */
         $endpoint = $this->resolveEndpoint($endpoint);
         $this->endpoint = $endpoint;
     }

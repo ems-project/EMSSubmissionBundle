@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace EMS\SubmissionBundle\Tests;
 
 use EMS\SubmissionBundle\FilesystemFactory;
-use League\Flysystem\Adapter\NullAdapter;
-use League\Flysystem\FilesystemInterface;
+use League\Flysystem\Filesystem;
+use League\Flysystem\Local\LocalFilesystemAdapter;
 use PHPUnit\Framework\TestCase;
 
 final class FilesystemFactoryTest extends TestCase
@@ -23,8 +23,8 @@ final class FilesystemFactoryTest extends TestCase
 
     public function testCreate()
     {
-        $adapter = new NullAdapter();
+        $adapter = new LocalFilesystemAdapter('.');
         $filesystem = $this->filesystemFactory->create($adapter);
-        $this->assertInstanceOf(FilesystemInterface::class, $filesystem);
+        $this->assertInstanceOf(Filesystem::class, $filesystem);
     }
 }

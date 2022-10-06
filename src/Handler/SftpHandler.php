@@ -45,11 +45,8 @@ final class SftpHandler extends AbstractHandler
             $transportedFiles = [];
 
             foreach ($sftpRequest->getFiles() as $file) {
-                $result = $sftp->put($file['path'], $file['contents']);
-
-                if ($result) {
-                    $transportedFiles[] = $file;
-                }
+                $sftp->write($file['path'], $file['contents']);
+                $transportedFiles[] = $file;
             }
 
             $handleResponse = new SftpHandleResponse($sftpRequest, $transportedFiles);

@@ -68,7 +68,7 @@ class FormSubmission implements EntityInterface
     /**
      * @var array<string, mixed>|null
      *
-     * @ORM\Column(name="data", type="json_array", nullable=true)
+     * @ORM\Column(name="data", type="json", nullable=true)
      */
     private $data;
 
@@ -81,6 +81,7 @@ class FormSubmission implements EntityInterface
 
     /**
      * @var \DateTime|null
+     *
      * @ORM\Column(name="expire_date", type="date", nullable=true)
      */
     private $expireDate;
@@ -192,7 +193,7 @@ class FormSubmission implements EntityInterface
         return $this->expireDate;
     }
 
-    public function getCreated(): \Datetime
+    public function getCreated(): \DateTime
     {
         return $this->created;
     }

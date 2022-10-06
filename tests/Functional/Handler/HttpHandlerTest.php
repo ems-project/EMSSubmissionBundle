@@ -74,9 +74,10 @@ final class HttpHandlerTest extends AbstractHandlerTest
             $this->assertEquals(30.0, $options['timeout']);
             $this->assertEquals('{"test":"test"}', $options['body']);
 
-            $userPass = \base64_encode('userTest:testPass'); //see config.yml
+            $userPass = \base64_encode('userTest:testPass'); // see config.yml
             $this->assertEquals([
                 'Content-Type: application/json',
+                'Content-Length: 15',
                 'Accept: */*',
                 \sprintf('Authorization: Basic %s', $userPass),
             ], $options['headers']);
@@ -99,7 +100,7 @@ final class HttpHandlerTest extends AbstractHandlerTest
         $message = \file_get_contents(__DIR__.'/../fixtures/twig/message_http.twig');
 
         $this->assertEquals(
-            '{"status":"error","data":"Submission failed, contact your admin. (Invalid endpoint configuration: The option \"test\" does not exist. Defined options are: \"auth_basic\", \"auth_bearer\", \"headers\", \"method\", \"query\", \"timeout\", \"url\".)"}',
+            '{"status":"error","data":"Submission failed, contact your admin. (Invalid endpoint configuration: The option \"test\" does not exist. Defined options are: \"auth_basic\", \"auth_bearer\", \"headers\", \"ignore_body_value\", \"method\", \"query\", \"timeout\", \"url\".)"}',
             $this->handle($this->createForm(), $endpoint, $message)->getResponse()
         );
     }

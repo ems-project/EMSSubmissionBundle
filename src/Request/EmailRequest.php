@@ -15,7 +15,7 @@ final class EmailRequest
     /** @var string */
     private $body = '';
     private string $contentType = '';
-    /** @var array<array> */
+    /** @var array<array<mixed>> */
     private $attachments;
 
     /**
@@ -26,7 +26,7 @@ final class EmailRequest
         $this->endpoint = $endpoint;
 
         if (!isset($message['from'])) {
-            throw new \Exception(\sprintf('From email address not defined.'));
+            throw new \Exception('From email address not defined.');
         }
 
         $this->from = $message['from'];
@@ -62,7 +62,7 @@ final class EmailRequest
     }
 
     /**
-     * @return array<array>
+     * @return array<array<mixed>>
      */
     public function getAttachments(): array
     {

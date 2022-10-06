@@ -21,7 +21,7 @@ final class ServiceNowHandlerTest extends AbstractHandlerTest
     {
         parent::setUp();
 
-        $this->credentials = \base64_encode(\sprintf('%s:%s', 'userA', 'passB')); //see config.yml
+        $this->credentials = \base64_encode(\sprintf('%s:%s', 'userA', 'passB')); // see config.yml
         $this->responseFactory = $this->container->get(ResponseFactory::class);
         $this->endpoint = [
             'host' => 'https://example.service-now.com',
@@ -50,12 +50,13 @@ final class ServiceNowHandlerTest extends AbstractHandlerTest
         $this->responseFactory->setCallback(function (string $method, string $url, array $options = []) {
             if ('POST' === $method && 'https://example.service-now.com/api/now/v1/table/table_name' === $url) {
                 $this->assertEquals('{"title":"Test serviceNow","name":"testFirstName"}', $options['body']);
-                $this->assertEquals('19', $options['timeout']); //see config.yml
+                $this->assertEquals('19', $options['timeout']); // see config.yml
 
                 $this->assertSame([
                     'Accept: application/json',
                     'Content-Type: application/json',
                     \sprintf('Authorization: Basic %s', $this->credentials),
+                    'Content-Length: 50',
                 ], $options['headers']);
 
                 return new MockResponse('{"message": "example"}');
@@ -94,10 +95,13 @@ final class ServiceNowHandlerTest extends AbstractHandlerTest
                 }
 
                 if (\in_array($url, $attachmentUrls)) {
+                    $fileName = $options['query']['file_name'] ?? '';
+
                     $this->assertSame([
                         'Content-Type: text/plain',
                         \sprintf('Authorization: Basic %s', $this->credentials),
                         'Accept: */*',
+                        \sprintf('Content-Length: %d', 'attachment.txt' === $fileName ? 23 : 24),
                     ], $options['headers']);
 
                     return new MockResponse('{}');
@@ -107,9 +111,11 @@ final class ServiceNowHandlerTest extends AbstractHandlerTest
             }
         );
 
+        $handle = $this->handle($this->createFormUploadFiles(), \json_encode($this->endpoint), $message);
+
         $this->assertEquals(
             '{"status":"success","data":"{\"result\":{\"sys_id\":98765}}"}',
-            $this->handle($this->createFormUploadFiles(), \json_encode($this->endpoint), $message)->getResponse()
+            $handle->getResponse()
         );
     }
 
